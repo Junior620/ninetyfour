@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PLAYER
+  PARENT
+  COACH
+  ADMIN
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+enum NewsCategory {
+  ACADEMY
+  MATCHES
+  TRAINING
+  PARTNERS
+  EVENTS
+}
+
+enum GalleryCategory {
+  TRAINING
+  MATCHES
+  ACADEMY_LIFE
+  PARTNERS
+  EDUCATION
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  player       Player?
+  parentLinks  ParentPlayer[] @relation("ParentUser")
+  evaluations  Evaluation[]   @relation("CoachEvaluations")
+  comments     Comment[]      @relation("CoachComments")
+}
+
+model Player {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  firstName    String
+  lastName     String
+  birthDate    DateTime
+  position     String
+  strongFoot   String
+  currentClub  String?
+  schoolLevel  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  parents      ParentPlayer[]
+  evaluations  Evaluation[]
+  attendances  Attendance[]
+  comments     Comment[]
+  metrics      PerformanceMetric[]
+}
+
+model ParentPlayer {
+  id       String @id @default(cuid())
+  parentId String
+  playerId String
+  parent   User   @relation("ParentUser", fields: [parentId], references: [id])
+  player   Player @relation(fields: [playerId], references: [id])
+
+  @@unique([parentId, playerId])
+}
+
+model Application {
+  id            String            @id @default(cuid())
+  firstName     String
+  lastName      String
+  birthDate     DateTime
+  city          String
+  position      String
+  strongFoot    String
+  currentClub   String?
+  schoolLevel   String
+  parentContact String
+  phone         String
+  email         String
+  message       String?
+  videoLink     String?
+  status        ApplicationStatus @default(PENDING)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+model Article {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  titleFr   String
+  titleEn   String
+  excerptFr String
+  excerptEn String
+  contentFr String       @db.Text
+  contentEn String       @db.Text
+  category  NewsCategory
+  image     String
+  published Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model GalleryItem {
+  id         String          @id @default(cuid())
+  titleFr    String
+  titleEn    String
+  category   GalleryCategory
+  image      String
+  type       String          @default("image")
+  videoUrl   String?
+  createdAt  DateTime        @default(now())
+}
+
+model Partner {
+  id          String @id @default(cuid())
+  name        String
+  roleFr      String
+  roleEn      String
+  descriptionFr String @db.Text
+  descriptionEn String @db.Text
+  website     String?
+  logo        String?
+  order       Int    @default(0)
+}
+
+model Evaluation {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id])
+  coachId   String
+  coach     User     @relation("CoachEvaluations", fields: [coachId], references: [id])
+  technical Int
+  tactical  Int
+  physical  Int
+  mental    Int
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id])
+  date      DateTime
+  present   Boolean
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id])
+  coachId   String
+  coach     User     @relation("CoachComments", fields: [coachId], references: [id])
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model PerformanceMetric {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id])
+  month     String
+  technical Int
+  physical  Int
+  createdAt DateTime @default(now())
+}

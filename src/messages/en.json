@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "siteName": "Ninety One Foot Academy",
+    "tagline": "Talent. Education. Performance.",
+    "description": "Football academy in Douala dedicated to the sporting, academic and human development of young African talents."
+  },
+  "nav": {
+    "home": "Home",
+    "academy": "Academy",
+    "program": "Program",
+    "performanceLab": "Performance Lab",
+    "education": "Education",
+    "partners": "Partners",
+    "news": "News",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "join": "Join the academy",
+    "joinShort": "Join",
+    "privateSpace": "Private space",
+    "privateShort": "Login",
+    "academyGroup": "Academy",
+    "programGroup": "Program",
+    "mediaGroup": "Media",
+    "vision": "Vision & Values",
+    "training": "Sports training"
+  },
+  "common": {
+    "learnMore": "Learn more",
+    "discover": "Discover",
+    "applyNow": "Apply now",
+    "contactUs": "Contact us",
+    "readMore": "Read more",
+    "viewAll": "View all",
+    "back": "Back",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "success": "Message sent successfully",
+    "error": "An error occurred",
+    "all": "All",
+    "filter": "Filter",
+    "close": "Close",
+    "whatsapp": "Message on WhatsApp"
+  },
+  "home": {
+    "heroTitle": "Shaping tomorrow's African football leaders",
+    "heroSubtitle": "An academy based in Douala, dedicated to the sporting, academic and human development of young talents.",
+    "discoverProgram": "Discover the program",
+    "partnersBand": "Partners dedicated to performance and talent development.",
+    "promiseTitle": "Our promise",
+    "statsTitle": "Key figures",
+    "dimensionsTitle": "One academy, four dimensions",
+    "quote": "We don't just train players, we build leaders.",
+    "ctaTitle": "Ready to build your future?",
+    "badges": {
+      "age": "15–17 years",
+      "sessions": "4 sessions/week",
+      "location": "Douala",
+      "tracking": "Performance tracking"
+    }
+  },
+  "academy": {
+    "title": "Who are we?",
+    "subtitle": "Ninety One Foot Academy is based in Douala, born to identify, train and support young African talents towards their full potential.",
+    "historyTitle": "Our story",
+    "approachTitle": "Our approach",
+    "summaryTitle": "Ninety One at a glance",
+    "whyTitle": "Why Ninety One?"
+  },
+  "vision": {
+    "title": "Vision & Values",
+    "visionTitle": "Our vision",
+    "missionTitle": "Our mission",
+    "engagementTitle": "Our commitment",
+    "valuesTitle": "Our values",
+    "quote": "Our ambition is clear: to build the next generation of leaders who will shine African football."
+  },
+  "program": {
+    "title": "Program",
+    "subtitle": "A structured talent development process.",
+    "timelineTitle": "5-step journey",
+    "benefitsTitle": "What each player receives"
+  },
+  "training": {
+    "title": "Sports training",
+    "heroTitle": "Develop potential. Achieve excellence.",
+    "dimensionsTitle": "The 4 sporting dimensions",
+    "weeklyTitle": "Weekly program",
+    "evaluationTitle": "Evaluation method",
+    "playerCardTitle": "Sample player profile"
+  },
+  "education": {
+    "title": "Education & Personal Development",
+    "subtitle": "Training the mind to unlock potential.",
+    "academicTitle": "Personalized academic support",
+    "personalTitle": "Personal development",
+    "futureTitle": "Preparing for the future",
+    "quote": "A well-trained player today, a leader tomorrow."
+  },
+  "performanceLab": {
+    "title": "Performance Lab",
+    "heroTitle": "Data at the service of potential.",
+    "toolsTitle": "Our tools",
+    "metricsTitle": "Key indicators",
+    "chartTitle": "6-month progression",
+    "methodTitle": "Analyze, optimize, prepare, progress"
+  },
+  "partners": {
+    "title": "Partners",
+    "heroTitle": "Strong partners at the service of performance.",
+    "whyTitle": "Why our partners matter",
+    "ctaTitle": "Become a partner"
+  },
+  "news": {
+    "title": "News",
+    "subtitle": "Follow academy life",
+    "categories": {
+      "academy": "Academy",
+      "matches": "Matches",
+      "training": "Training",
+      "partners": "Partners",
+      "events": "Events"
+    }
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Life at Ninety One Foot Academy",
+    "videosTitle": "Videos",
+    "categories": {
+      "training": "Training",
+      "matches": "Matches",
+      "academy-life": "Academy life",
+      "partners": "Partners",
+      "education": "Education"
+    }
+  },
+  "join": {
+    "title": "Join the academy",
+    "subtitle": "Are you between 15 and 17? Want to progress in a structured environment?",
+    "conditionsTitle": "Requirements",
+    "formTitle": "Application form",
+    "processTitle": "After applying"
+  },
+  "contact": {
+    "title": "Contact",
+    "subtitle": "Let's stay in touch",
+    "address": "Douala, Cameroon",
+    "formTitle": "Send us a message"
+  },
+  "login": {
+    "title": "Private space",
+    "subtitle": "Select your profile to access your space",
+    "roles": {
+      "player": "Player",
+      "parent": "Parent",
+      "coach": "Coach",
+      "admin": "Administrator"
+    },
+    "descriptions": {
+      "player": "Track your progress and goals",
+      "parent": "Follow your child's journey",
+      "coach": "Manage players and evaluations",
+      "admin": "Platform administration"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "player": {
+      "title": "Player dashboard",
+      "nextTraining": "Next training",
+      "technicalProgress": "Technical progress",
+      "physicalProgress": "Physical progress",
+      "monthlyGoals": "Monthly goals",
+      "coachComments": "Latest comments",
+      "videosToReview": "Videos to review",
+      "calendar": "Calendar"
+    },
+    "parent": {
+      "title": "Parent dashboard",
+      "playerProgress": "Player progress",
+      "attendance": "Session attendance",
+      "academic": "Academic follow-up",
+      "messages": "Academy messages",
+      "documents": "Documents"
+    },
+    "coach": {
+      "title": "Coach dashboard",
+      "players": "Player list",
+      "addEvaluation": "Add evaluation",
+      "addAttendance": "Add attendance",
+      "addComment": "Add comment",
+      "statistics": "Statistics"
+    },
+    "admin": {
+      "title": "Administration",
+      "players": "Manage players",
+      "applications": "Manage applications",
+      "articles": "Manage articles",
+      "media": "Manage media",
+      "partners": "Manage partners"
+    }
+  },
+  "form": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "birthDate": "Date of birth",
+    "city": "City",
+    "position": "Position",
+    "strongFoot": "Strong foot",
+    "currentClub": "Current club",
+    "schoolLevel": "School level",
+    "parentContact": "Parent contact",
+    "phone": "Phone",
+    "email": "Email",
+    "message": "Message",
+    "videoLink": "Video link",
+    "consent": "I agree to the processing of my personal data",
+    "name": "Full name",
+    "subject": "Subject",
+    "leftFoot": "Left",
+    "rightFoot": "Right",
+    "bothFeet": "Both"
+  },
+  "footer": {
+    "slogan": "More than an academy, a movement. More than a dream, a mission.",
+    "academy": "Academy",
+    "program": "Program",
+    "contact": "Contact",
+    "social": "Social media",
+    "rights": "All rights reserved."
+  }
+}
