@@ -50,10 +50,10 @@ export default function LoginPage() {
             >
               <button
                 onClick={() => selectRole(role)}
-                className="w-full text-left"
+                className="w-full min-h-[4.5rem] text-left"
               >
-                <Card className="border-0 bg-white shadow-sm transition-all hover:shadow-md hover:ring-2 hover:ring-gold/50">
-                  <CardContent className="flex items-center gap-5 p-6">
+                <Card className="h-full border-0 bg-white shadow-sm transition-all hover:shadow-md hover:ring-2 hover:ring-gold/50">
+                  <CardContent className="flex items-center gap-4 p-5 sm:gap-5 sm:p-6">
                     <div
                       className={`flex h-14 w-14 items-center justify-center rounded-xl ${color} text-white`}
                     >

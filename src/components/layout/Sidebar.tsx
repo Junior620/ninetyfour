@@ -2,48 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import {
-  LayoutDashboard,
-  Users,
-  ClipboardList,
-  FileText,
-  Image,
-  Handshake,
-  LogOut,
-  Calendar,
-  BarChart3,
-  MessageSquare,
-  BookOpen,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
 import { AcademyLogo } from "./AcademyLogo";
-
-const roleNav: Record<
-  UserRole,
-  { href: string; icon: typeof LayoutDashboard; label: string }[]
-> = {
-  player: [
-    { href: "/dashboard/joueur", icon: LayoutDashboard, label: "player.title" },
-  ],
-  parent: [
-    { href: "/dashboard/parent", icon: LayoutDashboard, label: "parent.title" },
-  ],
-  coach: [
-    { href: "/dashboard/coach", icon: LayoutDashboard, label: "coach.title" },
-    { href: "/dashboard/coach#players", icon: Users, label: "coach.players" },
-    { href: "/dashboard/coach#evaluation", icon: ClipboardList, label: "coach.addEvaluation" },
-    { href: "/dashboard/coach#stats", icon: BarChart3, label: "coach.statistics" },
-  ],
-  admin: [
-    { href: "/dashboard/admin", icon: LayoutDashboard, label: "admin.title" },
-    { href: "/dashboard/admin#players", icon: Users, label: "admin.players" },
-    { href: "/dashboard/admin#applications", icon: ClipboardList, label: "admin.applications" },
-    { href: "/dashboard/admin#articles", icon: FileText, label: "admin.articles" },
-    { href: "/dashboard/admin#media", icon: Image, label: "admin.media" },
-    { href: "/dashboard/admin#partners", icon: Handshake, label: "admin.partners" },
-  ],
-};
+import { dashboardRoleNav } from "@/lib/dashboard-nav";
 
 interface SidebarProps {
   role: UserRole;
@@ -52,7 +15,7 @@ interface SidebarProps {
 export function Sidebar({ role }: SidebarProps) {
   const t = useTranslations("dashboard");
   const pathname = usePathname();
-  const links = roleNav[role];
+  const links = dashboardRoleNav[role];
 
   function handleLogout() {
     localStorage.removeItem("nofa_role");
@@ -99,5 +62,3 @@ export function Sidebar({ role }: SidebarProps) {
     </aside>
   );
 }
-
-export { Calendar, MessageSquare, BookOpen };

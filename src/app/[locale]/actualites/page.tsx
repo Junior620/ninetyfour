@@ -32,10 +32,10 @@ export default function NewsPage() {
     <>
       <section className="section-padding bg-navy">
         <div className="container-wide text-center">
-          <h1 className="text-3xl font-bold uppercase tracking-wide text-white md:text-5xl">
+          <h1 className="page-hero-title">
             {t("title")}
           </h1>
-          <p className="mt-4 text-white/70">{t("subtitle")}</p>
+          <p className="page-hero-subtitle">{t("subtitle")}</p>
         </div>
       </section>
 
@@ -47,7 +47,7 @@ export default function NewsPage() {
                 key={cat}
                 onClick={() => setFilter(cat)}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                  "filter-chip",
                   filter === cat
                     ? "bg-navy text-white"
                     : "bg-white text-text-muted hover:bg-navy/10"

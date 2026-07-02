@@ -87,7 +87,7 @@ export function Header() {
           </Link>
 
           <nav
-            className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 lg:flex"
+            className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:flex"
             aria-label="Main navigation"
           >
             {desktopNavItems.map((item) =>
@@ -97,7 +97,7 @@ export function Header() {
             )}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+          <div className="hidden shrink-0 items-center gap-2 xl:flex">
             <div className="flex rounded-md border border-border text-[11px] font-semibold">
               <Link
                 href={pathname}
@@ -151,9 +151,9 @@ export function Header() {
           </div>
 
           <button
-            className="ml-auto rounded-md p-2 text-navy lg:hidden"
+            className="ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-md text-navy xl:hidden"
             onClick={() => setMobileOpen(true)}
-            aria-label="Open menu"
+            aria-label="Ouvrir le menu"
           >
             <Menu className="h-6 w-6" />
           </button>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "@/lib/i18n/navigation";
 import { Sidebar } from "./Sidebar";
+import { DashboardMobileNav } from "./DashboardMobileNav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { UserRole } from "@/types";
 
@@ -60,10 +61,11 @@ export function DashboardLayout({ children, requiredRole }: DashboardLayoutProps
       <div className="hidden md:block">
         <Sidebar role={role} />
       </div>
-      <div className="flex flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between border-b bg-white px-6">
-          <h1 className="text-sm font-bold uppercase tracking-wider text-navy md:hidden">
-            NOFA Dashboard
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-16 items-center gap-3 border-b bg-white px-4 md:px-6">
+          <DashboardMobileNav role={role} />
+          <h1 className="truncate text-sm font-bold uppercase tracking-wider text-navy md:hidden">
+            Dashboard
           </h1>
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden text-sm text-text-muted sm:block">
@@ -76,7 +78,7 @@ export function DashboardLayout({ children, requiredRole }: DashboardLayoutProps
             </Avatar>
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

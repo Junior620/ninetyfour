@@ -106,11 +106,11 @@ export default function ParentDashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {parentData.documents.map((doc) => (
                 <div
                   key={doc.name.fr}
-                  className="flex items-center justify-between rounded-lg border p-4"
+                  className="flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <span className="text-sm text-black-premium">
                     {localized(doc.name, locale)}

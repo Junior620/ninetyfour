@@ -28,21 +28,25 @@ export function PerformanceChart({ data, title }: PerformanceChartProps) {
           </CardTitle>
         </CardHeader>
       )}
-      <CardContent>
-        <div className="h-[300px] w-full">
+      <CardContent className="p-4 sm:p-6">
+        <div className="h-[240px] w-full sm:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e2db" />
-              <XAxis dataKey="month" stroke="#4B5563" fontSize={12} />
-              <YAxis stroke="#4B5563" fontSize={12} domain={[50, 100]} />
+              <XAxis dataKey="month" stroke="#4B5563" fontSize={11} tickMargin={8} />
+              <YAxis stroke="#4B5563" fontSize={11} domain={[50, 100]} width={32} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "#fff",
                   border: "1px solid #e5e2db",
                   borderRadius: "8px",
+                  fontSize: "12px",
                 }}
               />
-              <Legend />
+              <Legend
+                wrapperStyle={{ fontSize: "12px", paddingTop: "8px" }}
+                iconSize={10}
+              />
               <Line
                 type="monotone"
                 dataKey="technical"

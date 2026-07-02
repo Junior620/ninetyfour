@@ -1,13 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
 import { mobileNavLinks } from "@/lib/nav-config";
+import { AcademyLogo } from "./AcademyLogo";
 
 interface MobileNavProps {
   open: boolean;
@@ -19,6 +20,17 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
   const locale = useLocale();
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -28,34 +40,34 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] bg-navy xl:hidden"
         >
-          <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between p-4">
-              <span className="text-sm font-bold uppercase tracking-wider text-gold">
-                Ninety One Foot Academy
-              </span>
+          <div className="flex h-full flex-col overscroll-contain">
+            <div className="flex items-center justify-between gap-3 p-4">
+              <AcademyLogo variant="sidebar" className="brightness-0 invert" />
               <button
                 onClick={onClose}
-                className="rounded-md p-2 text-white"
-                aria-label="Close menu"
+                className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-white"
+                aria-label="Fermer le menu"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-6 py-4">
+            <nav className="flex-1 overflow-y-auto px-4 py-2">
               {mobileNavLinks.map((link, index) => (
                 <motion.div
                   key={link.href}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: index * 0.04 }}
                 >
                   <Link
                     href={link.href}
                     onClick={onClose}
                     className={cn(
-                      "block border-b border-white/10 py-4 text-lg font-medium uppercase tracking-wide transition-colors",
-                      pathname === link.href ? "text-gold" : "text-white/80 hover:text-white"
+                      "flex min-h-12 items-center border-b border-white/10 py-3 text-base font-medium uppercase tracking-wide transition-colors",
+                      pathname === link.href
+                        ? "text-gold"
+                        : "text-white/80 hover:text-white"
                     )}
                   >
                     {t(link.key)}
@@ -64,14 +76,14 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
               ))}
             </nav>
 
-            <div className="space-y-3 border-t border-white/10 p-6">
+            <div className="space-y-3 border-t border-white/10 p-4 pb-6">
               <div className="flex justify-center gap-2">
                 <Link
                   href={pathname}
                   locale="fr"
                   onClick={onClose}
                   className={cn(
-                    "rounded-md px-4 py-2 text-sm font-medium",
+                    "flex min-h-11 min-w-[3.5rem] items-center justify-center rounded-md px-4 text-sm font-semibold",
                     locale === "fr" ? "bg-gold text-navy" : "text-white/70"
                   )}
                 >
@@ -82,7 +94,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                   locale="en"
                   onClick={onClose}
                   className={cn(
-                    "rounded-md px-4 py-2 text-sm font-medium",
+                    "flex min-h-11 min-w-[3.5rem] items-center justify-center rounded-md px-4 text-sm font-semibold",
                     locale === "en" ? "bg-gold text-navy" : "text-white/70"
                   )}
                 >
@@ -94,7 +106,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 onClick={onClose}
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "w-full bg-gold text-navy hover:bg-gold/90"
+                  "w-full justify-center bg-gold text-navy hover:bg-gold/90"
                 )}
               >
                 {t("join")}
@@ -104,7 +116,7 @@ export function MobileNav({ open, onClose }: MobileNavProps) {
                 onClick={onClose}
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "w-full border-white/30 text-white hover:bg-white/10"
+                  "w-full justify-center border-white/30 text-white hover:bg-white/10"
                 )}
               >
                 {t("privateSpace")}

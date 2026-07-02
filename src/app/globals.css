@@ -95,10 +95,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-cream text-foreground antialiased;
+    @apply bg-cream text-foreground antialiased overflow-x-hidden;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply font-sans scroll-smooth overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
@@ -110,12 +110,21 @@
     text-wrap: balance;
   }
   .section-padding {
-    @apply px-4 py-16 md:px-8 md:py-24 lg:px-16;
+    @apply px-4 py-12 sm:py-16 md:px-8 md:py-24 lg:px-16;
   }
   .container-narrow {
     @apply mx-auto max-w-6xl;
   }
   .container-wide {
     @apply mx-auto max-w-7xl;
+  }
+  .page-hero-title {
+    @apply text-balance text-2xl font-bold uppercase tracking-wide text-white sm:text-3xl md:text-5xl;
+  }
+  .page-hero-subtitle {
+    @apply mt-4 text-base text-white/70 sm:text-lg;
+  }
+  .filter-chip {
+    @apply inline-flex min-h-10 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors;
   }
 }

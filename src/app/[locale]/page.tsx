@@ -91,7 +91,7 @@ export default async function HomePage({
       <section className="section-padding bg-navy">
         <div className="container-wide">
           <SectionTitle title={t("statsTitle")} light />
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
             {keyStats.map((stat) => (
               <StatCard
                 key={stat.label.fr}

@@ -52,7 +52,7 @@ export function PlayerProgressCard({ player, locale }: PlayerProgressCardProps) 
           ))}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           <div>
             <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-gold">
               {locale === "fr" ? "Objectifs" : "Goals"}

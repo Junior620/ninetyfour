@@ -32,7 +32,9 @@ export function HeroSection({
     <section
       className={cn(
         "relative flex items-center overflow-hidden bg-navy",
-        compact ? "min-h-[40vh]" : "min-h-[85vh]"
+        compact
+          ? "min-h-[35vh] sm:min-h-[40vh]"
+          : "min-h-[60vh] sm:min-h-[70vh] lg:min-h-[85vh]"
       )}
     >
       {image && (
@@ -48,7 +50,7 @@ export function HeroSection({
         />
       )}
       {overlay && (
-        <div className="absolute inset-0 bg-gradient-to-r from-navy/65 via-navy/30 to-navy/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/40 to-navy/20 sm:from-navy/65 sm:via-navy/30 sm:to-navy/10" />
       )}
       <div className="relative z-10 container-wide section-padding w-full">
         <motion.div
@@ -58,34 +60,34 @@ export function HeroSection({
           className="max-w-3xl"
         >
           {badges && badges.length > 0 && (
-            <div className="mb-6 flex flex-wrap gap-2">
+            <div className="mb-4 flex flex-wrap gap-2 sm:mb-6">
               {badges.map((badge) => (
                 <Badge
                   key={badge}
                   variant="outline"
-                  className="border-gold/50 bg-gold/10 text-gold"
+                  className="border-gold/50 bg-gold/10 text-xs text-gold sm:text-sm"
                 >
                   {badge}
                 </Badge>
               ))}
             </div>
           )}
-          <h1 className="text-3xl font-bold uppercase leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
+          <h1 className="text-balance text-2xl font-bold uppercase leading-tight tracking-wide text-white sm:text-3xl md:text-5xl lg:text-6xl">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-6 max-w-2xl text-lg text-white/80 md:text-xl">
+            <p className="mt-4 max-w-2xl text-base text-white/80 sm:mt-6 sm:text-lg md:text-xl">
               {subtitle}
             </p>
           )}
           {(primaryCta || secondaryCta) && (
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-4">
               {primaryCta && (
                 <Link
                   href={primaryCta.href}
                   className={cn(
                     buttonVariants({ size: "lg" }),
-                    "bg-gold text-navy hover:bg-gold/90"
+                    "w-full justify-center bg-gold text-navy hover:bg-gold/90 sm:w-auto"
                   )}
                 >
                   {primaryCta.label}
@@ -96,7 +98,7 @@ export function HeroSection({
                   href={secondaryCta.href}
                   className={cn(
                     buttonVariants({ size: "lg", variant: "outline" }),
-                    "border-white/30 text-white hover:bg-white/10"
+                    "w-full justify-center border-white/30 text-white hover:bg-white/10 sm:w-auto"
                   )}
                 >
                   {secondaryCta.label}

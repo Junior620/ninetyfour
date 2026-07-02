@@ -26,7 +26,7 @@ export default function PlayerDashboardPage() {
   return (
     <DashboardLayout requiredRole="player">
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-black-premium">{t("title")}</h1>
+        <h1 className="text-xl font-bold text-black-premium sm:text-2xl">{t("title")}</h1>
 
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="border-0 bg-white shadow-sm lg:col-span-1">
@@ -113,12 +113,12 @@ export default function PlayerDashboardPage() {
               {videosToReview.map((video) => (
                 <div
                   key={video.id}
-                  className="flex items-center justify-between rounded-lg bg-cream p-3"
+                  className="flex flex-col gap-2 rounded-lg bg-cream p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <span className="text-sm text-black-premium">
                     {localized(video.title, locale)}
                   </span>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="w-fit shrink-0 text-xs">
                     {formatDate(video.date, locale)}
                   </Badge>
                 </div>

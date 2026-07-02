@@ -84,7 +84,7 @@ export function ContactForm() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="bg-gold text-navy hover:bg-gold/90"
+        className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
       >
         {isSubmitting ? tCommon("loading") : tCommon("submit")}
       </Button>

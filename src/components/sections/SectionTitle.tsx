@@ -25,14 +25,14 @@ export function SectionTitle({
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
       className={cn(
-        "mb-12",
+        "mb-6 md:mb-12",
         align === "center" && "text-center",
         className
       )}
     >
       <h2
         className={cn(
-          "text-2xl font-bold uppercase tracking-wide md:text-4xl",
+          "text-xl font-bold uppercase tracking-wide sm:text-2xl md:text-4xl",
           light ? "text-white" : "text-black-premium"
         )}
       >
@@ -41,7 +41,7 @@ export function SectionTitle({
       {subtitle && (
         <p
           className={cn(
-            "mt-4 max-w-2xl text-lg",
+            "mt-3 max-w-2xl text-base sm:mt-4 sm:text-lg",
             align === "center" && "mx-auto",
             light ? "text-white/70" : "text-text-muted"
           )}

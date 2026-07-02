@@ -58,8 +58,8 @@ export function StatCard({ value, label, className }: StatCardProps) {
       viewport={{ once: true }}
       className={cn("text-center", className)}
     >
-      <div className="text-3xl font-bold text-gold md:text-5xl">{value}</div>
-      <div className="mt-2 text-sm uppercase tracking-wider text-text-muted">
+      <div className="text-2xl font-bold text-gold sm:text-3xl md:text-5xl">{value}</div>
+      <div className="mt-2 text-balance text-xs uppercase tracking-wider text-text-muted sm:text-sm">
         {label}
       </div>
     </motion.div>

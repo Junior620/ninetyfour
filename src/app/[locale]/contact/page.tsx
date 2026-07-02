@@ -74,7 +74,7 @@ export default async function ContactPage({
               rel="noopener noreferrer"
               className={cn(
                 buttonVariants(),
-                "bg-[#25D366] text-white hover:bg-[#25D366]/90"
+                "w-full justify-center bg-[#25D366] text-white hover:bg-[#25D366]/90 sm:w-auto"
               )}
             >
               <MessageCircle className="mr-2 h-4 w-4" />

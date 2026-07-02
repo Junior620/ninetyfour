@@ -31,9 +31,9 @@ export function PartnerCard({
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ delay: index * 0.1 }}
-        className="flex items-center justify-center px-8"
+        className="flex items-center justify-center px-4 sm:px-8"
       >
-        <span className="text-xl font-bold uppercase tracking-widest text-navy/60 md:text-2xl">
+        <span className="text-base font-bold uppercase tracking-widest text-navy/60 sm:text-xl md:text-2xl">
           {name}
         </span>
       </motion.div>
