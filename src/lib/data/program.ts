@@ -9,9 +9,10 @@ export const programSteps: ProgramStep[] = [
       en: "Scouting promising profiles.",
     },
     details: {
-      fr: "Détection lors de journées portes ouvertes, tournois locaux et recommandations. Analyse du profil sportif et scolaire initial.",
-      en: "Detection during open days, local tournaments and recommendations. Initial sporting and academic profile analysis.",
+      fr: "Repérage des jeunes talents lors de compétitions, tournois et événements sportifs dans les communautés et académies partenaires.",
+      en: "Scouting young talents during competitions, tournaments and sporting events in communities and partner academies.",
     },
+    image: "/program-01.png",
   },
   {
     id: "evaluation",
@@ -21,9 +22,10 @@ export const programSteps: ProgramStep[] = [
       en: "Complete potential analysis.",
     },
     details: {
-      fr: "Évaluation technique, tactique, physique, mental et scolaire. Tests standardisés et observation en situation de match.",
-      en: "Technical, tactical, physical, mental and academic evaluation. Standardized tests and match situation observation.",
+      fr: "Analyse technique, tactique, physique, mentale et comportementale à travers des tests et observations détaillées.",
+      en: "Technical, tactical, physical, mental and behavioral analysis through detailed tests and observations.",
     },
+    image: "/program-02.png",
   },
   {
     id: "integration",
@@ -33,9 +35,10 @@ export const programSteps: ProgramStep[] = [
       en: "Welcome and goal setting.",
     },
     details: {
-      fr: "Plan de développement personnalisé, intégration au groupe et présentation du programme éducatif et sportif.",
-      en: "Personalized development plan, group integration and presentation of the educational and sports program.",
+      fr: "Sélection des profils correspondant aux exigences du programme et signature d'un parcours personnalisé.",
+      en: "Selection of profiles meeting program requirements and signing of a personalized pathway.",
     },
+    image: "/program-03.png",
   },
   {
     id: "development",
@@ -45,9 +48,10 @@ export const programSteps: ProgramStep[] = [
       en: "Continuous and structured progress.",
     },
     details: {
-      fr: "Entraînements quotidiens, suivi vidéo, données Footbar, renforcement physique et accompagnement scolaire régulier.",
-      en: "Daily training, video monitoring, Footbar data, physical strengthening and regular academic support.",
+      fr: "Programme individualisé combinant entraînement, éducation, suivi médical et accompagnement humain.",
+      en: "Individualized program combining training, education, medical follow-up and human support.",
     },
+    image: "/program-04.png",
   },
   {
     id: "exposition",
@@ -57,9 +61,10 @@ export const programSteps: ProgramStep[] = [
       en: "Showcasing talents.",
     },
     details: {
-      fr: "Matchs officiels, tournois, vidéos de performance et opportunités de détection internationale.",
-      en: "Official matches, tournaments, performance videos and international scouting opportunities.",
+      fr: "Mise en relation avec les académies, clubs et partenaires internationaux pour créer des opportunités réelles au plus haut niveau.",
+      en: "Connecting with international academies, clubs and partners to create real opportunities at the highest level.",
     },
+    image: "/program-05.png",
   },
 ];
 

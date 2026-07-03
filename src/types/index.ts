@@ -54,6 +54,9 @@ export interface Pillar {
   title: LocalizedString;
   description: LocalizedString;
   icon: string;
+  tag?: LocalizedString;
+  href?: string;
+  image?: string;
 }
 
 export interface ProgramStep {
@@ -61,6 +64,7 @@ export interface ProgramStep {
   title: LocalizedString;
   description: LocalizedString;
   details: LocalizedString;
+  image?: string;
 }
 
 export interface Player {

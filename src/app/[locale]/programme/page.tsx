@@ -33,6 +33,7 @@ export default async function ProgramPage({
     title: localized(step.title, loc),
     description: localized(step.description, loc),
     details: localized(step.details, loc),
+    image: step.image,
   }));
 
   return (

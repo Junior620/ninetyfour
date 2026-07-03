@@ -106,10 +106,13 @@ export default async function HomePage({
         ctaLabel={t("partnersCta")}
       />
 
-      <section className="section-padding bg-cream">
+      <section className="bg-cream px-4 py-12 sm:py-16 md:px-8 lg:px-16">
         <div className="container-wide">
-          <SectionTitle title={t("promiseTitle")} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <SectionTitle
+            title={t("promiseTitle")}
+            subtitle={t("promiseSubtitle")}
+          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
             {promisePillars.map((pillar, i) => (
               <PillarCard
                 key={pillar.id}
@@ -117,6 +120,11 @@ export default async function HomePage({
                 description={localized(pillar.description, loc)}
                 icon={pillar.icon}
                 index={i}
+                tag={pillar.tag ? localized(pillar.tag, loc) : undefined}
+                href={pillar.href}
+                cta={tCommon("learnMore")}
+                image={pillar.image}
+                numbered
               />
             ))}
           </div>
