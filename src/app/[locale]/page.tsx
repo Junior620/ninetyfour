@@ -5,7 +5,8 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
 import { CTASection } from "@/components/sections/CTASection";
 import { QuoteSection } from "@/components/sections/QuoteSection";
-import { StatCard, PillarCard } from "@/components/cards/StatCard";
+import { PillarCard } from "@/components/cards/StatCard";
+import { StatsSection } from "@/components/sections/StatsSection";
 import { NewsCard } from "@/components/cards/PartnerCard";
 import { ExploreCard } from "@/components/cards/ExploreCard";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
@@ -131,21 +132,21 @@ export default async function HomePage({
         </div>
       </section>
 
-      <section className="section-padding bg-navy">
-        <div className="container-wide">
-          <SectionTitle title={t("statsTitle")} light />
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
-            {keyStats.map((stat, i) => (
-              <StatCard
-                key={stat.label.fr}
-                value={stat.value}
-                label={localized(stat.label, loc)}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <StatsSection
+        sectionTitle={t("statsTitle")}
+        title={t("statsHeadline")}
+        subtitle={t("statsSubtitle")}
+        image={images.stats}
+        stats={keyStats.map((stat) => ({
+          value: localized(stat.value, loc),
+          label: localized(stat.label, loc),
+          icon: stat.icon,
+          note: stat.note ? localized(stat.note, loc) : undefined,
+          tag: stat.tag ? localized(stat.tag, loc) : undefined,
+          featured: stat.featured,
+          image: stat.image,
+        }))}
+      />
 
       <section className="section-padding bg-white">
         <div className="container-wide">

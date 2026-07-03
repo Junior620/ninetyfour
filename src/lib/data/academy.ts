@@ -98,12 +98,82 @@ export const dimensions: Pillar[] = [
 ];
 
 export const keyStats = [
-  { value: "15–17", label: { fr: "Âge cible", en: "Target age" } },
-  { value: "4", label: { fr: "Piliers de formation", en: "Training pillars" } },
-  { value: "4", label: { fr: "Séances par semaine", en: "Sessions per week" } },
-  { value: "3", label: { fr: "Partenaires stratégiques", en: "Strategic partners" } },
-  { value: "100%", label: { fr: "Suivi individualisé", en: "Individual tracking" } },
-  { value: "CMR", label: { fr: "Douala, Cameroun", en: "Douala, Cameroon" } },
+  {
+    value: { fr: "15–17 ANS", en: "15–17 YRS" },
+    label: { fr: "Catégorie d'âge cible", en: "Target age category" },
+    tag: { fr: "Formation", en: "Training" },
+    icon: "Users",
+    image: "/stat-01.png",
+    featured: true,
+  },
+  {
+    value: { fr: "4 SÉANCES / SEMAINE", en: "4 SESSIONS / WEEK" },
+    label: { fr: "Entraînements structurés", en: "Structured training" },
+    tag: { fr: "Encadrement", en: "Coaching" },
+    icon: "Timer",
+    image: "/stat-02.png",
+    featured: true,
+  },
+  {
+    value: { fr: "100 %", en: "100 %" },
+    label: { fr: "Suivi individualisé", en: "Individualized tracking" },
+    tag: { fr: "Accompagnement", en: "Support" },
+    icon: "UserCheck",
+    image: "/stat-03.png",
+    featured: true,
+  },
+  {
+    value: { fr: "DOUALA", en: "DOUALA" },
+    label: {
+      fr: "Ancrage local, ambition internationale",
+      en: "Local roots, international ambition",
+    },
+    tag: { fr: "Territoire", en: "Territory" },
+    icon: "MapPin",
+    image: "/stat-04.png",
+    featured: true,
+  },
+  {
+    value: { fr: "4 PILIERS", en: "4 PILLARS" },
+    label: {
+      fr: "Sport, éducation, performance, leadership",
+      en: "Sport, education, performance, leadership",
+    },
+    tag: { fr: "Modèle", en: "Model" },
+    icon: "Landmark",
+    image: "/stat-05.png",
+  },
+  {
+    value: { fr: "3 PARTENAIRES", en: "3 PARTNERS" },
+    label: {
+      fr: "Un écosystème au service du talent",
+      en: "An ecosystem serving talent",
+    },
+    tag: { fr: "Réseau", en: "Network" },
+    icon: "Handshake",
+    image: "/stat-06.png",
+  },
+  {
+    value: { fr: "2 OUTILS", en: "2 TOOLS" },
+    label: {
+      fr: "Technologies de performance",
+      en: "Performance technologies",
+    },
+    note: { fr: "Footbar & Veo", en: "Footbar & Veo" },
+    tag: { fr: "Performance", en: "Performance" },
+    icon: "BarChart3",
+    image: "/stat-07.png",
+  },
+  {
+    value: { fr: "1 VISION", en: "1 VISION" },
+    label: {
+      fr: "Former les leaders du football africain",
+      en: "Shaping African football leaders",
+    },
+    tag: { fr: "Ambition", en: "Ambition" },
+    icon: "Target",
+    image: "/stat-08.png",
+  },
 ];
 
 export const values: Pillar[] = [
@@ -227,6 +297,7 @@ export const images = {
     "/hero-3.jpeg",
     "/hero-4.jpeg",
   ],
+  stats: "/stats.png",
   academy: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80",
   training: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
   education: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",
