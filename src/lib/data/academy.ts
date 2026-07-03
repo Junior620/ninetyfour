@@ -209,6 +209,12 @@ export const contactInfo = {
 
 export const images = {
   hero: "/hero.png",
+  heroImages: [
+    "/hero.png",
+    "/hero-2.jpeg",
+    "/hero-3.jpeg",
+    "/hero-4.jpeg",
+  ],
   academy: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1200&q=80",
   training: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
   education: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&q=80",

@@ -77,11 +77,16 @@ export function Header() {
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-300",
           scrolled
-            ? "bg-white/95 shadow-sm backdrop-blur-md"
+            ? "bg-white/98 shadow-md backdrop-blur-md"
             : "bg-cream"
         )}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 lg:px-6">
+        <div
+          className={cn(
+            "mx-auto flex max-w-7xl items-center gap-3 px-4 transition-all duration-300 lg:px-6",
+            scrolled ? "h-14" : "h-16"
+          )}
+        >
           <Link href="/" className="flex shrink-0 items-center">
             <AcademyLogo variant="header" priority />
           </Link>

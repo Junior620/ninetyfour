@@ -29,10 +29,10 @@ export function Footer() {
               {t("academy")}
             </h3>
             <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/academie" className="flex min-h-11 items-center hover:text-white">{tNav("academy")}</Link></li>
-              <li><Link href="/vision" className="flex min-h-11 items-center hover:text-white">{tNav("vision")}</Link></li>
-              <li><Link href="/partenaires" className="flex min-h-11 items-center hover:text-white">{tNav("partners")}</Link></li>
-              <li><Link href="/actualites" className="flex min-h-11 items-center hover:text-white">{tNav("news")}</Link></li>
+              <li><Link href="/academie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("academy")}</Link></li>
+              <li><Link href="/vision" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("vision")}</Link></li>
+              <li><Link href="/partenaires" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("partners")}</Link></li>
+              <li><Link href="/actualites" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("news")}</Link></li>
             </ul>
           </div>
 
@@ -41,10 +41,10 @@ export function Footer() {
               {t("program")}
             </h3>
             <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/programme" className="flex min-h-11 items-center hover:text-white">{tNav("program")}</Link></li>
-              <li><Link href="/formation-sportive" className="flex min-h-11 items-center hover:text-white">{tNav("training")}</Link></li>
-              <li><Link href="/education" className="flex min-h-11 items-center hover:text-white">{tNav("education")}</Link></li>
-              <li><Link href="/performance-lab" className="flex min-h-11 items-center hover:text-white">{tNav("performanceLab")}</Link></li>
+              <li><Link href="/programme" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("program")}</Link></li>
+              <li><Link href="/formation-sportive" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("training")}</Link></li>
+              <li><Link href="/education" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("education")}</Link></li>
+              <li><Link href="/performance-lab" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("performanceLab")}</Link></li>
             </ul>
           </div>
 
@@ -53,16 +53,19 @@ export function Footer() {
               {t("contact")}
             </h3>
             <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/contact" className="flex min-h-11 items-center hover:text-white">{tNav("contact")}</Link></li>
-              <li><Link href="/rejoindre" className="flex min-h-11 items-center hover:text-white">{tNav("join")}</Link></li>
-              <li><Link href="/login" className="flex min-h-11 items-center hover:text-white">{tNav("privateSpace")}</Link></li>
+              <li><Link href="/contact" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("contact")}</Link></li>
+              <li><Link href="/rejoindre" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("join")}</Link></li>
+              <li><Link href="/login" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("privateSpace")}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/10 pt-8">
           {partners.map((p) => (
-            <span key={p.id} className="text-sm font-bold uppercase tracking-widest text-white/30">
+            <span
+              key={p.id}
+              className="text-sm font-bold uppercase tracking-widest text-white/30 transition-colors duration-200 hover:text-gold/70"
+            >
               {p.name}
             </span>
           ))}

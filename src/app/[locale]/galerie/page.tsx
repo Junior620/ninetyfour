@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
+import { ImageCarousel } from "@/components/gallery/ImageCarousel";
 import { imageItems, videoItems } from "@/lib/data";
 import { localized } from "@/lib/utils";
 import type { Locale, GalleryCategory } from "@/types";
@@ -64,6 +65,18 @@ export default function GalleryPage() {
 
       <section className="section-padding bg-cream">
         <div className="container-wide">
+          {imageItems.length > 0 && (
+            <div className="mb-10">
+              <ImageCarousel
+                items={imageItems.slice(0, 6).map((item) => ({
+                  id: item.id,
+                  title: localized(item.title, locale),
+                  image: item.image,
+                }))}
+              />
+            </div>
+          )}
+
           <div className="mb-8 flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button

@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { cn } from "@/lib/utils";
 
 interface QuoteSectionProps {
@@ -11,14 +11,10 @@ interface QuoteSectionProps {
 
 export function QuoteSection({ quote, dark = true }: QuoteSectionProps) {
   return (
-    <motion.section
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-      className={cn(
-        "section-padding",
-        dark ? "bg-navy-light" : "bg-white"
-      )}
+    <ScrollReveal
+      as="section"
+      variant="fadeUp"
+      className={cn("section-padding", dark ? "bg-navy-light" : "bg-white")}
     >
       <div className="container-narrow text-center">
         <Quote className="mx-auto mb-6 h-10 w-10 text-gold" />
@@ -31,6 +27,6 @@ export function QuoteSection({ quote, dark = true }: QuoteSectionProps) {
           &ldquo;{quote}&rdquo;
         </blockquote>
       </div>
-    </motion.section>
+    </ScrollReveal>
   );
 }

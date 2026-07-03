@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { cn } from "@/lib/utils";
 
 interface ProgramStep {
@@ -16,20 +16,15 @@ interface ProgramTimelineProps {
 export function ProgramTimeline({ steps }: ProgramTimelineProps) {
   return (
     <div className="relative">
-      {/* Mobile timeline */}
       <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-gold/30 md:hidden" />
-
-      {/* Desktop timeline */}
       <div className="absolute left-4 top-0 hidden h-full w-0.5 bg-gold/30 md:left-1/2 md:block md:-translate-x-px" />
 
       <div className="space-y-8 md:space-y-12">
         {steps.map((step, index) => (
-          <motion.div
+          <ScrollReveal
             key={step.title}
-            initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1 }}
+            variant={index % 2 === 0 ? "fadeRight" : "fadeLeft"}
+            delay={index * 0.08}
             className={cn(
               "relative pl-8 md:pl-0 md:flex md:items-center",
               index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
@@ -37,10 +32,7 @@ export function ProgramTimeline({ steps }: ProgramTimelineProps) {
           >
             <div className="hidden md:block md:w-1/2" />
 
-            {/* Mobile dot */}
             <div className="absolute left-0 top-6 h-3.5 w-3.5 rounded-full border-[3px] border-gold bg-navy md:hidden" />
-
-            {/* Desktop dot */}
             <div className="absolute left-4 top-1/2 hidden h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-gold bg-navy md:left-1/2 md:block" />
 
             <div
@@ -49,7 +41,7 @@ export function ProgramTimeline({ steps }: ProgramTimelineProps) {
                 index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12"
               )}
             >
-              <div className="rounded-lg bg-white p-5 shadow-sm sm:p-6">
+              <div className="hover-lift rounded-lg bg-white p-5 shadow-sm sm:p-6">
                 <span className="text-sm font-bold text-gold">
                   {String(index + 1).padStart(2, "0")}
                 </span>
@@ -64,7 +56,7 @@ export function ProgramTimeline({ steps }: ProgramTimelineProps) {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </ScrollReveal>
         ))}
       </div>
     </div>

@@ -1,11 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { Link } from "@/lib/i18n/navigation";
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 
 interface PartnerCardProps {
   name: string;
@@ -26,28 +26,21 @@ export function PartnerCard({
 }: PartnerCardProps) {
   if (compact) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.1 }}
+      <ScrollReveal
+        variant="scaleIn"
+        delay={index * 0.08}
         className="flex items-center justify-center px-4 sm:px-8"
       >
-        <span className="text-base font-bold uppercase tracking-widest text-navy/60 sm:text-xl md:text-2xl">
+        <span className="text-base font-bold uppercase tracking-widest text-navy/60 transition-colors duration-200 hover:text-navy sm:text-xl md:text-2xl">
           {name}
         </span>
-      </motion.div>
+      </ScrollReveal>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-    >
-      <Card className="h-full border-0 bg-white shadow-sm transition-shadow hover:shadow-md">
+    <ScrollReveal variant="scaleIn" delay={index * 0.08}>
+      <Card className="hover-lift h-full border-0 bg-white shadow-sm">
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xl font-bold text-royal">{name}</h3>
@@ -56,7 +49,7 @@ export function PartnerCard({
                 href={website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-muted hover:text-royal"
+                className="text-text-muted transition-all duration-200 hover:translate-x-0.5 hover:text-royal"
                 aria-label={`Visit ${name}`}
               >
                 <ExternalLink className="h-4 w-4" />
@@ -71,7 +64,7 @@ export function PartnerCard({
           </p>
         </CardContent>
       </Card>
-    </motion.div>
+    </ScrollReveal>
   );
 }
 
@@ -82,6 +75,7 @@ interface NewsCardProps {
   date: string;
   category: string;
   slug: string;
+  index?: number;
 }
 
 export function NewsCard({
@@ -91,21 +85,18 @@ export function NewsCard({
   date,
   category,
   slug,
+  index = 0,
 }: NewsCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-    >
-      <Link href={`/actualites/${slug}`}>
-        <Card className="group h-full overflow-hidden border-0 bg-white shadow-sm transition-shadow hover:shadow-md">
-          <div className="relative aspect-[16/10] overflow-hidden">
+    <ScrollReveal variant="fadeUp" delay={index * 0.08}>
+      <Link href={`/actualites/${slug}`} className="block">
+        <Card className="hover-lift group h-full overflow-hidden border-0 bg-white shadow-sm">
+          <div className="hover-zoom relative aspect-[16/10]">
             <Image
               src={image}
               alt={title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
             <Badge className="absolute left-4 top-4 bg-royal text-white">
@@ -114,7 +105,7 @@ export function NewsCard({
           </div>
           <CardContent className="p-5">
             <time className="text-xs text-text-muted">{date}</time>
-            <h3 className="mt-2 text-lg font-bold text-black-premium group-hover:text-royal">
+            <h3 className="mt-2 text-lg font-bold text-black-premium transition-colors duration-200 group-hover:text-royal">
               {title}
             </h3>
             <p className="mt-2 line-clamp-2 text-sm text-text-muted">
@@ -123,6 +114,6 @@ export function NewsCard({
           </CardContent>
         </Card>
       </Link>
-    </motion.div>
+    </ScrollReveal>
   );
 }

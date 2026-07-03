@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Star,
   GraduationCap,
@@ -22,6 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -48,21 +48,21 @@ interface StatCardProps {
   value: string;
   label: string;
   className?: string;
+  index?: number;
 }
 
-export function StatCard({ value, label, className }: StatCardProps) {
+export function StatCard({ value, label, className, index = 0 }: StatCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+    <ScrollReveal
+      variant="fadeUp"
+      delay={index * 0.08}
       className={cn("text-center", className)}
     >
       <div className="text-2xl font-bold text-gold sm:text-3xl md:text-5xl">{value}</div>
       <div className="mt-2 text-balance text-xs uppercase tracking-wider text-text-muted sm:text-sm">
         {label}
       </div>
-    </motion.div>
+    </ScrollReveal>
   );
 }
 
@@ -84,20 +84,15 @@ export function PillarCard({
   const Icon = iconMap[icon] ?? Star;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-    >
+    <ScrollReveal variant="fadeUp" delay={index * 0.08}>
       <Card
         className={cn(
-          "h-full border-0 shadow-sm transition-shadow hover:shadow-md",
+          "hover-lift h-full border-0 shadow-sm",
           dark ? "bg-navy-light text-white" : "bg-white"
         )}
       >
         <CardContent className="p-6">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gold/10">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gold/10 transition-transform duration-300 group-hover:scale-105">
             <Icon className="h-6 w-6 text-gold" />
           </div>
           <h3
@@ -118,7 +113,7 @@ export function PillarCard({
           </p>
         </CardContent>
       </Card>
-    </motion.div>
+    </ScrollReveal>
   );
 }
 

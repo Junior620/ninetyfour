@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BackToTop } from "@/components/layout/BackToTop";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -30,6 +31,7 @@ export default async function LocaleLayout({
       <Header />
       <main className="flex flex-1 flex-col">{children}</main>
       <Footer />
+      <BackToTop />
     </NextIntlClientProvider>
   );
 }

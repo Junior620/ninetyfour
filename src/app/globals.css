@@ -127,4 +127,38 @@
   .filter-chip {
     @apply inline-flex min-h-10 items-center rounded-full px-4 py-2 text-sm font-medium transition-colors;
   }
+  .hover-zoom {
+    @apply overflow-hidden;
+  }
+  .hover-zoom img {
+    @apply transition-transform duration-300 ease-out;
+  }
+  .hover-zoom:hover img {
+    transform: scale(1.06);
+  }
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+  .hover-link {
+    @apply transition-colors duration-200;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hover-zoom img,
+  .hover-lift {
+    transition: none !important;
+  }
+  .hover-zoom:hover img {
+    transform: none;
+  }
+  .hover-lift:hover {
+    transform: none;
+  }
 }

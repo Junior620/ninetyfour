@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 import { cn } from "@/lib/utils";
 
 interface SectionTitleProps {
@@ -19,11 +19,8 @@ export function SectionTitle({
   className,
 }: SectionTitleProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+    <ScrollReveal
+      variant="fadeUp"
       className={cn(
         "mb-6 md:mb-12",
         align === "center" && "text-center",
@@ -55,6 +52,6 @@ export function SectionTitle({
           align === "center" && "mx-auto"
         )}
       />
-    </motion.div>
+    </ScrollReveal>
   );
 }

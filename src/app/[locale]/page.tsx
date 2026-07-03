@@ -47,7 +47,7 @@ export default async function HomePage({
       <HeroSection
         title={t("heroTitle")}
         subtitle={t("heroSubtitle")}
-        image={images.hero}
+        images={images.heroImages}
         badges={[
           t("badges.age"),
           t("badges.sessions"),
@@ -92,11 +92,12 @@ export default async function HomePage({
         <div className="container-wide">
           <SectionTitle title={t("statsTitle")} light />
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
-            {keyStats.map((stat) => (
+            {keyStats.map((stat, i) => (
               <StatCard
                 key={stat.label.fr}
                 value={stat.value}
                 label={localized(stat.label, loc)}
+                index={i}
               />
             ))}
           </div>

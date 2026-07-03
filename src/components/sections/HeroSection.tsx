@@ -1,6 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import Image from "next/image";
 import { Link } from "@/lib/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
@@ -11,83 +18,178 @@ interface HeroSectionProps {
   title: string;
   subtitle?: string;
   image?: string;
+  images?: string[];
   badges?: string[];
   primaryCta?: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
   compact?: boolean;
   overlay?: boolean;
+  autoplayMs?: number;
 }
 
 export function HeroSection({
   title,
   subtitle,
   image,
+  images,
   badges,
   primaryCta,
   secondaryCta,
   compact = false,
   overlay = true,
+  autoplayMs = 5000,
 }: HeroSectionProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const slides = images?.length ? images : image ? [image] : [];
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  const imageY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReducedMotion ? ["0%", "0%"] : ["0%", "12%"]
+  );
+
+  useEffect(() => {
+    if (slides.length <= 1 || paused || prefersReducedMotion) return;
+    const id = window.setInterval(() => {
+      setIndex((current) => (current + 1) % slides.length);
+    }, autoplayMs);
+    return () => window.clearInterval(id);
+  }, [slides.length, paused, prefersReducedMotion, autoplayMs]);
+
+  function goTo(next: number) {
+    if (slides.length <= 1) return;
+    setIndex(((next % slides.length) + slides.length) % slides.length);
+  }
+
+  function onTouchStart(event: React.TouchEvent<HTMLElement>) {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+    setPaused(true);
+  }
+
+  function onTouchEnd(event: React.TouchEvent<HTMLElement>) {
+    const startX = touchStartX.current;
+    const endX = event.changedTouches[0]?.clientX;
+    touchStartX.current = null;
+    setPaused(false);
+
+    if (startX == null || endX == null || slides.length <= 1) return;
+
+    const deltaX = endX - startX;
+    if (Math.abs(deltaX) < 50) return;
+
+    if (deltaX < 0) goTo(index + 1);
+    else goTo(index - 1);
+  }
+
   return (
     <section
+      ref={sectionRef}
       className={cn(
         "relative flex items-center overflow-hidden bg-navy",
         compact
-          ? "min-h-[35vh] sm:min-h-[40vh]"
-          : "min-h-[60vh] sm:min-h-[70vh] lg:min-h-[85vh]"
+          ? "min-h-[38vh] sm:min-h-[40vh]"
+          : "min-h-[68vh] sm:min-h-[70vh] lg:min-h-[85vh]"
       )}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
-      {image && (
-        <Image
-          src={image}
-          alt=""
-          fill
-          className="object-cover object-center"
-          priority
-          quality={100}
-          unoptimized={image.startsWith("/")}
-          sizes="100vw"
-        />
+      {slides.length > 0 && (
+        <motion.div className="absolute inset-0" style={{ y: imageY }}>
+          <AnimatePresence mode="sync">
+            <motion.div
+              key={slides[index]}
+              initial={prefersReducedMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={slides[index]}
+                alt=""
+                fill
+                className="object-cover object-[center_30%] scale-110 sm:object-center"
+                priority={index === 0}
+                quality={100}
+                unoptimized={slides[index].startsWith("/")}
+                sizes="100vw"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       )}
+
       {overlay && (
-        <div className="absolute inset-0 bg-gradient-to-r from-navy/70 via-navy/40 to-navy/20 sm:from-navy/65 sm:via-navy/30 sm:to-navy/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/75 via-navy/50 to-navy/70 sm:bg-gradient-to-r sm:from-navy/70 sm:via-navy/40 sm:to-navy/20 lg:from-navy/65 lg:via-navy/30 lg:to-navy/10" />
       )}
-      <div className="relative z-10 container-wide section-padding w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-3xl"
-        >
+
+      <div
+        className={cn(
+          "relative z-10 container-wide section-padding w-full",
+          slides.length > 1 && "pb-16 sm:pb-20"
+        )}
+      >
+        <div className="max-w-3xl">
           {badges && badges.length > 0 && (
-            <div className="mb-4 flex flex-wrap gap-2 sm:mb-6">
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.05 }}
+              className="mb-3 flex flex-wrap gap-2 sm:mb-6"
+            >
               {badges.map((badge) => (
                 <Badge
                   key={badge}
                   variant="outline"
-                  className="border-gold/50 bg-gold/10 text-xs text-gold sm:text-sm"
+                  className="border-gold/50 bg-gold/10 text-[11px] text-gold sm:text-sm"
                 >
                   {badge}
                 </Badge>
               ))}
-            </div>
+            </motion.div>
           )}
-          <h1 className="text-balance text-2xl font-bold uppercase leading-tight tracking-wide text-white sm:text-3xl md:text-5xl lg:text-6xl">
+          <motion.h1
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.12 }}
+            className="text-balance text-2xl font-bold uppercase leading-tight tracking-wide text-white sm:text-3xl md:text-5xl lg:text-6xl"
+          >
             {title}
-          </h1>
+          </motion.h1>
           {subtitle && (
-            <p className="mt-4 max-w-2xl text-base text-white/80 sm:mt-6 sm:text-lg md:text-xl">
+            <motion.p
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.22 }}
+              className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:mt-6 sm:text-lg md:text-xl"
+            >
               {subtitle}
-            </p>
+            </motion.p>
           )}
           {(primaryCta || secondaryCta) && (
-            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-4">
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.32 }}
+              className="mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-4"
+            >
               {primaryCta && (
                 <Link
                   href={primaryCta.href}
                   className={cn(
                     buttonVariants({ size: "lg" }),
-                    "w-full justify-center bg-gold text-navy hover:bg-gold/90 sm:w-auto"
+                    "min-h-11 w-full justify-center bg-gold text-navy hover:bg-gold/90 sm:w-auto"
                   )}
                 >
                   {primaryCta.label}
@@ -98,16 +200,38 @@ export function HeroSection({
                   href={secondaryCta.href}
                   className={cn(
                     buttonVariants({ size: "lg", variant: "outline" }),
-                    "w-full justify-center border-white/30 text-white hover:bg-white/10 sm:w-auto"
+                    "min-h-11 w-full justify-center border-white/30 text-white hover:bg-white/10 sm:w-auto"
                   )}
                 >
                   {secondaryCta.label}
                 </Link>
               )}
-            </div>
+            </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
+
+      {slides.length > 1 && (
+        <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 sm:bottom-6 sm:gap-2">
+          {slides.map((slide, i) => (
+            <button
+              key={slide}
+              type="button"
+              onClick={() => goTo(i)}
+              className="flex min-h-11 min-w-11 items-center justify-center"
+              aria-label={`Image ${i + 1}`}
+              aria-current={i === index}
+            >
+              <span
+                className={cn(
+                  "block h-2 rounded-full transition-all duration-300",
+                  i === index ? "w-6 bg-gold" : "w-2 bg-white/50"
+                )}
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
