@@ -12,6 +12,7 @@ interface PartnerCardProps {
   role: string;
   description: string;
   website?: string;
+  logo?: string;
   index?: number;
   compact?: boolean;
 }
@@ -21,6 +22,7 @@ export function PartnerCard({
   role,
   description,
   website,
+  logo,
   index = 0,
   compact = false,
 }: PartnerCardProps) {
@@ -29,9 +31,9 @@ export function PartnerCard({
       <ScrollReveal
         variant="scaleIn"
         delay={index * 0.08}
-        className="flex items-center justify-center px-4 sm:px-8"
+        className="flex items-center justify-center"
       >
-        <span className="text-base font-bold uppercase tracking-widest text-navy/60 transition-colors duration-200 hover:text-navy sm:text-xl md:text-2xl">
+        <span className="border border-navy/10 bg-white px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-navy/50 transition-all duration-300 hover:border-gold/40 hover:text-navy sm:px-8 sm:py-4 sm:text-base md:text-lg">
           {name}
         </span>
       </ScrollReveal>
@@ -42,14 +44,26 @@ export function PartnerCard({
     <ScrollReveal variant="scaleIn" delay={index * 0.08}>
       <Card className="hover-lift h-full border-0 bg-white shadow-sm">
         <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
+          {logo && (
+            <div className="mb-5 flex h-[72px] max-w-[180px] items-center">
+              <Image
+                src={logo}
+                alt={name}
+                width={180}
+                height={72}
+                className="h-[72px] w-auto max-w-[180px] object-contain"
+                unoptimized
+              />
+            </div>
+          )}
+          <div className="mb-4 flex items-center justify-between gap-3">
             <h3 className="text-xl font-bold text-royal">{name}</h3>
             {website && (
               <a
                 href={website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-text-muted transition-all duration-200 hover:translate-x-0.5 hover:text-royal"
+                className="shrink-0 text-text-muted transition-all duration-200 hover:translate-x-0.5 hover:text-royal"
                 aria-label={`Visit ${name}`}
               >
                 <ExternalLink className="h-4 w-4" />

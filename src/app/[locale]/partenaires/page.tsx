@@ -44,6 +44,7 @@ export default async function PartnersPage({
                 role={localized(partner.role, loc)}
                 description={localized(partner.description, loc)}
                 website={partner.website}
+                logo={partner.logo}
                 index={i}
               />
             ))}

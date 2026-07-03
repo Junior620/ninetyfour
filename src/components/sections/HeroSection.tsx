@@ -12,7 +12,6 @@ import Image from "next/image";
 import { Link } from "@/lib/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 interface HeroSectionProps {
   title: string;
@@ -97,7 +96,7 @@ export function HeroSection({
         "relative flex items-center overflow-hidden bg-navy",
         compact
           ? "min-h-[38vh] sm:min-h-[40vh]"
-          : "min-h-[68vh] sm:min-h-[70vh] lg:min-h-[85vh]"
+          : "min-h-[68vh] sm:min-h-[72vh] lg:min-h-[82vh]"
       )}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -131,7 +130,18 @@ export function HeroSection({
       )}
 
       {overlay && (
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-navy/75 via-navy/50 to-navy/70 sm:bg-gradient-to-r sm:from-navy/70 sm:via-navy/40 sm:to-navy/20 lg:from-navy/65 lg:via-navy/30 lg:to-navy/10" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(90deg, rgba(7, 20, 38, 0.85) 0%, rgba(7, 20, 38, 0.55) 45%, rgba(7, 20, 38, 0.15) 100%)",
+          }}
+        />
+      )}
+
+      {/* Mobile: reinforce bottom readability without hiding players */}
+      {overlay && (
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent sm:hidden" />
       )}
 
       <div
@@ -140,22 +150,21 @@ export function HeroSection({
           slides.length > 1 && "pb-16 sm:pb-20"
         )}
       >
-        <div className="max-w-3xl">
+        <div className="max-w-[900px]">
           {badges && badges.length > 0 && (
             <motion.div
               initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.05 }}
-              className="mb-3 flex flex-wrap gap-2 sm:mb-6"
+              className="mb-6 flex flex-wrap gap-2.5 sm:mb-8 sm:gap-3"
             >
               {badges.map((badge) => (
-                <Badge
+                <span
                   key={badge}
-                  variant="outline"
-                  className="border-gold/50 bg-gold/10 text-[11px] text-gold sm:text-sm"
+                  className="inline-flex items-center rounded-full border border-gold/40 bg-navy/40 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-gold backdrop-blur-sm sm:px-4 sm:text-xs"
                 >
                   {badge}
-                </Badge>
+                </span>
               ))}
             </motion.div>
           )}
@@ -163,7 +172,7 @@ export function HeroSection({
             initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.12 }}
-            className="text-balance text-2xl font-bold uppercase leading-tight tracking-wide text-white sm:text-3xl md:text-5xl lg:text-6xl"
+            className="max-w-[900px] text-balance text-[1.75rem] font-bold uppercase leading-[1.08] tracking-[-0.03em] text-white sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[3.75rem]"
           >
             {title}
           </motion.h1>
@@ -172,7 +181,7 @@ export function HeroSection({
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.22 }}
-              className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:mt-6 sm:text-lg md:text-xl"
+              className="mt-5 max-w-xl text-sm leading-relaxed text-white/85 sm:mt-7 sm:text-base md:text-lg"
             >
               {subtitle}
             </motion.p>
@@ -182,7 +191,7 @@ export function HeroSection({
               initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: 0.32 }}
-              className="mt-5 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap sm:gap-4"
+              className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:gap-4"
             >
               {primaryCta && (
                 <Link
@@ -200,7 +209,7 @@ export function HeroSection({
                   href={secondaryCta.href}
                   className={cn(
                     buttonVariants({ size: "lg", variant: "outline" }),
-                    "min-h-11 w-full justify-center border-white/30 text-white hover:bg-white/10 sm:w-auto"
+                    "min-h-11 w-full justify-center border border-white bg-transparent text-white hover:bg-white hover:text-navy sm:w-auto"
                   )}
                 >
                   {secondaryCta.label}
@@ -224,8 +233,8 @@ export function HeroSection({
             >
               <span
                 className={cn(
-                  "block h-2 rounded-full transition-all duration-300",
-                  i === index ? "w-6 bg-gold" : "w-2 bg-white/50"
+                  "block h-1.5 rounded-full transition-all duration-300",
+                  i === index ? "w-6 bg-gold" : "w-1.5 bg-white/50"
                 )}
               />
             </button>

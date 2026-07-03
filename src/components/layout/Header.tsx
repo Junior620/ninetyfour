@@ -17,7 +17,7 @@ import { NavHoverMenu } from "./NavHoverMenu";
 import { AcademyLogo } from "./AcademyLogo";
 
 const navLinkClass =
-  "inline-flex items-center gap-0.5 whitespace-nowrap rounded-md px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:text-royal lg:text-xs";
+  "group relative inline-flex items-center gap-0.5 whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted transition-colors hover:text-navy lg:text-xs after:absolute after:bottom-0.5 after:left-2.5 after:right-2.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 hover:after:scale-x-100";
 
 export function Header() {
   const t = useTranslations("nav");
@@ -42,7 +42,7 @@ export function Header() {
       (pathname === href || (href !== "/" && pathname.startsWith(href)));
     return cn(
       navLinkClass,
-      isActive ? "text-royal" : "text-text-muted"
+      isActive && "text-royal after:scale-x-100"
     );
   }
 
@@ -75,16 +75,14 @@ export function Header() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-300",
-          scrolled
-            ? "bg-white/98 shadow-md backdrop-blur-md"
-            : "bg-cream"
+          "sticky top-0 z-50 w-full border-b border-black/[0.06] backdrop-blur-[10px] transition-all duration-300",
+          scrolled ? "bg-white/95 shadow-sm" : "bg-cream/90"
         )}
       >
         <div
           className={cn(
             "mx-auto flex max-w-7xl items-center gap-3 px-4 transition-all duration-300 lg:px-6",
-            scrolled ? "h-14" : "h-16"
+            scrolled ? "h-[3.75rem]" : "h-[4.25rem]"
           )}
         >
           <Link href="/" className="flex shrink-0 items-center">

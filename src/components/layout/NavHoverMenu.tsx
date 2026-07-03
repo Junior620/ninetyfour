@@ -39,8 +39,10 @@ export function NavHoverMenu({ label, active, items }: NavHoverMenuProps) {
         aria-expanded={open}
         aria-haspopup="true"
         className={cn(
-          "inline-flex items-center gap-0.5 whitespace-nowrap rounded-md px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:text-royal lg:text-xs",
-          active || open ? "text-royal" : "text-text-muted"
+          "group relative inline-flex items-center gap-0.5 whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide transition-colors hover:text-navy lg:text-xs after:absolute after:bottom-0.5 after:left-2.5 after:right-2.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 hover:after:scale-x-100",
+          active || open
+            ? "text-royal after:scale-x-100"
+            : "text-text-muted"
         )}
       >
         {label}
@@ -60,14 +62,14 @@ export function NavHoverMenu({ label, active, items }: NavHoverMenuProps) {
             : "pointer-events-none invisible -translate-y-1 opacity-0"
         )}
       >
-        <div className="min-w-[190px] overflow-hidden rounded-lg border border-border bg-white p-1.5 shadow-lg ring-1 ring-foreground/5">
+        <div className="min-w-[200px] overflow-hidden rounded-lg border border-black/[0.06] bg-white p-1.5 shadow-xl ring-1 ring-black/[0.04]">
           {items.map((child) => (
             <Link
               key={child.href}
               href={child.href}
               className={cn(
-                "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-cream",
-                child.isActive ? "text-royal" : "text-foreground"
+                "block rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-cream hover:text-royal",
+                child.isActive ? "bg-cream text-royal" : "text-foreground"
               )}
             >
               {child.label}

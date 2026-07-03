@@ -27,6 +27,7 @@ export interface Partner {
   role: LocalizedString;
   description: LocalizedString;
   website?: string;
+  logo?: string;
 }
 
 export interface NewsArticle {

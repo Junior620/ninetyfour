@@ -2,8 +2,22 @@ import type { Partner } from "@/types";
 
 export const partners: Partner[] = [
   {
+    id: "astra",
+    name: "Astra Invest",
+    logo: "/partner-astra.png",
+    role: {
+      fr: "Partenaire stratégique",
+      en: "Strategic partner",
+    },
+    description: {
+      fr: "Astra Invest soutient la vision de Ninety One Foot Academy en tant que partenaire stratégique du projet.",
+      en: "Astra Invest supports Ninety One Foot Academy's vision as a strategic partner of the project.",
+    },
+  },
+  {
     id: "voak",
     name: "Voak Sport",
+    logo: "/partner-voak.png",
     role: {
       fr: "Équipementier officiel",
       en: "Official kit supplier",
@@ -15,30 +29,17 @@ export const partners: Partner[] = [
     website: "https://voaksport.com",
   },
   {
-    id: "footbar",
-    name: "Footbar",
+    id: "johny",
+    name: "Johny Sport Consulting",
+    logo: "/partner-johny.png",
     role: {
-      fr: "Performance sportive et données",
-      en: "Sports performance and data",
+      fr: "Accompagnement sportif",
+      en: "Sports consulting",
     },
     description: {
-      fr: "Footbar fournit des données de performance en temps réel pour analyser la vitesse, l'endurance et les actions de chaque joueur.",
-      en: "Footbar provides real-time performance data to analyze each player's speed, endurance and actions.",
+      fr: "Johny Sport Consulting accompagne le développement sportif et stratégique de l'académie avec une expertise terrain reconnue.",
+      en: "Johny Sport Consulting supports the academy's sporting and strategic development with recognized field expertise.",
     },
-    website: "https://footbar.com",
-  },
-  {
-    id: "veo",
-    name: "Veo",
-    role: {
-      fr: "Analyse vidéo intelligente",
-      en: "Smart video analysis",
-    },
-    description: {
-      fr: "Veo permet l'enregistrement et l'analyse vidéo automatique des matchs et entraînements pour un feedback précis.",
-      en: "Veo enables automatic video recording and analysis of matches and training for precise feedback.",
-    },
-    website: "https://veo.co",
   },
 ];
 
