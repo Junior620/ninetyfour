@@ -30,6 +30,15 @@ export interface Partner {
   logo?: string;
 }
 
+export interface Ambassador {
+  id: string;
+  name: string;
+  role: LocalizedString;
+  description: LocalizedString;
+  country?: LocalizedString;
+  photo: string;
+}
+
 export interface NewsArticle {
   slug: string;
   title: LocalizedString;

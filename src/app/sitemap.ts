@@ -12,6 +12,7 @@ const staticPaths = [
   "/education",
   "/performance-lab",
   "/partenaires",
+  "/parrains",
   "/actualites",
   "/galerie",
   "/rejoindre",

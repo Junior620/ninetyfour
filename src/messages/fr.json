@@ -11,6 +11,7 @@
     "performanceLab": "Performance Lab",
     "education": "Éducation",
     "partners": "Partenaires",
+    "ambassadors": "Parrains",
     "news": "Actualités",
     "gallery": "Galerie",
     "contact": "Contact",
@@ -68,6 +69,9 @@
     "newsSubtitle": "Suis la vie de l'académie, les matchs et les événements.",
     "galleryCtaTitle": "Vis l'académie en images",
     "galleryCtaButton": "Voir la galerie",
+    "ambassadorsTitle": "Nos parrains et ambassadeurs internationaux",
+    "ambassadorsSubtitle": "Des personnalités basées à l'étranger qui soutiennent l'académie par leurs dons, leur réseau et leur visibilité.",
+    "ambassadorsCta": "Voir tous les parrains",
     "badges": {
       "age": "15–17 ans",
       "sessions": "4 séances/semaine",
@@ -126,6 +130,20 @@
     "heroTitle": "Des partenaires solides au service de la performance.",
     "whyTitle": "Pourquoi nos partenaires comptent",
     "ctaTitle": "Devenir partenaire"
+  },
+  "ambassadors": {
+    "title": "Parrains et ambassadeurs",
+    "heroTitle": "Nos parrains et ambassadeurs internationaux",
+    "intro": "Nos parrains sont des personnes basées notamment à l'étranger qui soutiennent l'académie par des dons financiers ou matériels, en parlant de notre projet autour d'eux, en recherchant des partenaires et en mettant l'académie en relation avec des clubs et organisations internationales. Ce rôle est distinct d'un accompagnement scolaire : il s'agit avant tout de contribuer à la visibilité et au développement de l'académie.",
+    "sectionSubtitle": "Ils croient en notre vision et accompagnent le projet depuis l'international.",
+    "howToTitle": "Comment contribuer ?",
+    "howToItems": {
+      "donations": "Faire des dons financiers ou matériels",
+      "visibility": "Parler de l'académie autour de vous",
+      "partners": "Rechercher des partenaires et sponsors",
+      "connections": "Mettre en relation avec des clubs et organisations à l'étranger"
+    },
+    "ctaTitle": "Rejoindre le réseau des parrains"
   },
   "news": {
     "title": "Actualités",

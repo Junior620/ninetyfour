@@ -11,6 +11,7 @@
     "performanceLab": "Performance Lab",
     "education": "Education",
     "partners": "Partners",
+    "ambassadors": "Ambassadors",
     "news": "News",
     "gallery": "Gallery",
     "contact": "Contact",
@@ -68,6 +69,9 @@
     "newsSubtitle": "Follow academy life, matches and events.",
     "galleryCtaTitle": "Experience the academy in pictures",
     "galleryCtaButton": "View the gallery",
+    "ambassadorsTitle": "Our international patrons and ambassadors",
+    "ambassadorsSubtitle": "Individuals based abroad who support the academy through donations, their network and visibility.",
+    "ambassadorsCta": "View all patrons",
     "badges": {
       "age": "15–17 years",
       "sessions": "4 sessions/week",
@@ -126,6 +130,20 @@
     "heroTitle": "Strong partners at the service of performance.",
     "whyTitle": "Why our partners matter",
     "ctaTitle": "Become a partner"
+  },
+  "ambassadors": {
+    "title": "Patrons and ambassadors",
+    "heroTitle": "Our international patrons and ambassadors",
+    "intro": "Our patrons are individuals based abroad who support the academy through financial or material donations, by talking about our project, seeking partners and sponsors, and connecting the academy with international clubs and organizations. This role is distinct from academic mentoring: it is primarily about contributing to the academy's visibility and development.",
+    "sectionSubtitle": "They believe in our vision and support the project from abroad.",
+    "howToTitle": "How to contribute?",
+    "howToItems": {
+      "donations": "Make financial or material donations",
+      "visibility": "Talk about the academy in your network",
+      "partners": "Seek partners and sponsors",
+      "connections": "Connect us with clubs and organizations abroad"
+    },
+    "ctaTitle": "Join the patrons network"
   },
   "news": {
     "title": "News",

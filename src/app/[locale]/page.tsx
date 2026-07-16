@@ -10,6 +10,7 @@ import { StatsSection } from "@/components/sections/StatsSection";
 import { NewsCard } from "@/components/cards/PartnerCard";
 import { ExploreCard } from "@/components/cards/ExploreCard";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
+import { AmbassadorsSection } from "@/components/sections/AmbassadorsSection";
 import { buttonVariants } from "@/components/ui/button";
 import {
   promisePillars,
@@ -17,6 +18,7 @@ import {
   keyStats,
   images,
   partners,
+  ambassadors,
   newsArticles,
 } from "@/lib/data";
 import { localized, formatDate, cn } from "@/lib/utils";
@@ -146,6 +148,17 @@ export default async function HomePage({
           featured: stat.featured,
           image: stat.image,
         }))}
+      />
+
+      <AmbassadorsSection
+        ambassadors={ambassadors}
+        title={t("ambassadorsTitle")}
+        subtitle={t("ambassadorsSubtitle")}
+        locale={loc}
+        limit={4}
+        showCta
+        ctaLabel={t("ambassadorsCta")}
+        background="cream"
       />
 
       <section className="section-padding bg-white">

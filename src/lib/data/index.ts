@@ -1,4 +1,5 @@
 export * from "./academy";
+export * from "./ambassadors";
 export * from "./partners";
 export * from "./program";
 export * from "./news";
