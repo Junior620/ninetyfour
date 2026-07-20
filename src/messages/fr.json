@@ -178,7 +178,18 @@
   "recruitment": {
     "title": "Fiche d’enregistrement (recrutement)",
     "submit": "Soumettre",
-    "submitted": "Candidature envoyée. Le PDF arrive par email."
+    "submitted": "Candidature envoyée. Le PDF se télécharge et arrive aussi par email.",
+    "downloadPdf": "Télécharger le PDF",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "stepOf": "Étape {current} sur {total}",
+    "steps": {
+      "photo": "Photo & joueur",
+      "contacts": "Contacts",
+      "profile": "Parcours & profil",
+      "health": "Santé",
+      "documents": "Documents & déclaration"
+    }
   },
   "contact": {
     "title": "Contact",

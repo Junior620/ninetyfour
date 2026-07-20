@@ -178,7 +178,18 @@
   "recruitment": {
     "title": "Registration sheet (recruitment)",
     "submit": "Submit",
-    "submitted": "Application submitted. Your PDF will be emailed."
+    "submitted": "Application submitted. Your PDF is downloading and will also be emailed.",
+    "downloadPdf": "Download PDF",
+    "next": "Next",
+    "previous": "Previous",
+    "stepOf": "Step {current} of {total}",
+    "steps": {
+      "photo": "Photo & player",
+      "contacts": "Contacts",
+      "profile": "Background & profile",
+      "health": "Health",
+      "documents": "Documents & declaration"
+    }
   },
   "contact": {
     "title": "Contact",

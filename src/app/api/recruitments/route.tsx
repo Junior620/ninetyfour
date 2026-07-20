@@ -198,7 +198,13 @@ export async function POST(request: Request) {
       });
     }
 
-    return NextResponse.json({ success: true, applicationId, pdfSignedUrl });
+    return NextResponse.json({
+      success: true,
+      applicationId,
+      pdfSignedUrl,
+      pdfBase64,
+      fileName: `fiche-enregistrement-${data.lastName}-${data.firstNames}.pdf`.replace(/\s+/g, "-"),
+    });
   } catch (error) {
     console.error("[Recruitment error]", error);
     return NextResponse.json({ success: false, error: "Recruitment failed" }, { status: 500 });

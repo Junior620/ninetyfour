@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { recruitmentSchema, type RecruitmentFormData } from "@/lib/validations/schemas";
 import { Button } from "@/components/ui/button";
@@ -19,22 +20,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
+const STEP_KEYS = ["photo", "contacts", "profile", "health", "documents"] as const;
+
+const STEP_FIELDS: (keyof RecruitmentFormData)[][] = [
+  [
+    "playerNumber",
+    "category",
+    "zone",
+    "lastName",
+    "firstNames",
+    "dobDay",
+    "dobMonth",
+    "dobYear",
+    "age",
+    "nationality",
+  ],
+  ["playerPhone", "fatherTutorName", "fatherTutorPhone", "email", "address"],
+  ["currentClub", "school", "primaryPosition", "strongFoot"],
+  ["injuryCurrent", "injuryDetails", "allergies"],
+  [
+    "birthCertificateProvided",
+    "parentalAuthProvided",
+    "medicalCertificateProvided",
+    "feesPaidProvided",
+    "amountPaidXaf",
+    "paymentMethod",
+    "paymentMethodOther",
+    "parentDeclarationName",
+    "consent",
+  ],
+];
 
 export function RecruitmentForm() {
   const locale = useLocale();
   const isFr = locale === "fr";
   const t = useTranslations("recruitment");
 
+  const [step, setStep] = useState(0);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [docFiles, setDocFiles] = useState<Record<string, File | null>>({});
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [pdfDownloadUrl, setPdfDownloadUrl] = useState<string | null>(null);
+  const [pdfFileName, setPdfFileName] = useState("fiche-enregistrement.pdf");
+  // Évite le mismatch SSR/client sur l’attribut HTML `disabled` (Base UI / React 19)
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    trigger,
     formState: { errors, isSubmitting },
   } = useForm<RecruitmentFormData>({
     resolver: zodResolver(recruitmentSchema),
@@ -47,6 +87,7 @@ export function RecruitmentForm() {
       feesPaidProvided: false,
       paymentMethod: "cash",
     },
+    mode: "onTouched",
   });
 
   const injuryCurrent = watch("injuryCurrent");
@@ -55,6 +96,11 @@ export function RecruitmentForm() {
   const medicalCertificateProvided = watch("medicalCertificateProvided");
   const feesPaidProvided = watch("feesPaidProvided");
   const paymentMethod = watch("paymentMethod");
+  const category = watch("category");
+  const zone = watch("zone");
+  const primaryPosition = watch("primaryPosition");
+  const strongFoot = watch("strongFoot");
+  const consent = watch("consent");
 
   const docProvidedKeys = useMemo(
     () => ({
@@ -66,42 +112,90 @@ export function RecruitmentForm() {
     [birthCertificateProvided, parentalAuthProvided, medicalCertificateProvided, feesPaidProvided]
   );
 
+  const totalSteps = STEP_KEYS.length;
+  const isLastStep = step === totalSteps - 1;
+
+  async function validateCurrentStep(): Promise<boolean> {
+    if (step === 0 && !photoFile) {
+      setError(
+        isFr ? "Veuillez importer la photo d’identité." : "Please upload your ID photo."
+      );
+      return false;
+    }
+
+    if (step === totalSteps - 1) {
+      const requiredDocs: { key: string; fileLabel: string }[] = [];
+      if (docProvidedKeys.birth)
+        requiredDocs.push({ key: "birthCertificate", fileLabel: isFr ? "Acte de naissance" : "Birth certificate" });
+      if (docProvidedKeys.parental)
+        requiredDocs.push({ key: "parentalAuth", fileLabel: isFr ? "Autorisation parentale" : "Parental authorization" });
+      if (docProvidedKeys.medical)
+        requiredDocs.push({ key: "medicalCertificate", fileLabel: isFr ? "Certificat médical" : "Medical certificate" });
+      if (docProvidedKeys.fees)
+        requiredDocs.push({ key: "feesReceipt", fileLabel: isFr ? "Justificatif frais" : "Fee receipt" });
+
+      const missing = requiredDocs.find((d) => !docFiles[d.key]);
+      if (missing) {
+        setError(
+          isFr
+            ? `Veuillez importer le document : ${missing.fileLabel}`
+            : `Please upload the document: ${missing.fileLabel}`
+        );
+        return false;
+      }
+    }
+
+    const valid = await trigger(STEP_FIELDS[step]);
+    if (!valid) {
+      setError(isFr ? "Veuillez corriger les champs en rouge." : "Please fix the highlighted fields.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  }
+
+  async function goNext() {
+    const ok = await validateCurrentStep();
+    if (ok) setStep((s) => Math.min(s + 1, totalSteps - 1));
+  }
+
+  function goPrev() {
+    if (step === 0) return;
+    setError("");
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
+  function downloadPdfFromBase64(base64: string, fileName: string) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    setPdfDownloadUrl(url);
+    setPdfFileName(fileName);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
   async function onSubmit(values: RecruitmentFormData) {
     setError("");
 
-    const requiredDocs: { key: string; fileLabel: string }[] = [];
-    if (docProvidedKeys.birth) requiredDocs.push({ key: "birthCertificate", fileLabel: "Acte de naissance" });
-    if (docProvidedKeys.parental) requiredDocs.push({ key: "parentalAuth", fileLabel: "Autorisation parentale" });
-    if (docProvidedKeys.medical) requiredDocs.push({ key: "medicalCertificate", fileLabel: "Certificat médical" });
-    if (docProvidedKeys.fees) requiredDocs.push({ key: "feesReceipt", fileLabel: "Justificatif frais" });
-
-    const missing = requiredDocs.find((d) => !docFiles[d.key]);
-    if (missing) {
-      setError(
-        isFr
-          ? `Veuillez importer le document : ${missing.fileLabel}`
-          : `Please upload the document: ${missing.fileLabel}`
-      );
-      return;
-    }
-
     if (!photoFile) {
-      setError(
-        isFr
-          ? "Veuillez importer la photo d’identité."
-          : "Please upload your ID photo."
-      );
+      setError(isFr ? "Veuillez importer la photo d’identité." : "Please upload your ID photo.");
+      setStep(0);
       return;
     }
 
     const formData = new FormData();
     for (const [k, v] of Object.entries(values)) {
       if (v === undefined) continue;
-      if (typeof v === "boolean") {
-        formData.append(k, String(v));
-        continue;
-      }
-      formData.append(k, String(v));
+      formData.append(k, typeof v === "boolean" ? String(v) : String(v));
     }
     formData.append("photo", photoFile);
 
@@ -111,13 +205,24 @@ export function RecruitmentForm() {
     if (docProvidedKeys.fees) formData.append("feesReceipt", docFiles.feesReceipt as File);
 
     try {
-      const res = await fetch("/api/recruitments", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch("/api/recruitments", { method: "POST", body: formData });
       if (!res.ok) throw new Error("Failed");
+
+      const json = (await res.json()) as {
+        success?: boolean;
+        pdfBase64?: string;
+        fileName?: string;
+      };
+
+      if (json.pdfBase64) {
+        downloadPdfFromBase64(
+          json.pdfBase64,
+          json.fileName || "fiche-enregistrement.pdf"
+        );
+      }
+
       setSubmitted(true);
-    } catch (e) {
+    } catch {
       setError(isFr ? "Une erreur est survenue." : "An error occurred.");
     }
   }
@@ -125,11 +230,17 @@ export function RecruitmentForm() {
   if (submitted) {
     return (
       <Card className="border-0 bg-white shadow-sm">
-        <CardContent className="p-8 text-center">
-          <p className="text-lg font-medium text-royal">
-            {t("submitted")}
-          </p>
-          {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+        <CardContent className="space-y-4 p-8 text-center">
+          <p className="text-lg font-medium text-royal">{t("submitted")}</p>
+          {pdfDownloadUrl && (
+            <a
+              href={pdfDownloadUrl}
+              download={pdfFileName}
+              className="inline-flex h-8 items-center justify-center rounded-lg bg-gold px-3 text-sm font-medium text-navy transition-colors hover:bg-gold/90"
+            >
+              {t("downloadPdf")}
+            </a>
+          )}
         </CardContent>
       </Card>
     );
@@ -137,398 +248,384 @@ export function RecruitmentForm() {
 
   return (
     <Card className="border-0 bg-white shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold text-black-premium">
-          {t("title")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
-          {/* Section 0: photo */}
-          <section className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "Photo d’identité" : "ID photo"}
-            </h3>
-            <div className="grid gap-3 sm:grid-cols-2 sm:items-center">
-              <Label htmlFor="photo">{isFr ? "Importer la photo" : "Upload photo"}</Label>
-              <Input
-                id="photo"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const f = e.target.files?.[0] ?? null;
-                  setPhotoFile(f);
-                }}
-              />
-            </div>
-          </section>
+      <CardHeader className="space-y-4 pb-2">
+        <CardTitle className="text-xl font-bold text-black-premium">{t("title")}</CardTitle>
 
-          {/* Section 1: joueur */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "1. Informations du joueur" : "1. Player information"}
-            </h3>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="playerNumber">{isFr ? "Numéro de joueur" : "Player number"}</Label>
-                <Input id="playerNumber" {...register("playerNumber")} />
-                {errors.playerNumber && <p className="mt-1 text-xs text-destructive">{errors.playerNumber.message}</p>}
-              </div>
-
-              <div>
-                <Label>{isFr ? "Catégorie" : "Category"}</Label>
-                <Select onValueChange={(v) => setValue("category", v as RecruitmentFormData["category"])}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={isFr ? "Choisir" : "Select"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="U-14">U-14</SelectItem>
-                    <SelectItem value="U-16">U-16</SelectItem>
-                    <SelectItem value="U-18">U-18</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.category && <p className="mt-1 text-xs text-destructive">{errors.category.message}</p>}
-              </div>
-
-              <div>
-                <Label>{isFr ? "Zone de détection" : "Detection area"}</Label>
-                <Select onValueChange={(v) => setValue("zone", v as RecruitmentFormData["zone"])}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={isFr ? "Choisir" : "Select"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="A">{isFr ? "Zone A" : "Area A"}</SelectItem>
-                    <SelectItem value="B">{isFr ? "Zone B" : "Area B"}</SelectItem>
-                    <SelectItem value="C">{isFr ? "Zone C" : "Area C"}</SelectItem>
-                    <SelectItem value="FINAL">{isFr ? "Finale" : "Final"}</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.zone && <p className="mt-1 text-xs text-destructive">{errors.zone.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="lastName">{isFr ? "Nom" : "Last name"}</Label>
-                <Input id="lastName" {...register("lastName")} />
-                {errors.lastName && <p className="mt-1 text-xs text-destructive">{errors.lastName.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="firstNames">{isFr ? "Prénom(s)" : "First names"}</Label>
-                <Input id="firstNames" {...register("firstNames")} />
-                {errors.firstNames && <p className="mt-1 text-xs text-destructive">{errors.firstNames.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="dobDay">{isFr ? "Jour de naissance" : "Birth day"}</Label>
-                <Input id="dobDay" {...register("dobDay")} />
-                {errors.dobDay && <p className="mt-1 text-xs text-destructive">{errors.dobDay.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="dobMonth">{isFr ? "Mois" : "Month"}</Label>
-                <Input id="dobMonth" {...register("dobMonth")} />
-                {errors.dobMonth && <p className="mt-1 text-xs text-destructive">{errors.dobMonth.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="dobYear">{isFr ? "Année" : "Year"}</Label>
-                <Input id="dobYear" {...register("dobYear")} />
-                {errors.dobYear && <p className="mt-1 text-xs text-destructive">{errors.dobYear.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="age">{isFr ? "Âge" : "Age"}</Label>
-                <Input id="age" {...register("age")} />
-                {errors.age && <p className="mt-1 text-xs text-destructive">{errors.age.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="nationality">{isFr ? "Nationalité" : "Nationality"}</Label>
-                <Input id="nationality" {...register("nationality")} />
-                {errors.nationality && <p className="mt-1 text-xs text-destructive">{errors.nationality.message}</p>}
-              </div>
-            </div>
-          </section>
-
-          {/* Section 2: contacts */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "2. Contacts et adresse" : "2. Contacts & address"}
-            </h3>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="playerPhone">{isFr ? "Téléphone" : "Phone"}</Label>
-                <Input id="playerPhone" {...register("playerPhone")} />
-                {errors.playerPhone && <p className="mt-1 text-xs text-destructive">{errors.playerPhone.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="fatherTutorName">{isFr ? "Nom du père / tuteur" : "Father / guardian name"}</Label>
-                <Input id="fatherTutorName" {...register("fatherTutorName")} />
-                {errors.fatherTutorName && <p className="mt-1 text-xs text-destructive">{errors.fatherTutorName.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="fatherTutorPhone">{isFr ? "Téléphone (père/tuteur)" : "Phone (guardian)"}</Label>
-                <Input id="fatherTutorPhone" {...register("fatherTutorPhone")} />
-                {errors.fatherTutorPhone && <p className="mt-1 text-xs text-destructive">{errors.fatherTutorPhone.message}</p>}
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" {...register("email")} />
-                {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="address">{isFr ? "Adresse complète" : "Full address"}</Label>
-                <Textarea id="address" {...register("address")} rows={3} />
-                {errors.address && <p className="mt-1 text-xs text-destructive">{errors.address.message}</p>}
-              </div>
-            </div>
-          </section>
-
-          {/* Section 3: parcours */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "3. Parcours footballistique" : "3. Football background"}
-            </h3>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="currentClub">{isFr ? "Club actuel" : "Current club"}</Label>
-                <Input id="currentClub" {...register("currentClub")} />
-                {errors.currentClub && <p className="mt-1 text-xs text-destructive">{errors.currentClub.message}</p>}
-              </div>
-              <div>
-                <Label htmlFor="previousClubs">{isFr ? "Anciens clubs" : "Previous clubs"}</Label>
-                <Input id="previousClubs" {...register("previousClubs")} />
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="school">{isFr ? "Établissement scolaire fréquenté" : "School"}</Label>
-                <Input id="school" {...register("school")} />
-                {errors.school && <p className="mt-1 text-xs text-destructive">{errors.school.message}</p>}
-              </div>
-            </div>
-          </section>
-
-          {/* Section 4: profil sportif */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "4. Profil sportif" : "4. Sports profile"}
-            </h3>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Label>{isFr ? "Poste principal" : "Primary position"}</Label>
-                <Select
-                  onValueChange={(v) =>
-                    setValue("primaryPosition", v as RecruitmentFormData["primaryPosition"])
-                  }
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-xs font-medium text-text-muted sm:text-sm">
+            <span>{t("stepOf", { current: step + 1, total: totalSteps })}</span>
+            <span className="text-navy">{t(`steps.${STEP_KEYS[step]}`)}</span>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-cream">
+            <div
+              className="h-full rounded-full bg-gold transition-all duration-300"
+              style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
+            />
+          </div>
+          <div className="hidden gap-1 sm:flex">
+            {STEP_KEYS.map((key, i) => {
+              const locked = i > step;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    if (!locked) setStep(i);
+                  }}
+                  aria-disabled={locked}
+                  disabled={hydrated ? locked : undefined}
+                  className={cn(
+                    "flex-1 truncate rounded-md px-1 py-1.5 text-center text-[10px] font-semibold uppercase tracking-wide transition-colors",
+                    i === step
+                      ? "bg-navy text-white"
+                      : i < step
+                        ? "bg-navy/10 text-navy hover:bg-navy/20"
+                        : "bg-cream text-text-muted"
+                  )}
                 >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={isFr ? "Choisir" : "Select"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="GARDIEN">{isFr ? "Gardien" : "Goalkeeper"}</SelectItem>
-                    <SelectItem value="DEFENSEUR_CENTRAL">{isFr ? "Défenseur central" : "Center back"}</SelectItem>
-                    <SelectItem value="LATERAL_DROIT">{isFr ? "Latéral droit" : "Right back"}</SelectItem>
-                    <SelectItem value="LATERAL_GAUCHE">{isFr ? "Latéral gauche" : "Left back"}</SelectItem>
-                    <SelectItem value="MILIEU_CENTRAL">{isFr ? "Milieu central" : "Central mid"}</SelectItem>
-                    <SelectItem value="MILIEU_RELAYEUR">{isFr ? "Milieu relayeur" : "Holding mid"}</SelectItem>
-                    <SelectItem value="MILIEU_OFFENSIF">{isFr ? "Milieu offensif" : "Attacking mid"}</SelectItem>
-                    <SelectItem value="AILE_DROIT">{isFr ? "Ailier droit" : "Right winger"}</SelectItem>
-                    <SelectItem value="AILE_GAUCHE">{isFr ? "Ailier gauche" : "Left winger"}</SelectItem>
-                    <SelectItem value="ATTAQUANT">{isFr ? "Attaquant" : "Striker"}</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.primaryPosition && <p className="mt-1 text-xs text-destructive">{errors.primaryPosition.message}</p>}
-              </div>
+                  {t(`steps.${key}`)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </CardHeader>
 
-              <div>
-                <Label>{isFr ? "Deuxième poste" : "Second position"}</Label>
-                <Input {...register("secondaryPosition")} />
-              </div>
-
-              <div>
-                <Label>{isFr ? "Pied fort" : "Strong foot"}</Label>
-                <Select onValueChange={(v) => setValue("strongFoot", v as RecruitmentFormData["strongFoot"])}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={isFr ? "Choisir" : "Select"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="left">{isFr ? "Gauche" : "Left"}</SelectItem>
-                    <SelectItem value="right">{isFr ? "Droit" : "Right"}</SelectItem>
-                    <SelectItem value="both">{isFr ? "Les deux" : "Both"}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </section>
-
-          {/* Section 5: santé */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "5. État de santé" : "5. Health status"}
-            </h3>
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div>
-                <Label>{isFr ? "Blessure actuelle" : "Current injury"}</Label>
-                <div className="mt-2 flex items-center gap-4">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      checked={injuryCurrent === true}
-                      onChange={() => setValue("injuryCurrent", true)}
-                    />
-                    {isFr ? "Oui" : "Yes"}
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      checked={injuryCurrent === false}
-                      onChange={() => setValue("injuryCurrent", false)}
-                    />
-                    {isFr ? "Non" : "No"}
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="injuryDetails">{isFr ? "Si oui, laquelle ?" : "If yes, which one?"}</Label>
-                <Input id="injuryDetails" disabled={!injuryCurrent} {...register("injuryDetails")} />
-                {errors.injuryDetails && <p className="mt-1 text-xs text-destructive">{errors.injuryDetails.message}</p>}
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="allergies">{isFr ? "Allergies connues" : "Known allergies"}</Label>
-                <Input id="allergies" {...register("allergies")} />
-              </div>
-            </div>
-          </section>
-
-          {/* Section 6: documents */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "6. Documents à fournir" : "6. Documents to provide"}
-            </h3>
-
-            <div className="grid gap-5 sm:grid-cols-2">
-              <DocYesNo
-                label={isFr ? "Copie acte de naissance" : "Birth certificate copy"}
-                value={birthCertificateProvided}
-                onChange={(v) => setValue("birthCertificateProvided", v)}
-                file={docFiles.birthCertificate ?? null}
-                onFile={(f) => setDocFiles((prev) => ({ ...prev, birthCertificate: f }))}
-                isFr={isFr}
-                error={errors.birthCertificateProvided}
-              />
-              <DocYesNo
-                label={isFr ? "Autorisation parentale" : "Parental authorization"}
-                value={parentalAuthProvided}
-                onChange={(v) => setValue("parentalAuthProvided", v)}
-                file={docFiles.parentalAuth ?? null}
-                onFile={(f) => setDocFiles((prev) => ({ ...prev, parentalAuth: f }))}
-                isFr={isFr}
-                error={errors.parentalAuthProvided}
-              />
-              <DocYesNo
-                label={isFr ? "Certificat médical (si dispo)" : "Medical certificate (if available)"}
-                value={medicalCertificateProvided}
-                onChange={(v) => setValue("medicalCertificateProvided", v)}
-                file={docFiles.medicalCertificate ?? null}
-                onFile={(f) => setDocFiles((prev) => ({ ...prev, medicalCertificate: f }))}
-                isFr={isFr}
-                error={errors.medicalCertificateProvided}
-              />
-              <DocYesNo
-                label={isFr ? "Frais d’inscription (réglés)" : "Registration fees (paid)"}
-                value={feesPaidProvided}
-                onChange={(v) => setValue("feesPaidProvided", v)}
-                file={docFiles.feesReceipt ?? null}
-                onFile={(f) => setDocFiles((prev) => ({ ...prev, feesReceipt: f }))}
-                isFr={isFr}
-                error={errors.feesPaidProvided}
-              />
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="amountPaidXaf">{isFr ? "Montant payé (XAF)" : "Amount paid (XAF)"}</Label>
-                <Input id="amountPaidXaf" disabled={!feesPaidProvided} {...register("amountPaidXaf")} />
-                {errors.amountPaidXaf && <p className="mt-1 text-xs text-destructive">{errors.amountPaidXaf.message}</p>}
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label>{isFr ? "Mode de paiement" : "Payment method"}</Label>
-                <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
-                  {(
-                    [
-                      ["cash", isFr ? "Espèces" : "Cash"],
-                      ["mobile_money", isFr ? "Mobile money" : "Mobile money"],
-                      ["other", isFr ? "Autre" : "Other"],
-                    ] as const
-                  ).map(([val, lbl]) => (
-                    <label key={val} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="radio"
-                        checked={paymentMethod === val}
-                        onChange={() => setValue("paymentMethod", val)}
-                      />
-                      {lbl}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="sm:col-span-2">
-                <Label htmlFor="paymentMethodOther">{isFr ? "Préciser (si autre)" : "Specify (if other)"}</Label>
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {step === 0 && (
+            <section className="space-y-5">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Photo d’identité" : "ID photo"}
+              </h3>
+              <div className="grid gap-3 sm:grid-cols-2 sm:items-center">
+                <Label htmlFor="photo">{isFr ? "Importer la photo" : "Upload photo"}</Label>
                 <Input
-                  id="paymentMethodOther"
-                  disabled={paymentMethod !== "other"}
-                  {...register("paymentMethodOther")}
+                  id="photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
                 />
-                {errors.paymentMethodOther && <p className="mt-1 text-xs text-destructive">{errors.paymentMethodOther.message}</p>}
               </div>
-            </div>
-          </section>
-
-          {/* Section 8: déclaration */}
-          <section className="space-y-5">
-            <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
-              {isFr ? "8. Déclaration parent/tuteur" : "8. Parent/guardian declaration"}
-            </h3>
-            <div>
-              <Label htmlFor="parentDeclarationName">{isFr ? "Nom du parent / tuteur" : "Parent/guardian name"}</Label>
-              <Input id="parentDeclarationName" {...register("parentDeclarationName")} />
-              {errors.parentDeclarationName && (
-                <p className="mt-1 text-xs text-destructive">{errors.parentDeclarationName.message}</p>
+              {photoFile && (
+                <p className="text-xs text-text-muted">
+                  {isFr ? "Photo sélectionnée :" : "Selected photo:"} {photoFile.name}
+                </p>
               )}
-            </div>
 
-            <div className="flex items-start gap-3">
-              <Checkbox
-                id="consent"
-                checked={watch("consent") === true}
-                onCheckedChange={(checked) => setValue("consent", checked === true ? true : (undefined as unknown as true))}
-              />
-              <Label htmlFor="consent" className="text-sm leading-relaxed text-text-muted">
-                {isFr
-                  ? "Je certifie que les informations fournies sont exactes."
-                  : "I confirm the information provided is accurate."}
-              </Label>
-            </div>
-            {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
-          </section>
+              <h3 className="pt-2 text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Informations du joueur" : "Player information"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label={isFr ? "Numéro de joueur" : "Player number"} error={errors.playerNumber?.message}>
+                  <Input {...register("playerNumber")} />
+                </Field>
+                <Field label={isFr ? "Catégorie" : "Category"} error={errors.category?.message}>
+                  <Select value={category ?? ""} onValueChange={(v) => setValue("category", v as RecruitmentFormData["category"], { shouldValidate: true })}>
+                    <SelectTrigger><SelectValue placeholder={isFr ? "Choisir" : "Select"} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="U-14">U-14</SelectItem>
+                      <SelectItem value="U-16">U-16</SelectItem>
+                      <SelectItem value="U-18">U-18</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label={isFr ? "Zone de détection" : "Detection area"} error={errors.zone?.message}>
+                  <Select value={zone ?? ""} onValueChange={(v) => setValue("zone", v as RecruitmentFormData["zone"], { shouldValidate: true })}>
+                    <SelectTrigger><SelectValue placeholder={isFr ? "Choisir" : "Select"} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A">{isFr ? "Zone A" : "Area A"}</SelectItem>
+                      <SelectItem value="B">{isFr ? "Zone B" : "Area B"}</SelectItem>
+                      <SelectItem value="C">{isFr ? "Zone C" : "Area C"}</SelectItem>
+                      <SelectItem value="FINAL">{isFr ? "Finale" : "Final"}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label={isFr ? "Nom" : "Last name"} error={errors.lastName?.message}>
+                  <Input {...register("lastName")} />
+                </Field>
+                <Field label={isFr ? "Prénom(s)" : "First names"} error={errors.firstNames?.message}>
+                  <Input {...register("firstNames")} />
+                </Field>
+                <Field label={isFr ? "Jour" : "Day"} error={errors.dobDay?.message}>
+                  <Input {...register("dobDay")} placeholder="JJ" />
+                </Field>
+                <Field label={isFr ? "Mois" : "Month"} error={errors.dobMonth?.message}>
+                  <Input {...register("dobMonth")} placeholder="MM" />
+                </Field>
+                <Field label={isFr ? "Année" : "Year"} error={errors.dobYear?.message}>
+                  <Input {...register("dobYear")} placeholder="AAAA" />
+                </Field>
+                <Field label={isFr ? "Âge" : "Age"} error={errors.age?.message}>
+                  <Input {...register("age")} />
+                </Field>
+                <Field label={isFr ? "Nationalité" : "Nationality"} error={errors.nationality?.message}>
+                  <Input {...register("nationality")} />
+                </Field>
+              </div>
+            </section>
+          )}
+
+          {step === 1 && (
+            <section className="space-y-5">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Contacts et adresse" : "Contacts & address"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label={isFr ? "Téléphone" : "Phone"} error={errors.playerPhone?.message}>
+                  <Input {...register("playerPhone")} />
+                </Field>
+                <Field label={isFr ? "Nom du père / tuteur" : "Father / guardian name"} error={errors.fatherTutorName?.message}>
+                  <Input {...register("fatherTutorName")} />
+                </Field>
+                <Field label={isFr ? "Téléphone (père/tuteur)" : "Phone (guardian)"} error={errors.fatherTutorPhone?.message}>
+                  <Input {...register("fatherTutorPhone")} />
+                </Field>
+                <Field label="Email" error={errors.email?.message}>
+                  <Input type="email" {...register("email")} />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label={isFr ? "Adresse complète" : "Full address"} error={errors.address?.message}>
+                    <Textarea {...register("address")} rows={3} />
+                  </Field>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {step === 2 && (
+            <section className="space-y-5">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Parcours footballistique" : "Football background"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label={isFr ? "Club actuel" : "Current club"} error={errors.currentClub?.message}>
+                  <Input {...register("currentClub")} />
+                </Field>
+                <Field label={isFr ? "Anciens clubs" : "Previous clubs"}>
+                  <Input {...register("previousClubs")} />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label={isFr ? "Établissement scolaire" : "School"} error={errors.school?.message}>
+                    <Input {...register("school")} />
+                  </Field>
+                </div>
+              </div>
+
+              <h3 className="pt-2 text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Profil sportif" : "Sports profile"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field label={isFr ? "Poste principal" : "Primary position"} error={errors.primaryPosition?.message}>
+                  <Select value={primaryPosition ?? ""} onValueChange={(v) => v && setValue("primaryPosition", v, { shouldValidate: true })}>
+                    <SelectTrigger><SelectValue placeholder={isFr ? "Choisir" : "Select"} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="GARDIEN">{isFr ? "Gardien" : "Goalkeeper"}</SelectItem>
+                      <SelectItem value="DEFENSEUR_CENTRAL">{isFr ? "Défenseur central" : "Center back"}</SelectItem>
+                      <SelectItem value="LATERAL_DROIT">{isFr ? "Latéral droit" : "Right back"}</SelectItem>
+                      <SelectItem value="LATERAL_GAUCHE">{isFr ? "Latéral gauche" : "Left back"}</SelectItem>
+                      <SelectItem value="MILIEU_CENTRAL">{isFr ? "Milieu central" : "Central mid"}</SelectItem>
+                      <SelectItem value="MILIEU_RELAYEUR">{isFr ? "Milieu relayeur" : "Holding mid"}</SelectItem>
+                      <SelectItem value="MILIEU_OFFENSIF">{isFr ? "Milieu offensif" : "Attacking mid"}</SelectItem>
+                      <SelectItem value="AILE_DROIT">{isFr ? "Ailier droit" : "Right winger"}</SelectItem>
+                      <SelectItem value="AILE_GAUCHE">{isFr ? "Ailier gauche" : "Left winger"}</SelectItem>
+                      <SelectItem value="ATTAQUANT">{isFr ? "Attaquant" : "Striker"}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field label={isFr ? "Deuxième poste" : "Second position"}>
+                  <Input {...register("secondaryPosition")} />
+                </Field>
+                <Field label={isFr ? "Pied fort" : "Strong foot"} error={errors.strongFoot?.message}>
+                  <Select value={strongFoot ?? ""} onValueChange={(v) => setValue("strongFoot", v as RecruitmentFormData["strongFoot"], { shouldValidate: true })}>
+                    <SelectTrigger><SelectValue placeholder={isFr ? "Choisir" : "Select"} /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">{isFr ? "Gauche" : "Left"}</SelectItem>
+                      <SelectItem value="right">{isFr ? "Droit" : "Right"}</SelectItem>
+                      <SelectItem value="both">{isFr ? "Les deux" : "Both"}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+            </section>
+          )}
+
+          {step === 3 && (
+            <section className="space-y-5">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "État de santé" : "Health status"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div>
+                  <Label>{isFr ? "Blessure actuelle" : "Current injury"}</Label>
+                  <div className="mt-2 flex items-center gap-4">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="radio" checked={injuryCurrent === true} onChange={() => setValue("injuryCurrent", true)} />
+                      {isFr ? "Oui" : "Yes"}
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="radio" checked={injuryCurrent === false} onChange={() => setValue("injuryCurrent", false)} />
+                      {isFr ? "Non" : "No"}
+                    </label>
+                  </div>
+                </div>
+                <Field label={isFr ? "Si oui, laquelle ?" : "If yes, which one?"} error={errors.injuryDetails?.message}>
+                  <Input disabled={!injuryCurrent} {...register("injuryDetails")} />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field label={isFr ? "Allergies connues" : "Known allergies"}>
+                    <Input {...register("allergies")} />
+                  </Field>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {step === 4 && (
+            <section className="space-y-5">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Documents à fournir" : "Documents to provide"}
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <DocYesNo
+                  label={isFr ? "Copie acte de naissance" : "Birth certificate copy"}
+                  value={birthCertificateProvided}
+                  onChange={(v) => setValue("birthCertificateProvided", v)}
+                  file={docFiles.birthCertificate ?? null}
+                  onFile={(f) => setDocFiles((prev) => ({ ...prev, birthCertificate: f }))}
+                  isFr={isFr}
+                />
+                <DocYesNo
+                  label={isFr ? "Autorisation parentale" : "Parental authorization"}
+                  value={parentalAuthProvided}
+                  onChange={(v) => setValue("parentalAuthProvided", v)}
+                  file={docFiles.parentalAuth ?? null}
+                  onFile={(f) => setDocFiles((prev) => ({ ...prev, parentalAuth: f }))}
+                  isFr={isFr}
+                />
+                <DocYesNo
+                  label={isFr ? "Certificat médical (si dispo)" : "Medical certificate (if available)"}
+                  value={medicalCertificateProvided}
+                  onChange={(v) => setValue("medicalCertificateProvided", v)}
+                  file={docFiles.medicalCertificate ?? null}
+                  onFile={(f) => setDocFiles((prev) => ({ ...prev, medicalCertificate: f }))}
+                  isFr={isFr}
+                />
+                <DocYesNo
+                  label={isFr ? "Frais d’inscription (réglés)" : "Registration fees (paid)"}
+                  value={feesPaidProvided}
+                  onChange={(v) => setValue("feesPaidProvided", v)}
+                  file={docFiles.feesReceipt ?? null}
+                  onFile={(f) => setDocFiles((prev) => ({ ...prev, feesReceipt: f }))}
+                  isFr={isFr}
+                />
+                <div className="sm:col-span-2">
+                  <Field label={isFr ? "Montant payé (XAF)" : "Amount paid (XAF)"} error={errors.amountPaidXaf?.message}>
+                    <Input disabled={!feesPaidProvided} {...register("amountPaidXaf")} />
+                  </Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <Label>{isFr ? "Mode de paiement" : "Payment method"}</Label>
+                  <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+                    {(
+                      [
+                        ["cash", isFr ? "Espèces" : "Cash"],
+                        ["mobile_money", isFr ? "Mobile money" : "Mobile money"],
+                        ["other", isFr ? "Autre" : "Other"],
+                      ] as const
+                    ).map(([val, lbl]) => (
+                      <label key={val} className="flex items-center gap-2 text-sm">
+                        <input type="radio" checked={paymentMethod === val} onChange={() => setValue("paymentMethod", val)} />
+                        {lbl}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <Field label={isFr ? "Préciser (si autre)" : "Specify (if other)"} error={errors.paymentMethodOther?.message}>
+                    <Input disabled={paymentMethod !== "other"} {...register("paymentMethodOther")} />
+                  </Field>
+                </div>
+              </div>
+
+              <h3 className="pt-2 text-sm font-bold uppercase tracking-wide text-navy">
+                {isFr ? "Déclaration parent/tuteur" : "Parent/guardian declaration"}
+              </h3>
+              <Field label={isFr ? "Nom du parent / tuteur" : "Parent/guardian name"} error={errors.parentDeclarationName?.message}>
+                <Input {...register("parentDeclarationName")} />
+              </Field>
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="consent"
+                  checked={consent === true}
+                  onCheckedChange={(checked) =>
+                    setValue("consent", checked === true ? true : (undefined as unknown as true), { shouldValidate: true })
+                  }
+                />
+                <Label htmlFor="consent" className="text-sm leading-relaxed text-text-muted">
+                  {isFr
+                    ? "Je certifie que les informations fournies sont exactes."
+                    : "I confirm the information provided is accurate."}
+                </Label>
+              </div>
+              {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
+            </section>
+          )}
 
           {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
-          >
-            {isSubmitting ? (isFr ? "Envoi..." : "Sending...") : t("submit")}
-          </Button>
+          <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={goPrev}
+              disabled={hydrated ? step === 0 : undefined}
+              className="w-full border-navy text-navy sm:w-auto"
+            >
+              <ChevronLeft className="mr-1 h-4 w-4" />
+              {t("previous")}
+            </Button>
+
+            {isLastStep ? (
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
+              >
+                {isSubmitting ? (isFr ? "Envoi..." : "Sending...") : t("submit")}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={goNext}
+                className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
+              >
+                {t("next")}
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="mt-1">{children}</div>
+      {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+    </div>
   );
 }
 
@@ -539,7 +636,6 @@ function DocYesNo({
   file,
   onFile,
   isFr,
-  error,
 }: {
   label: string;
   value: boolean;
@@ -547,8 +643,6 @@ function DocYesNo({
   file: File | null;
   onFile: (f: File | null) => void;
   isFr: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error?: any;
 }) {
   return (
     <div className="space-y-3">
@@ -563,19 +657,15 @@ function DocYesNo({
           {isFr ? "Non" : "No"}
         </label>
       </div>
-      <div>
-        <Input
-          type="file"
-          accept="application/pdf,image/*"
-          disabled={!value}
-          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-        />
-        {value && !file && (
-          <p className="mt-1 text-xs text-text-muted">{isFr ? "Ajoutez le document" : "Add the document"}</p>
-        )}
-      </div>
-      {error && <p className="text-xs text-destructive">{String(error.message ?? error)}</p>}
+      <Input
+        type="file"
+        accept="application/pdf,image/*"
+        disabled={!value}
+        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+      />
+      {value && !file && (
+        <p className="text-xs text-text-muted">{isFr ? "Ajoutez le document" : "Add the document"}</p>
+      )}
     </div>
   );
 }
-
