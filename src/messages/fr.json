@@ -175,6 +175,11 @@
     "formTitle": "Formulaire de candidature",
     "processTitle": "Après candidature"
   },
+  "recruitment": {
+    "title": "Fiche d’enregistrement (recrutement)",
+    "submit": "Soumettre",
+    "submitted": "Candidature envoyée. Le PDF arrive par email."
+  },
   "contact": {
     "title": "Contact",
     "subtitle": "Restons en contact",

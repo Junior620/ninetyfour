@@ -175,6 +175,11 @@
     "formTitle": "Application form",
     "processTitle": "After applying"
   },
+  "recruitment": {
+    "title": "Registration sheet (recruitment)",
+    "submit": "Submit",
+    "submitted": "Application submitted. Your PDF will be emailed."
+  },
   "contact": {
     "title": "Contact",
     "subtitle": "Let's stay in touch",

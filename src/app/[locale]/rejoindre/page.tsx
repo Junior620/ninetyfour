@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
-import { ApplicationForm } from "@/components/forms/ApplicationForm";
+import { RecruitmentForm } from "@/components/forms/RecruitmentForm";
 import { Check } from "lucide-react";
 import { joinConditions, joinProcess } from "@/lib/data";
 import { localized } from "@/lib/utils";
@@ -64,7 +64,7 @@ export default async function JoinPage({
 
           <div>
             <SectionTitle title={t("formTitle")} align="left" />
-            <ApplicationForm />
+            <RecruitmentForm />
           </div>
         </div>
       </section>

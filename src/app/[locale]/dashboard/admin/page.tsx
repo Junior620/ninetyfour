@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PlayerTable } from "@/components/dashboard/PlayerTable";
@@ -15,7 +16,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   mockPlayers,
-  mockApplications,
   newsArticles,
   galleryItems,
   partners,
@@ -33,6 +33,25 @@ const statusColors: Record<string, string> = {
 export default function AdminDashboardPage() {
   const t = useTranslations("dashboard.admin");
   const locale = useLocale() as Locale;
+  const [applications, setApplications] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/recruitments");
+        const json = await res.json();
+        if (!isMounted) return;
+        setApplications(Array.isArray(json?.items) ? json.items : []);
+      } catch {
+        if (!isMounted) return;
+        setApplications([]);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <DashboardLayout requiredRole="admin">
@@ -52,26 +71,50 @@ export default function AdminDashboardPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nom</TableHead>
-                    <TableHead>Ville</TableHead>
-                    <TableHead>Poste</TableHead>
+                    <TableHead>{locale === "fr" ? "Lieu" : "Location"}</TableHead>
+                    <TableHead>{locale === "fr" ? "Poste" : "Position"}</TableHead>
                     <TableHead>Statut</TableHead>
+                    <TableHead className="text-right">PDF</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {mockApplications.map((app) => (
-                    <TableRow key={app.id}>
-                      <TableCell className="font-medium">
-                        {app.firstName} {app.lastName}
-                      </TableCell>
-                      <TableCell>{app.city}</TableCell>
-                      <TableCell>{app.position}</TableCell>
-                      <TableCell>
-                        <Badge className={statusColors[app.status]}>
-                          {app.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {applications.map((app) => {
+                    const status = String(app.status ?? "").toLowerCase();
+                    const badgeClass =
+                      statusColors[status] ?? "bg-gray-100 text-gray-800";
+                    const first = app.firstNames ?? app.firstName ?? "";
+                    const last = app.lastName ?? "";
+                    const location = app.city ?? app.school ?? app.address ?? "";
+                    const position =
+                      app.primaryPosition ?? app.position ?? "";
+
+                    return (
+                      <TableRow key={app.id}>
+                        <TableCell className="font-medium">
+                          {first} {last}
+                        </TableCell>
+                        <TableCell>{location}</TableCell>
+                        <TableCell>{position}</TableCell>
+                        <TableCell>
+                          <Badge className={badgeClass}>{app.status}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {app.pdfSignedUrl ? (
+                            <a
+                              href={app.pdfSignedUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-sm font-semibold text-navy hover:underline"
+                            >
+                              {locale === "fr" ? "Voir PDF" : "View PDF"}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-text-muted">—</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
