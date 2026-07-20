@@ -55,10 +55,17 @@ export const recruitmentSchema = z
     dobYear: z.string().min(4, "Année requise"),
     age: z.string().min(1, "Âge requis"),
     nationality: z.string().min(1, "Nationalité requise"),
+    birthPlace: z.string().optional(),
+    city: z.string().optional(),
+    neighborhood: z.string().optional(),
+    heightCm: z.string().optional(),
+    weightKg: z.string().optional(),
 
     playerPhone: z.string().min(5, "Téléphone requis"),
     fatherTutorName: z.string().min(2, "Nom du père/tuteur requis"),
     fatherTutorPhone: z.string().min(5, "Téléphone requis"),
+    motherName: z.string().optional(),
+    motherPhone: z.string().optional(),
     email: z.string().email("Email invalide"),
     address: z.string().min(2, "Adresse requise"),
 

@@ -11,6 +11,7 @@ import { NewsCard } from "@/components/cards/PartnerCard";
 import { ExploreCard } from "@/components/cards/ExploreCard";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
 import { AmbassadorsSection } from "@/components/sections/AmbassadorsSection";
+import { RecruitmentPromoBanner } from "@/components/sections/RecruitmentPromoBanner";
 import { buttonVariants } from "@/components/ui/button";
 import {
   promisePillars,
@@ -88,6 +89,39 @@ export default async function HomePage({
 
   return (
     <>
+      <RecruitmentPromoBanner
+        eyebrowOpen={t("promo.eyebrowOpen")}
+        headline={t("promo.headline")}
+        tagline={t("promo.tagline")}
+        ctaLabel={t("promo.cta")}
+        ctaHint={t("promo.ctaHint")}
+        helpLink={t("promo.helpLink")}
+        closeLabel={t("promo.close")}
+        phones={t("promo.phones")}
+        campaigns={[
+          {
+            id: "zone-a",
+            image: "/pub1.jpg",
+            zone: t("promo.zoneA.zone"),
+            dates: t("promo.zoneA.dates"),
+            place: t("promo.zoneA.place"),
+            time: t("promo.zoneA.time"),
+            schedule: [t("promo.zoneA.day1"), t("promo.zoneA.day2")],
+            closesAt: "2026-07-25T13:00:00+01:00",
+          },
+          {
+            id: "zone-b",
+            image: "/pub2.jpg",
+            zone: t("promo.zoneB.zone"),
+            dates: t("promo.zoneB.dates"),
+            place: t("promo.zoneB.place"),
+            time: t("promo.zoneB.time"),
+            schedule: [t("promo.zoneB.day1"), t("promo.zoneB.day2")],
+            closesAt: "2026-07-27T10:00:00+01:00",
+          },
+        ]}
+      />
+
       <HeroSection
         title={t("heroTitle")}
         subtitle={t("heroSubtitle")}

@@ -72,6 +72,34 @@
     "ambassadorsTitle": "Nos parrains et ambassadeurs internationaux",
     "ambassadorsSubtitle": "Des personnalités basées à l'étranger qui soutiennent l'académie par leurs dons, leur réseau et leur visibilité.",
     "ambassadorsCta": "Voir tous les parrains",
+    "promo": {
+      "eyebrowOpen": "Inscriptions ouvertes",
+      "headline": "Entre dans la première promotion",
+      "tagline": "Ta chance. Ton terrain. Ton avenir commence ici.",
+      "cta": "Je m’inscris aux détections",
+      "ctaHint": "Inscription rapide • Places limitées",
+      "helpLink": "Besoin d’aide ? Nous contacter",
+      "close": "Non merci, fermer",
+      "phones": "678 259 540 / 693 881 971",
+      "countdown": "Clôture des inscriptions dans {days} J : {hours} H : {mins} MIN",
+      "countdownLive": "Inscriptions en cours",
+      "zoneA": {
+        "zone": "Zone A",
+        "dates": "25 & 26 juillet 2026",
+        "place": "Stade Terkocam, Bonamoussadi",
+        "time": "13 h – 15 h",
+        "day1": "25 juillet : U-14 & U-16",
+        "day2": "26 juillet : U-18"
+      },
+      "zoneB": {
+        "zone": "Zone B",
+        "dates": "27 & 28 juillet 2026",
+        "place": "Stade École Publique Deido",
+        "time": "10 h – 13 h",
+        "day1": "27 juillet : U-14 & U-16",
+        "day2": "28 juillet : U-18"
+      }
+    },
     "badges": {
       "age": "15–17 ans",
       "sessions": "4 séances/semaine",

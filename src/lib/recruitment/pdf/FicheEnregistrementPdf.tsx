@@ -1,264 +1,557 @@
 import React from "react";
-import { Document, Page, Text, Image, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
 import type { RecruitmentFormData } from "@/lib/validations/schemas";
 
 export type RecruitmentPdfProps = {
-  backgroundDataUri: string;
   photoDataUri?: string | null;
   data: RecruitmentFormData;
 };
 
-/** A4 (pt) — image source 1241 × 1754 px */
-const W = 595.28;
-const H = 841.89;
-const IMG_W = 1241;
-const IMG_H = 1754;
+const COLORS = {
+  navy: "#1f3fa8",
+  gold: "#c2a14e",
+  bar: "#111111",
+  label: "#16205a",
+  labelBg: "#f4f6fb",
+  border: "#bfbfbf",
+  text: "#111111",
+  muted: "#7a8091",
+};
+
+const POSITION_LABELS: Record<string, string> = {
+  GARDIEN: "Gardien",
+  DEFENSEUR_CENTRAL: "Défenseur central",
+  LATERAL_DROIT: "Latéral droit",
+  LATERAL_GAUCHE: "Latéral gauche",
+  MILIEU_CENTRAL: "Milieu défensif",
+  MILIEU_RELAYEUR: "Milieu relayeur",
+  MILIEU_OFFENSIF: "Milieu offensif",
+  AILE_DROIT: "Ailier droit",
+  AILE_GAUCHE: "Ailier gauche",
+  ATTAQUANT: "Attaquant",
+};
+
+const POSITIONS_ROW1 = [
+  "GARDIEN",
+  "DEFENSEUR_CENTRAL",
+  "LATERAL_DROIT",
+  "LATERAL_GAUCHE",
+  "MILIEU_CENTRAL",
+] as const;
+
+const POSITIONS_ROW2 = [
+  "MILIEU_RELAYEUR",
+  "MILIEU_OFFENSIF",
+  "AILE_DROIT",
+  "AILE_GAUCHE",
+  "ATTAQUANT",
+] as const;
 
 const styles = StyleSheet.create({
-  page: { padding: 0, margin: 0, position: "relative" },
-  background: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    width: W,
-    height: H - 0.5,
+  page: {
+    padding: 16,
+    fontFamily: "Helvetica",
+    fontSize: 9,
+    color: COLORS.text,
+    backgroundColor: "#ffffff",
+  },
+  goldBorder: {
+    border: `4 solid ${COLORS.gold}`,
+    padding: 10,
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  logoBox: {
+    width: 64,
+    height: 64,
+    backgroundColor: COLORS.navy,
+    border: `2 solid ${COLORS.gold}`,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoText: {
+    color: "#fff",
+    fontSize: 20,
+    fontFamily: "Helvetica-Bold",
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+  brandTop: {
+    fontSize: 16,
+    fontFamily: "Helvetica-Bold",
+    letterSpacing: 1.5,
+  },
+  brandSub: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    letterSpacing: 3,
+    marginTop: 1,
+  },
+  goldLine: {
+    width: "55%",
+    height: 2,
+    backgroundColor: COLORS.gold,
+    marginVertical: 4,
+  },
+  ficheTitle: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    color: COLORS.navy,
+  },
+  ficheSub: {
+    fontSize: 7,
+    fontFamily: "Helvetica-Bold",
+    color: "#333",
+    marginTop: 2,
+  },
+  photoBox: {
+    width: 72,
+    height: 80,
+    border: `2 solid ${COLORS.navy}`,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  photoPlaceholder: {
+    fontSize: 6,
+    fontFamily: "Helvetica-Bold",
+    color: COLORS.muted,
+    textAlign: "center",
+    lineHeight: 1.3,
+  },
+  photoImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+  sectionBar: {
+    backgroundColor: COLORS.bar,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    marginBottom: 4,
+    marginTop: 6,
+  },
+  sectionBarText: {
+    color: "#fff",
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+  },
+  row: {
+    flexDirection: "row",
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+  },
+  labelCell: {
+    width: "38%",
+    backgroundColor: COLORS.labelBg,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    borderRightWidth: 0.5,
+    borderRightColor: COLORS.border,
+    justifyContent: "center",
+  },
+  labelText: {
+    fontSize: 7,
+    fontFamily: "Helvetica-Bold",
+    color: COLORS.label,
+  },
+  valueCell: {
+    flex: 1,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    justifyContent: "center",
+  },
+  valueText: {
+    fontSize: 8,
+  },
+  twoCol: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  col: {
+    flex: 1,
+  },
+  pickRow: {
+    flexDirection: "row",
+  },
+  pickCell: {
+    flex: 1,
+    borderWidth: 0.5,
+    borderColor: COLORS.border,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pickOn: {
+    backgroundColor: COLORS.navy,
+  },
+  pickOff: {
+    backgroundColor: "#ffffff",
+  },
+  pickTextOn: {
+    color: "#ffffff",
+    fontSize: 7,
+    fontFamily: "Helvetica-Bold",
+  },
+  pickTextOff: {
+    color: COLORS.label,
+    fontSize: 7,
+    fontFamily: "Helvetica-Bold",
+  },
+  blockTitle: {
+    backgroundColor: COLORS.navy,
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+    alignItems: "center",
+  },
+  blockTitleText: {
+    color: "#fff",
+    fontSize: 7,
+    fontFamily: "Helvetica-Bold",
+  },
+  footer: {
+    backgroundColor: COLORS.bar,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    marginTop: 8,
+  },
+  footerText: {
+    color: "#fff",
+    fontSize: 6,
+    textAlign: "center",
+  },
+  italicNote: {
+    fontSize: 7,
+    fontStyle: "italic",
+    color: "#333",
+    marginBottom: 4,
+    marginTop: 2,
+  },
+  playerNumberRow: {
+    flexDirection: "row",
+    marginBottom: 6,
+    alignItems: "stretch",
+  },
+  playerNumBox: {
+    width: "22%",
+    marginRight: 6,
   },
 });
 
-function x(px: number) {
-  return (px / IMG_W) * W;
+function SectionBar({ title }: { title: string }) {
+  return (
+    <View style={styles.sectionBar}>
+      <Text style={styles.sectionBarText}>{title}</Text>
+    </View>
+  );
 }
 
-function y(px: number) {
-  return (px / IMG_H) * H;
+function LabelValue({ label, value }: { label: string; value?: string }) {
+  return (
+    <View style={styles.row}>
+      <View style={styles.labelCell}>
+        <Text style={styles.labelText}>{label}</Text>
+      </View>
+      <View style={styles.valueCell}>
+        <Text style={styles.valueText}>{value?.trim() ? value : " "}</Text>
+      </View>
+    </View>
+  );
 }
 
-function Field({
-  px,
-  py,
-  width,
-  size = 9,
-  bold,
-  children,
+function Pick({
+  label,
+  on,
+  flex,
 }: {
-  px: number;
-  py: number;
-  width?: number;
-  size?: number;
-  bold?: boolean;
-  children: React.ReactNode;
+  label: string;
+  on: boolean;
+  flex?: number;
 }) {
-  if (children === null || children === undefined || children === "") return null;
   return (
-    <Text
-      style={{
-        position: "absolute",
-        left: x(px),
-        top: y(py),
-        width: width ? x(width) : undefined,
-        fontSize: size,
-        fontFamily: bold ? "Helvetica-Bold" : "Helvetica",
-        color: "#111111",
-        lineHeight: 1,
-      }}
+    <View
+      style={[
+        styles.pickCell,
+        on ? styles.pickOn : styles.pickOff,
+        flex != null ? { flex } : {},
+      ]}
     >
-      {children}
-    </Text>
+      <Text style={on ? styles.pickTextOn : styles.pickTextOff}>{label}</Text>
+    </View>
   );
 }
 
-function Mark({ px, py, size = 11 }: { px: number; py: number; size?: number }) {
-  return (
-    <Text
-      style={{
-        position: "absolute",
-        left: x(px),
-        top: y(py),
-        fontSize: size,
-        fontFamily: "Helvetica-Bold",
-        color: "#111111",
-      }}
-    >
-      X
-    </Text>
-  );
-}
-
-/**
- * Coordonnées calibrées sur l’image (grilles détectées) :
- * - S1/S2/S3 : texte dans la colonne valeur (après le séparateur), pas sur le libellé
- * - Cases à cocher : centres de cellules
- */
-const COL = {
-  s1Value: 282,
-  s2Value: 298,
-  s3Value: 400,
-  address: 645,
-  docsCheck: 1080,
-} as const;
-
-const CATEGORY: Record<RecruitmentFormData["category"], { px: number; py: number }> = {
-  "U-14": { px: 468, py: 348 },
-  "U-16": { px: 537, py: 348 },
-  "U-18": { px: 605, py: 348 },
-};
-
-const ZONE: Record<RecruitmentFormData["zone"], { px: number; py: number }> = {
-  A: { px: 700, py: 348 },
-  B: { px: 822, py: 348 },
-  C: { px: 948, py: 348 },
-  FINAL: { px: 1075, py: 348 },
-};
-
-/** Grille 2×5 postes (centres de cellules) */
-const POSITION: Record<string, { px: number; py: number }> = {
-  GARDIEN: { px: 158, py: 1088 },
-  DEFENSEUR_CENTRAL: { px: 273, py: 1088 },
-  LATERAL_DROIT: { px: 387, py: 1088 },
-  LATERAL_GAUCHE: { px: 502, py: 1088 },
-  MILIEU_CENTRAL: { px: 616, py: 1088 }, // = Milieu défensif sur la fiche
-  MILIEU_RELAYEUR: { px: 158, py: 1134 },
-  MILIEU_OFFENSIF: { px: 273, py: 1134 },
-  AILE_DROIT: { px: 387, py: 1134 },
-  AILE_GAUCHE: { px: 502, py: 1134 },
-  ATTAQUANT: { px: 616, py: 1134 },
-};
-
-const FOOT: Record<RecruitmentFormData["strongFoot"], { px: number; py: number }> = {
-  right: { px: 760, py: 1142 },
-  left: { px: 900, py: 1142 },
-  both: { px: 1055, py: 1142 },
-};
-
-export function FicheEnregistrementPdf({
-  backgroundDataUri,
-  photoDataUri,
-  data,
-}: RecruitmentPdfProps) {
-  const categoryMark = CATEGORY[data.category];
-  const zoneMark = ZONE[data.zone];
-  const positionMark = POSITION[data.primaryPosition];
-  const footMark = FOOT[data.strongFoot];
+export function FicheEnregistrementPdf({ photoDataUri, data }: RecruitmentPdfProps) {
+  const dob = [data.dobDay, data.dobMonth, data.dobYear].filter(Boolean).join(" / ");
+  const foot =
+    data.strongFoot === "right"
+      ? "Droit"
+      : data.strongFoot === "left"
+        ? "Gauche"
+        : "Les deux";
+  const today = new Date();
+  const dateStr = `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(2, "0")}/${today.getFullYear()}`;
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Image src={backgroundDataUri} style={styles.background} />
+        <View style={styles.goldBorder}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.logoBox}>
+              <Text style={styles.logoText}>91</Text>
+            </View>
+            <View style={styles.headerCenter}>
+              <Text style={styles.brandTop}>NINETY ONE</Text>
+              <Text style={styles.brandSub}>FOOT ACADEMY</Text>
+              <View style={styles.goldLine} />
+              <Text style={styles.ficheTitle}>FICHE D'ENREGISTREMENT</Text>
+              <Text style={styles.ficheSub}>DÉTECTION DES JEUNES TALENTS 2026</Text>
+            </View>
+            <View style={styles.photoBox}>
+              {photoDataUri ? (
+                <Image src={photoDataUri} style={styles.photoImg} />
+              ) : (
+                <Text style={styles.photoPlaceholder}>
+                  PHOTO{"\n"}D'IDENTITÉ{"\n"}(RÉCENTE)
+                </Text>
+              )}
+            </View>
+          </View>
 
-        {/* Photo */}
-        {photoDataUri ? (
-          <Image
-            src={photoDataUri}
-            style={{
-              position: "absolute",
-              left: x(1008),
-              top: y(108),
-              width: x(168),
-              height: y(168),
-              objectFit: "cover",
-            }}
-          />
-        ) : null}
+          {/* Numéro + catégorie + zone */}
+          <View style={styles.playerNumberRow}>
+            <View style={styles.playerNumBox}>
+              <View style={styles.blockTitle}>
+                <Text style={styles.blockTitleText}>NUMÉRO DE JOUEUR</Text>
+              </View>
+              <View style={[styles.row, { minHeight: 22 }]}>
+                <View style={[styles.valueCell, { width: "100%" }]}>
+                  <Text style={styles.valueText}>{data.playerNumber}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={{ flex: 1, marginRight: 6 }}>
+              <View style={styles.blockTitle}>
+                <Text style={styles.blockTitleText}>CATÉGORIE</Text>
+              </View>
+              <View style={styles.pickRow}>
+                <Pick label="U-14" on={data.category === "U-14"} />
+                <Pick label="U-16" on={data.category === "U-16"} />
+                <Pick label="U-18" on={data.category === "U-18"} />
+              </View>
+            </View>
+            <View style={{ flex: 1.4 }}>
+              <View style={styles.blockTitle}>
+                <Text style={styles.blockTitleText}>ZONE DE DÉTECTION</Text>
+              </View>
+              <View style={styles.pickRow}>
+                <Pick label="ZONE A" on={data.zone === "A"} />
+                <Pick label="ZONE B" on={data.zone === "B"} />
+                <Pick label="ZONE C" on={data.zone === "C"} />
+                <Pick label="FINALE" on={data.zone === "FINAL"} />
+              </View>
+            </View>
+          </View>
 
-        {/* En-tête */}
-        <Field px={105} py={342} width={300} size={10} bold>
-          {data.playerNumber}
-        </Field>
-        {categoryMark && <Mark px={categoryMark.px} py={categoryMark.py} />}
-        {zoneMark && <Mark px={zoneMark.px} py={zoneMark.py} />}
+          {/* 1 */}
+          <SectionBar title="1. INFORMATIONS DU JOUEUR" />
+          <View style={styles.twoCol}>
+            <View style={styles.col}>
+              <LabelValue label="NOM" value={data.lastName.toUpperCase()} />
+              <LabelValue label="PRÉNOM(S)" value={data.firstNames.toUpperCase()} />
+              <LabelValue label="DATE DE NAISSANCE" value={dob} />
+              <LabelValue label="ÂGE" value={data.age} />
+              <LabelValue label="NATIONALITÉ" value={data.nationality} />
+            </View>
+            <View style={styles.col}>
+              <LabelValue label="LIEU DE NAISSANCE" value={data.birthPlace} />
+              <LabelValue label="VILLE DE RÉSIDENCE" value={data.city} />
+              <LabelValue label="QUARTIER" value={data.neighborhood} />
+              <LabelValue label="TAILLE (cm)" value={data.heightCm} />
+              <LabelValue label="POIDS (kg)" value={data.weightKg} />
+            </View>
+          </View>
 
-        {/* 1. Informations joueur — colonne valeur x≈282 */}
-        <Field px={COL.s1Value} py={455} width={310} bold>
-          {data.lastName.toUpperCase()}
-        </Field>
-        <Field px={COL.s1Value} py={492} width={310} bold>
-          {data.firstNames.toUpperCase()}
-        </Field>
-        <Field px={352} py={532} width={50}>
-          {data.dobDay}
-        </Field>
-        <Field px={452} py={532} width={50}>
-          {data.dobMonth}
-        </Field>
-        <Field px={568} py={532} width={50}>
-          {data.dobYear}
-        </Field>
-        <Field px={COL.s1Value} py={570} width={120}>
-          {data.age}
-        </Field>
-        <Field px={COL.s1Value} py={608} width={310}>
-          {data.nationality.toUpperCase()}
-        </Field>
+          {/* 2 */}
+          <SectionBar title="2. CONTACTS" />
+          <View style={styles.twoCol}>
+            <View style={styles.col}>
+              <LabelValue label="NOM DU PÈRE / TUTEUR" value={data.fatherTutorName} />
+              <LabelValue label="TÉLÉPHONE" value={data.fatherTutorPhone} />
+              <LabelValue label="NOM DE LA MÈRE" value={data.motherName} />
+              <LabelValue label="TÉLÉPHONE" value={data.motherPhone || data.playerPhone} />
+              <LabelValue label="E-MAIL" value={data.email} />
+            </View>
+            <View style={styles.col}>
+              <View style={styles.row}>
+                <View style={[styles.labelCell, { width: "100%", borderRightWidth: 0 }]}>
+                  <Text style={styles.labelText}>ADRESSE COMPLÈTE</Text>
+                </View>
+              </View>
+              <View style={[styles.row, { minHeight: 72 }]}>
+                <View style={[styles.valueCell, { width: "100%" }]}>
+                  <Text style={styles.valueText}>{data.address}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
 
-        {/* 2. Contacts — colonne valeur x≈298 ; adresse à droite */}
-        <Field px={COL.s2Value} py={688} width={290}>
-          {data.fatherTutorName.toUpperCase()}
-        </Field>
-        <Field px={COL.s2Value} py={720} width={290}>
-          {data.fatherTutorPhone}
-        </Field>
-        <Field px={COL.s2Value} py={788} width={290}>
-          {data.playerPhone}
-        </Field>
-        <Field px={COL.s2Value} py={822} width={290} size={8}>
-          {data.email}
-        </Field>
-        <Field px={COL.address} py={700} width={480} size={8}>
-          {data.address}
-        </Field>
+          {/* 3 */}
+          <SectionBar title="3. PARCOURS FOOTBALLISTIQUE" />
+          <LabelValue label="CLUB ACTUEL" value={data.currentClub} />
+          <LabelValue label="ANCIEN(S) CLUB(S)" value={data.previousClubs} />
+          <LabelValue label="ÉTABLISSEMENT SCOLAIRE FRÉQUENTÉ" value={data.school} />
 
-        {/* 3. Parcours — colonne valeur x≈400 */}
-        <Field px={COL.s3Value} py={903} width={720}>
-          {data.currentClub}
-        </Field>
-        <Field px={COL.s3Value} py={938} width={720} size={8}>
-          {data.previousClubs || ""}
-        </Field>
-        <Field px={COL.s3Value} py={975} width={720} size={8}>
-          {data.school}
-        </Field>
+          {/* 4 */}
+          <SectionBar title="4. PROFIL SPORTIF" />
+          <View style={styles.twoCol}>
+            <View style={[styles.col, { flex: 1.5 }]}>
+              <Text style={[styles.labelText, { marginBottom: 3 }]}>POSTE PRINCIPAL</Text>
+              <View style={styles.pickRow}>
+                {POSITIONS_ROW1.map((p) => (
+                  <Pick
+                    key={p}
+                    label={POSITION_LABELS[p]}
+                    on={data.primaryPosition === p}
+                  />
+                ))}
+              </View>
+              <View style={styles.pickRow}>
+                {POSITIONS_ROW2.map((p) => (
+                  <Pick
+                    key={p}
+                    label={POSITION_LABELS[p]}
+                    on={data.primaryPosition === p}
+                  />
+                ))}
+              </View>
+            </View>
+            <View style={styles.col}>
+              <LabelValue label="DEUXIÈME POSTE" value={data.secondaryPosition} />
+              <Text style={[styles.labelText, { marginTop: 4, marginBottom: 3 }]}>PIED FORT</Text>
+              <View style={styles.pickRow}>
+                <Pick label="DROIT" on={foot === "Droit"} />
+                <Pick label="GAUCHE" on={foot === "Gauche"} />
+                <Pick label="LES DEUX" on={foot === "Les deux"} />
+              </View>
+            </View>
+          </View>
 
-        {/* 4. Profil sportif */}
-        {positionMark && <Mark px={positionMark.px} py={positionMark.py} />}
-        <Field px={710} py={1075} width={400} size={9}>
-          {data.secondaryPosition || ""}
-        </Field>
-        {footMark && <Mark px={footMark.px} py={footMark.py} />}
+          {/* 5 & 6 */}
+          <View style={[styles.twoCol, { marginTop: 4 }]}>
+            <View style={styles.col}>
+              <SectionBar title="5. ÉTAT DE SANTÉ" />
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "46%" }]}>
+                  <Text style={styles.labelText}>BLESSURE ACTUELLE</Text>
+                </View>
+                <Pick label="OUI" on={data.injuryCurrent === true} />
+                <Pick label="NON" on={data.injuryCurrent === false} />
+              </View>
+              <LabelValue
+                label="SI OUI, LAQUELLE ?"
+                value={data.injuryCurrent ? data.injuryDetails : ""}
+              />
+              <LabelValue label="ALLERGIES CONNUES" value={data.allergies} />
+            </View>
+            <View style={styles.col}>
+              <SectionBar title="6. DOCUMENTS FOURNIS" />
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "55%" }]}>
+                  <Text style={styles.labelText}>ACTE DE NAISSANCE</Text>
+                </View>
+                <Pick label="OUI" on={data.birthCertificateProvided} />
+                <Pick label="NON" on={!data.birthCertificateProvided} />
+              </View>
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "55%" }]}>
+                  <Text style={styles.labelText}>AUTORISATION PARENTALE</Text>
+                </View>
+                <Pick label="OUI" on={data.parentalAuthProvided} />
+                <Pick label="NON" on={!data.parentalAuthProvided} />
+              </View>
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "55%" }]}>
+                  <Text style={styles.labelText}>CERTIFICAT MÉDICAL</Text>
+                </View>
+                <Pick label="OUI" on={data.medicalCertificateProvided} />
+                <Pick label="NON" on={!data.medicalCertificateProvided} />
+              </View>
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "55%" }]}>
+                  <Text style={styles.labelText}>FRAIS RÉGLÉS</Text>
+                </View>
+                <Pick label="OUI" on={data.feesPaidProvided} />
+                <Pick label="NON" on={!data.feesPaidProvided} />
+              </View>
+              <LabelValue label="MONTANT PAYÉ (XAF)" value={data.amountPaidXaf} />
+              <View style={styles.pickRow}>
+                <View style={[styles.labelCell, { width: "40%" }]}>
+                  <Text style={styles.labelText}>MODE</Text>
+                </View>
+                <Pick label="ESPÈCES" on={data.paymentMethod === "cash"} />
+                <Pick label="MOBILE" on={data.paymentMethod === "mobile_money"} />
+                <Pick label="AUTRE" on={data.paymentMethod === "other"} />
+              </View>
+            </View>
+          </View>
 
-        {/* 5. Santé */}
-        {data.injuryCurrent ? (
-          <Mark px={368} py={1222} />
-        ) : (
-          <Mark px={512} py={1222} />
-        )}
-        <Field px={250} py={1262} width={330} size={8}>
-          {data.injuryCurrent ? data.injuryDetails || "" : ""}
-        </Field>
-        <Field px={110} py={1338} width={470} size={8}>
-          {data.allergies || ""}
-        </Field>
+          {/* 7 */}
+          <SectionBar title="7. RÉSERVÉ À L'ADMINISTRATION" />
+          <View style={styles.twoCol}>
+            <View style={styles.col}>
+              <LabelValue label="NUMÉRO DE DOSSARD" value="" />
+              <LabelValue label="NUMÉRO DE GROUPE" value="" />
+              <LabelValue label="HEURE D'ARRIVÉE" value="" />
+            </View>
+            <View style={styles.col}>
+              <View style={styles.row}>
+                <View style={[styles.labelCell, { width: "100%", borderRightWidth: 0 }]}>
+                  <Text style={styles.labelText}>OBSERVATIONS</Text>
+                </View>
+              </View>
+              <View style={[styles.row, { minHeight: 48 }]}>
+                <View style={[styles.valueCell, { width: "100%" }]}>
+                  <Text style={styles.valueText}> </Text>
+                </View>
+              </View>
+            </View>
+          </View>
 
-        {/* 6. Documents — cocher uniquement si fourni */}
-        {data.birthCertificateProvided && <Mark px={COL.docsCheck} py={1222} />}
-        {data.parentalAuthProvided && <Mark px={COL.docsCheck} py={1250} />}
-        {data.medicalCertificateProvided && <Mark px={COL.docsCheck} py={1278} />}
-        {data.feesPaidProvided && <Mark px={COL.docsCheck} py={1308} />}
-        <Field px={770} py={1345} width={200}>
-          {data.amountPaidXaf || ""}
-        </Field>
-        {data.paymentMethod === "cash" && <Mark px={825} py={1376} />}
-        {data.paymentMethod === "mobile_money" && <Mark px={955} py={1376} />}
-        {data.paymentMethod === "other" && <Mark px={1080} py={1376} />}
-        {data.paymentMethod === "other" ? (
-          <Field px={1110} py={1376} width={40} size={7}>
-            {data.paymentMethodOther || ""}
-          </Field>
-        ) : null}
+          {/* 8 */}
+          <SectionBar title="8. DÉCLARATION DU PARENT / TUTEUR" />
+          <Text style={styles.italicNote}>
+            Je certifie que les informations fournies sont exactes et j'autorise mon enfant à
+            participer à la journée de détection organisée par Ninety One Foot Academy.
+          </Text>
+          <View style={styles.twoCol}>
+            <View style={styles.col}>
+              <LabelValue
+                label="NOM DU PARENT / TUTEUR"
+                value={data.parentDeclarationName.toUpperCase()}
+              />
+            </View>
+            <View style={styles.col}>
+              <LabelValue label="DATE" value={dateStr} />
+            </View>
+          </View>
 
-        {/* 8. Déclaration — nom dans la case du bas, pas sur le paragraphe */}
-        <Field px={300} py={1648} width={300} size={9} bold>
-          {data.parentDeclarationName.toUpperCase()}
-        </Field>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              Immeuble Air France, Bonanjo — Douala / Cameroun  •  ninetyonefoot@outlook.com  •
+              ninetyonefoot.com  •  @ninety.one.foot
+            </Text>
+          </View>
+        </View>
       </Page>
     </Document>
   );

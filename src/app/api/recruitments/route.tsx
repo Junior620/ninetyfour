@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { readFile } from "fs/promises";
-import path from "path";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { Resend } from "resend";
 
 import { recruitmentSchema } from "@/lib/validations/schemas";
 import { FicheEnregistrementPdf } from "@/lib/recruitment/pdf/FicheEnregistrementPdf";
+import { buildFicheHtml } from "@/lib/recruitment/email/buildFicheHtml";
 import { getSupabaseAdminClient } from "@/lib/supabase/serverClient";
 
 function toDataUri(buffer: Buffer, mimeType: string) {
@@ -37,15 +36,6 @@ export async function POST(request: Request) {
     const photoBuffer = Buffer.from(await photo.arrayBuffer());
     const photoDataUri = toDataUri(photoBuffer, photo.type || "image/jpeg");
 
-    const backgroundPath = path.join(
-      process.cwd(),
-      "public",
-      "Fiche_Enregistrement_Ninety_One_Foot_Academy_Premium_page-0001.jpg"
-    );
-    const backgroundBuffer = await readFile(backgroundPath);
-    const backgroundDataUri = toDataUri(backgroundBuffer, "image/jpeg");
-
-    // Documents files
     const birthCertificate = form.get("birthCertificate");
     const parentalAuth = form.get("parentalAuth");
     const medicalCertificate = form.get("medicalCertificate");
@@ -62,9 +52,16 @@ export async function POST(request: Request) {
       dobYear: getFormString(form, "dobYear"),
       age: getFormString(form, "age"),
       nationality: getFormString(form, "nationality"),
+      birthPlace: getFormString(form, "birthPlace"),
+      city: getFormString(form, "city"),
+      neighborhood: getFormString(form, "neighborhood"),
+      heightCm: getFormString(form, "heightCm"),
+      weightKg: getFormString(form, "weightKg"),
       playerPhone: getFormString(form, "playerPhone"),
       fatherTutorName: getFormString(form, "fatherTutorName"),
       fatherTutorPhone: getFormString(form, "fatherTutorPhone"),
+      motherName: getFormString(form, "motherName"),
+      motherPhone: getFormString(form, "motherPhone"),
       email: getFormString(form, "email"),
       address: getFormString(form, "address"),
       currentClub: getFormString(form, "currentClub"),
@@ -90,14 +87,12 @@ export async function POST(request: Request) {
     const data = recruitmentSchema.parse(payload);
 
     const pdfBuffer = await renderToBuffer(
-      <FicheEnregistrementPdf
-        backgroundDataUri={backgroundDataUri}
-        photoDataUri={photoDataUri}
-        data={data}
-      />
+      <FicheEnregistrementPdf photoDataUri={photoDataUri} data={data} />
     );
 
     const pdfBase64 = pdfBuffer.toString("base64");
+    const fileName =
+      `fiche-enregistrement-${data.lastName}-${data.firstNames}.pdf`.replace(/\s+/g, "-");
 
     let pdfSignedUrl: string | null = null;
     let applicationId: string | null = null;
@@ -112,13 +107,11 @@ export async function POST(request: Request) {
       const photoPath = `photos/${now}_${photo.name || "photo.jpg"}`;
       const pdfPath = `pdfs/${now}_recruitment.pdf`;
 
-      // Upload photo
       await supabase.storage.from("recruitment-photos").upload(photoPath, photoBuffer, {
         contentType: photo.type || "image/jpeg",
         upsert: true,
       });
 
-      // Upload docs
       const docsToUpload: { file: File | null | undefined; key: string }[] = [
         { file: birthCertificate instanceof File ? birthCertificate : undefined, key: "birth" },
         { file: parentalAuth instanceof File ? parentalAuth : undefined, key: "parental" },
@@ -139,7 +132,6 @@ export async function POST(request: Request) {
         docsPaths[d.key] = docPath;
       }
 
-      // Upload pdf
       await supabase.storage.from("recruitment-pdfs").upload(pdfPath, pdfBuffer, {
         contentType: "application/pdf",
         upsert: true,
@@ -150,7 +142,6 @@ export async function POST(request: Request) {
         .createSignedUrl(pdfPath, 60 * 60);
       pdfSignedUrl = signed?.signedUrl ?? null;
 
-      // Create row (optional: table must exist)
       try {
         const { data: rowData } = await supabase
           .from("recruitment_applications")
@@ -170,31 +161,61 @@ export async function POST(request: Request) {
       }
     }
 
-    // Emails (optional)
     const canUseResend = !!process.env.RESEND_API_KEY;
     const adminEmail = process.env.ADMIN_EMAIL;
     const senderEmail = process.env.SENDER_EMAIL;
 
     if (canUseResend && adminEmail && senderEmail) {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      const pdfUrl = pdfSignedUrl ?? "";
+      const fullName = `${data.firstNames} ${data.lastName}`.trim();
+      const html = buildFicheHtml({
+        data,
+        photoCid: "photo",
+        photoUrl: null,
+      });
+
+      const attachments = [
+        {
+          filename: fileName,
+          content: pdfBase64,
+        },
+      ];
+
+      const inlinePhoto = {
+        filename: photo.name || "photo.jpg",
+        content: photoBuffer.toString("base64"),
+        contentId: "photo",
+      };
 
       await resend.emails.send({
         from: senderEmail,
         to: data.email,
-        subject: isFrench(data) ? "Votre PDF de candidature" : "Your recruitment PDF",
-        text: pdfUrl
-          ? `Bonjour,\n\nVoici votre PDF de candidature : ${pdfUrl}\n\nCordialement,\nNinety One Foot Academy`
-          : `Bonjour,\n\nVotre PDF a été généré.\n\nCordialement,\nNinety One Foot Academy`,
+        subject: `Votre fiche d'enregistrement — ${fullName}`,
+        html,
+        attachments: [
+          ...attachments,
+          // Resend inline: contentId for cid:photo
+          {
+            filename: inlinePhoto.filename,
+            content: inlinePhoto.content,
+            contentId: inlinePhoto.contentId,
+          },
+        ],
       });
 
       await resend.emails.send({
         from: senderEmail,
         to: adminEmail,
-        subject: "Nouvelle inscription - Recruitment",
-        text: `Une nouvelle candidature a été soumise.\n\nNom: ${data.firstNames} ${data.lastName}\nVille: ${data.school}\nPDF: ${
-          pdfUrl || "(non stocke)"
-        }`,
+        subject: `Nouvelle inscription — ${fullName}`,
+        html,
+        attachments: [
+          ...attachments,
+          {
+            filename: inlinePhoto.filename,
+            content: inlinePhoto.content,
+            contentId: inlinePhoto.contentId,
+          },
+        ],
       });
     }
 
@@ -203,16 +224,10 @@ export async function POST(request: Request) {
       applicationId,
       pdfSignedUrl,
       pdfBase64,
-      fileName: `fiche-enregistrement-${data.lastName}-${data.firstNames}.pdf`.replace(/\s+/g, "-"),
+      fileName,
     });
   } catch (error) {
     console.error("[Recruitment error]", error);
     return NextResponse.json({ success: false, error: "Recruitment failed" }, { status: 500 });
   }
 }
-
-function isFrench(_data: unknown) {
-  // API ne reçoit pas la locale pour l’instant; par défaut FR.
-  return true;
-}
-

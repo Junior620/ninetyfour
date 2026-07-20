@@ -36,8 +36,21 @@ const STEP_FIELDS: (keyof RecruitmentFormData)[][] = [
     "dobYear",
     "age",
     "nationality",
+    "birthPlace",
+    "city",
+    "neighborhood",
+    "heightCm",
+    "weightKg",
   ],
-  ["playerPhone", "fatherTutorName", "fatherTutorPhone", "email", "address"],
+  [
+    "playerPhone",
+    "fatherTutorName",
+    "fatherTutorPhone",
+    "motherName",
+    "motherPhone",
+    "email",
+    "address",
+  ],
   ["currentClub", "school", "primaryPosition", "strongFoot"],
   ["injuryCurrent", "injuryDetails", "allergies"],
   [
@@ -362,6 +375,21 @@ export function RecruitmentForm() {
                 <Field label={isFr ? "Nationalité" : "Nationality"} error={errors.nationality?.message}>
                   <Input {...register("nationality")} />
                 </Field>
+                <Field label={isFr ? "Lieu de naissance" : "Place of birth"}>
+                  <Input {...register("birthPlace")} />
+                </Field>
+                <Field label={isFr ? "Ville de résidence" : "City of residence"}>
+                  <Input {...register("city")} />
+                </Field>
+                <Field label={isFr ? "Quartier" : "Neighborhood"}>
+                  <Input {...register("neighborhood")} />
+                </Field>
+                <Field label={isFr ? "Taille (cm)" : "Height (cm)"}>
+                  <Input {...register("heightCm")} />
+                </Field>
+                <Field label={isFr ? "Poids (kg)" : "Weight (kg)"}>
+                  <Input {...register("weightKg")} />
+                </Field>
               </div>
             </section>
           )}
@@ -372,7 +400,7 @@ export function RecruitmentForm() {
                 {isFr ? "Contacts et adresse" : "Contacts & address"}
               </h3>
               <div className="grid gap-5 sm:grid-cols-2">
-                <Field label={isFr ? "Téléphone" : "Phone"} error={errors.playerPhone?.message}>
+                <Field label={isFr ? "Téléphone joueur" : "Player phone"} error={errors.playerPhone?.message}>
                   <Input {...register("playerPhone")} />
                 </Field>
                 <Field label={isFr ? "Nom du père / tuteur" : "Father / guardian name"} error={errors.fatherTutorName?.message}>
@@ -380,6 +408,12 @@ export function RecruitmentForm() {
                 </Field>
                 <Field label={isFr ? "Téléphone (père/tuteur)" : "Phone (guardian)"} error={errors.fatherTutorPhone?.message}>
                   <Input {...register("fatherTutorPhone")} />
+                </Field>
+                <Field label={isFr ? "Nom de la mère" : "Mother’s name"}>
+                  <Input {...register("motherName")} />
+                </Field>
+                <Field label={isFr ? "Téléphone (mère)" : "Mother’s phone"}>
+                  <Input {...register("motherPhone")} />
                 </Field>
                 <Field label="Email" error={errors.email?.message}>
                   <Input type="email" {...register("email")} />
@@ -424,7 +458,7 @@ export function RecruitmentForm() {
                       <SelectItem value="DEFENSEUR_CENTRAL">{isFr ? "Défenseur central" : "Center back"}</SelectItem>
                       <SelectItem value="LATERAL_DROIT">{isFr ? "Latéral droit" : "Right back"}</SelectItem>
                       <SelectItem value="LATERAL_GAUCHE">{isFr ? "Latéral gauche" : "Left back"}</SelectItem>
-                      <SelectItem value="MILIEU_CENTRAL">{isFr ? "Milieu central" : "Central mid"}</SelectItem>
+                      <SelectItem value="MILIEU_CENTRAL">{isFr ? "Milieu défensif" : "Defensive mid"}</SelectItem>
                       <SelectItem value="MILIEU_RELAYEUR">{isFr ? "Milieu relayeur" : "Holding mid"}</SelectItem>
                       <SelectItem value="MILIEU_OFFENSIF">{isFr ? "Milieu offensif" : "Attacking mid"}</SelectItem>
                       <SelectItem value="AILE_DROIT">{isFr ? "Ailier droit" : "Right winger"}</SelectItem>

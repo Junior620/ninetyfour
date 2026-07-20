@@ -72,6 +72,34 @@
     "ambassadorsTitle": "Our international patrons and ambassadors",
     "ambassadorsSubtitle": "Individuals based abroad who support the academy through donations, their network and visibility.",
     "ambassadorsCta": "View all patrons",
+    "promo": {
+      "eyebrowOpen": "Registration open",
+      "headline": "Join the first intake",
+      "tagline": "Your chance. Your pitch. Your future starts here.",
+      "cta": "Register for the trials",
+      "ctaHint": "Quick signup • Limited spots",
+      "helpLink": "Need help? Contact us",
+      "close": "No thanks, close",
+      "phones": "678 259 540 / 693 881 971",
+      "countdown": "Registration closes in {days} D : {hours} H : {mins} MIN",
+      "countdownLive": "Registration in progress",
+      "zoneA": {
+        "zone": "Zone A",
+        "dates": "25 & 26 July 2026",
+        "place": "Terkocam Stadium, Bonamoussadi",
+        "time": "1 pm – 3 pm",
+        "day1": "25 July: U-14 & U-16",
+        "day2": "26 July: U-18"
+      },
+      "zoneB": {
+        "zone": "Zone B",
+        "dates": "27 & 28 July 2026",
+        "place": "Public School Stadium, Deido",
+        "time": "10 am – 1 pm",
+        "day1": "27 July: U-14 & U-16",
+        "day2": "28 July: U-18"
+      }
+    },
     "badges": {
       "age": "15–17 years",
       "sessions": "4 sessions/week",
