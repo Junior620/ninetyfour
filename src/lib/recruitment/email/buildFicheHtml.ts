@@ -48,9 +48,12 @@ export type BuildFicheHtmlOptions = {
   /** Use cid:photo when attaching inline image via Resend */
   photoCid?: string | null;
   photoUrl?: string | null;
+  /** Use cid:logo when attaching inline logo via Resend */
+  logoCid?: string | null;
+  logoUrl?: string | null;
 };
 
-export function buildFicheHtml({ data, photoCid, photoUrl }: BuildFicheHtmlOptions) {
+export function buildFicheHtml({ data, photoCid, photoUrl, logoCid, logoUrl }: BuildFicheHtmlOptions) {
   const dob = [data.dobDay, data.dobMonth, data.dobYear].filter(Boolean).join(" / ");
   const poste = POSITION_LABELS[data.primaryPosition] || data.primaryPosition;
   const foot =
@@ -66,7 +69,10 @@ export function buildFicheHtml({ data, photoCid, photoUrl }: BuildFicheHtmlOptio
     ? `<img src="${photoSrc}" width="108" alt="Photo" style="display:block;width:108px;height:120px;object-fit:cover" />`
     : `<div style="padding:26px 4px;color:#7a8091;font-size:10px;font-weight:bold;line-height:1.4">PHOTO<br>D'IDENTITÉ<br>(RÉCENTE)</div>`;
 
-  const logoHtml = `<div style="width:80px;height:80px;background:#1f3fa8;border:3px solid #c2a14e;color:#fff;text-align:center;font-weight:900;font-size:24px;line-height:80px;margin:0 auto">91</div>`;
+  const logoSrc = logoCid ? `cid:${logoCid}` : logoUrl || "";
+  const logoHtml = logoSrc
+    ? `<img src="${logoSrc}" width="86" height="86" alt="Ninety One Foot Academy" style="display:block;width:86px;height:86px;margin:0 auto" />`
+    : `<div style="width:80px;height:80px;background:#1f3fa8;border:3px solid #c2a14e;color:#fff;text-align:center;font-weight:900;font-size:24px;line-height:80px;margin:0 auto">91</div>`;
 
   const header = `<table width="100%" cellspacing="0" cellpadding="0"><tr valign="middle">
     <td width="100" align="center">${logoHtml}</td>

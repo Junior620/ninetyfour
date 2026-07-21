@@ -1,3 +1,6 @@
+import { promises as fs } from "fs";
+import path from "path";
+
 import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { Resend } from "resend";
@@ -35,6 +38,17 @@ export async function POST(request: Request) {
 
     const photoBuffer = Buffer.from(await photo.arrayBuffer());
     const photoDataUri = toDataUri(photoBuffer, photo.type || "image/jpeg");
+
+    let logoBuffer: Buffer | null = null;
+    for (const name of ["logo-crest.png", "logo.png"]) {
+      try {
+        logoBuffer = await fs.readFile(path.join(process.cwd(), "public", name));
+        break;
+      } catch {
+        // try next; falls back to text-based "91" logo if none found
+      }
+    }
+    const logoDataUri = logoBuffer ? toDataUri(logoBuffer, "image/png") : null;
 
     const birthCertificate = form.get("birthCertificate");
     const parentalAuth = form.get("parentalAuth");
@@ -87,7 +101,7 @@ export async function POST(request: Request) {
     const data = recruitmentSchema.parse(payload);
 
     const pdfBuffer = await renderToBuffer(
-      <FicheEnregistrementPdf photoDataUri={photoDataUri} data={data} />
+      <FicheEnregistrementPdf photoDataUri={photoDataUri} logoDataUri={logoDataUri} data={data} />
     );
 
     const pdfBase64 = pdfBuffer.toString("base64");
@@ -172,35 +186,38 @@ export async function POST(request: Request) {
         data,
         photoCid: "photo",
         photoUrl: null,
+        logoCid: logoBuffer ? "logo" : null,
+        logoUrl: null,
       });
 
-      const attachments = [
+      const emailAttachments = [
         {
           filename: fileName,
           content: pdfBase64,
         },
+        // Inline images referenced via cid: in the HTML
+        {
+          filename: photo.name || "photo.jpg",
+          content: photoBuffer.toString("base64"),
+          contentId: "photo",
+        },
+        ...(logoBuffer
+          ? [
+              {
+                filename: "logo.png",
+                content: logoBuffer.toString("base64"),
+                contentId: "logo",
+              },
+            ]
+          : []),
       ];
-
-      const inlinePhoto = {
-        filename: photo.name || "photo.jpg",
-        content: photoBuffer.toString("base64"),
-        contentId: "photo",
-      };
 
       await resend.emails.send({
         from: senderEmail,
         to: data.email,
         subject: `Votre fiche d'enregistrement — ${fullName}`,
         html,
-        attachments: [
-          ...attachments,
-          // Resend inline: contentId for cid:photo
-          {
-            filename: inlinePhoto.filename,
-            content: inlinePhoto.content,
-            contentId: inlinePhoto.contentId,
-          },
-        ],
+        attachments: emailAttachments,
       });
 
       await resend.emails.send({
@@ -208,14 +225,7 @@ export async function POST(request: Request) {
         to: adminEmail,
         subject: `Nouvelle inscription — ${fullName}`,
         html,
-        attachments: [
-          ...attachments,
-          {
-            filename: inlinePhoto.filename,
-            content: inlinePhoto.content,
-            contentId: inlinePhoto.contentId,
-          },
-        ],
+        attachments: emailAttachments,
       });
     }
 

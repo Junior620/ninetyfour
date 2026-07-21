@@ -4,6 +4,7 @@ import type { RecruitmentFormData } from "@/lib/validations/schemas";
 
 export type RecruitmentPdfProps = {
   photoDataUri?: string | null;
+  logoDataUri?: string | null;
   data: RecruitmentFormData;
 };
 
@@ -49,7 +50,7 @@ const POSITIONS_ROW2 = [
 
 const styles = StyleSheet.create({
   page: {
-    padding: 16,
+    padding: 12,
     fontFamily: "Helvetica",
     fontSize: 9,
     color: COLORS.text,
@@ -57,13 +58,13 @@ const styles = StyleSheet.create({
   },
   goldBorder: {
     border: `4 solid ${COLORS.gold}`,
-    padding: 10,
+    padding: 8,
     flex: 1,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   logoBox: {
     width: 64,
@@ -77,6 +78,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontFamily: "Helvetica-Bold",
+  },
+  logoImgBox: {
+    width: 68,
+    height: 68,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  logoImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
   },
   headerCenter: {
     flex: 1,
@@ -133,10 +145,10 @@ const styles = StyleSheet.create({
   },
   sectionBar: {
     backgroundColor: COLORS.bar,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 8,
-    marginBottom: 4,
-    marginTop: 6,
+    marginBottom: 3,
+    marginTop: 4,
   },
   sectionBarText: {
     color: "#fff",
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
   labelCell: {
     width: "38%",
     backgroundColor: COLORS.labelBg,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 6,
     borderRightWidth: 0.5,
     borderRightColor: COLORS.border,
@@ -164,7 +176,7 @@ const styles = StyleSheet.create({
   },
   valueCell: {
     flex: 1,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 6,
     justifyContent: "center",
   },
@@ -185,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 0.5,
     borderColor: COLORS.border,
-    paddingVertical: 5,
+    paddingVertical: 4,
     paddingHorizontal: 2,
     alignItems: "center",
     justifyContent: "center",
@@ -208,7 +220,7 @@ const styles = StyleSheet.create({
   },
   blockTitle: {
     backgroundColor: COLORS.navy,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 6,
     alignItems: "center",
   },
@@ -219,9 +231,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: COLORS.bar,
-    paddingVertical: 6,
+    paddingVertical: 5,
     paddingHorizontal: 8,
-    marginTop: 8,
+    marginTop: 6,
   },
   footerText: {
     color: "#fff",
@@ -232,12 +244,12 @@ const styles = StyleSheet.create({
     fontSize: 7,
     fontStyle: "italic",
     color: "#333",
-    marginBottom: 4,
-    marginTop: 2,
+    marginBottom: 3,
+    marginTop: 1,
   },
   playerNumberRow: {
     flexDirection: "row",
-    marginBottom: 6,
+    marginBottom: 4,
     alignItems: "stretch",
   },
   playerNumBox: {
@@ -289,7 +301,7 @@ function Pick({
   );
 }
 
-export function FicheEnregistrementPdf({ photoDataUri, data }: RecruitmentPdfProps) {
+export function FicheEnregistrementPdf({ photoDataUri, logoDataUri, data }: RecruitmentPdfProps) {
   const dob = [data.dobDay, data.dobMonth, data.dobYear].filter(Boolean).join(" / ");
   const foot =
     data.strongFoot === "right"
@@ -306,9 +318,15 @@ export function FicheEnregistrementPdf({ photoDataUri, data }: RecruitmentPdfPro
         <View style={styles.goldBorder}>
           {/* Header */}
           <View style={styles.header}>
-            <View style={styles.logoBox}>
-              <Text style={styles.logoText}>91</Text>
-            </View>
+            {logoDataUri ? (
+              <View style={styles.logoImgBox}>
+                <Image src={logoDataUri} style={styles.logoImg} />
+              </View>
+            ) : (
+              <View style={styles.logoBox}>
+                <Text style={styles.logoText}>91</Text>
+              </View>
+            )}
             <View style={styles.headerCenter}>
               <Text style={styles.brandTop}>NINETY ONE</Text>
               <Text style={styles.brandSub}>FOOT ACADEMY</Text>
@@ -397,7 +415,7 @@ export function FicheEnregistrementPdf({ photoDataUri, data }: RecruitmentPdfPro
                   <Text style={styles.labelText}>ADRESSE COMPLÈTE</Text>
                 </View>
               </View>
-              <View style={[styles.row, { minHeight: 72 }]}>
+              <View style={[styles.row, { minHeight: 58 }]}>
                 <View style={[styles.valueCell, { width: "100%" }]}>
                   <Text style={styles.valueText}>{data.address}</Text>
                 </View>
@@ -519,7 +537,7 @@ export function FicheEnregistrementPdf({ photoDataUri, data }: RecruitmentPdfPro
                   <Text style={styles.labelText}>OBSERVATIONS</Text>
                 </View>
               </View>
-              <View style={[styles.row, { minHeight: 48 }]}>
+              <View style={[styles.row, { minHeight: 34 }]}>
                 <View style={[styles.valueCell, { width: "100%" }]}>
                   <Text style={styles.valueText}> </Text>
                 </View>
