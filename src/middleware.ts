@@ -1,7 +1,12 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/lib/i18n/routing";
-import { AUTH_COOKIE, parseRoleCookie } from "@/lib/auth/session";
+import { ROLE_PATHS } from "@/lib/auth/session";
+import {
+  SESSION_COOKIE,
+  verifySessionToken,
+} from "@/lib/auth/session-token";
+import type { UserRole } from "@/types";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -17,15 +22,33 @@ function isDashboardPath(pathname: string): boolean {
   return /^\/(fr|en)\/dashboard(\/|$)/.test(pathname);
 }
 
-export default function middleware(request: NextRequest) {
+function requiredRoleForPath(pathname: string): UserRole | null {
+  if (/\/dashboard\/admin(\/|$)/.test(pathname)) return "admin";
+  if (/\/dashboard\/coach(\/|$)/.test(pathname)) return "coach";
+  if (/\/dashboard\/parent(\/|$)/.test(pathname)) return "parent";
+  if (/\/dashboard\/joueur(\/|$)/.test(pathname)) return "player";
+  return null;
+}
+
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isDashboardPath(pathname)) {
-    const role = parseRoleCookie(request.cookies.get(AUTH_COOKIE)?.value);
-    if (!role) {
+    const session = await verifySessionToken(
+      request.cookies.get(SESSION_COOKIE)?.value
+    );
+
+    if (!session) {
       const locale = getLocaleFromPath(pathname);
-      const loginUrl = new URL(`/${locale}/login`, request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    }
+
+    const required = requiredRoleForPath(pathname);
+    if (required && session.role !== required) {
+      const locale = getLocaleFromPath(pathname);
+      return NextResponse.redirect(
+        new URL(`/${locale}${ROLE_PATHS[session.role]}`, request.url)
+      );
     }
   }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/serverClient";
 import { normalizeAppStatus } from "@/lib/admin/labels";
+import { requireSession } from "@/lib/auth/get-session";
 
 type RecruitmentApplicationRow = {
   id: string;
@@ -16,8 +17,17 @@ function canUseSupabase() {
   );
 }
 
+async function requireAdmin() {
+  return requireSession(["admin"]);
+}
+
 export async function GET() {
   try {
+    const session = await requireAdmin();
+    if (!session) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     if (!canUseSupabase()) {
       return NextResponse.json({ items: [] });
     }
@@ -65,6 +75,11 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
+    const session = await requireAdmin();
+    if (!session) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const id = typeof body.id === "string" ? body.id : "";
     const status = normalizeAppStatus(body.status);
@@ -97,6 +112,11 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const session = await requireAdmin();
+    if (!session) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id") ?? "";
     if (!id) {

@@ -9,18 +9,35 @@ function getEnv(name: string): string {
 }
 
 let adminClient: SupabaseClient | null = null;
+let anonClient: SupabaseClient | null = null;
 
 export function getSupabaseAdminClient(): SupabaseClient {
   if (adminClient) return adminClient;
 
-  const url = getEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const serviceRoleKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
-
-  adminClient = createClient(url, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  adminClient = createClient(
+    getEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    getEnv("SUPABASE_SERVICE_ROLE_KEY"),
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+    }
+  );
 
   return adminClient;
+}
+
+/** Anon client for password verification (Supabase Auth). */
+export function getSupabaseAuthClient(): SupabaseClient {
+  if (anonClient) return anonClient;
+
+  anonClient = createClient(
+    getEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+    }
+  );
+
+  return anonClient;
 }
 
 export async function uploadFileToBucket({
@@ -58,6 +75,7 @@ export function getSignedUrl({
   expiresInSeconds?: number;
 }) {
   const supabase = getSupabaseAdminClient();
-  return supabase.storage.from(bucket).createSignedUrl(filePath, expiresInSeconds);
+  return supabase.storage
+    .from(bucket)
+    .createSignedUrl(filePath, expiresInSeconds);
 }
-

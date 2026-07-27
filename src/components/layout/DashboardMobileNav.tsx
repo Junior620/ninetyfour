@@ -12,7 +12,7 @@ import {
 import { AcademyLogo } from "./AcademyLogo";
 import { dashboardRoleNav, isNavActive } from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils";
-import { clearRoleClient } from "@/lib/auth/session";
+import { logoutClient } from "@/lib/auth/session";
 import type { UserRole } from "@/types";
 
 interface DashboardMobileNavProps {
@@ -25,8 +25,8 @@ export function DashboardMobileNav({ role }: DashboardMobileNavProps) {
   const router = useRouter();
   const links = dashboardRoleNav[role];
 
-  function handleLogout() {
-    clearRoleClient();
+  async function handleLogout() {
+    await logoutClient();
     router.replace("/login");
   }
 

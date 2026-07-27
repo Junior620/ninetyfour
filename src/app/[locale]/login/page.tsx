@@ -97,6 +97,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           role: selectedRole,
           email,
@@ -104,9 +105,13 @@ export default function LoginPage() {
         }),
       });
 
-      const data = (await res.json()) as { success?: boolean; error?: string };
+      const data = (await res.json()) as {
+        success?: boolean;
+        error?: string;
+        role?: UserRole;
+      };
 
-      if (!res.ok || !data.success) {
+      if (!res.ok || !data.success || !data.role) {
         setError(
           data.error === "invalid_credentials"
             ? t("errorCredentials")
@@ -115,8 +120,8 @@ export default function LoginPage() {
         return;
       }
 
-      setRoleClient(selectedRole);
-      router.push(ROLE_PATHS[selectedRole]);
+      setRoleClient(data.role);
+      router.push(ROLE_PATHS[data.role]);
     } catch {
       setError(t("errorGeneric"));
     } finally {

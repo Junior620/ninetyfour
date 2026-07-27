@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { clearRoleClient } from "@/lib/auth/session";
+import { logoutClient } from "@/lib/auth/session";
 import type { UserRole } from "@/types";
 import { AcademyLogo } from "./AcademyLogo";
 import { dashboardRoleNav, isNavActive } from "@/lib/dashboard-nav";
@@ -19,8 +19,8 @@ export function Sidebar({ role }: SidebarProps) {
   const router = useRouter();
   const links = dashboardRoleNav[role];
 
-  function handleLogout() {
-    clearRoleClient();
+  async function handleLogout() {
+    await logoutClient();
     router.replace("/login");
   }
 

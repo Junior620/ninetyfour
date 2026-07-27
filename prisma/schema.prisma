@@ -38,12 +38,16 @@ enum GalleryCategory {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  role      UserRole
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  /// Hash bcrypt optionnel si sync Prisma locale (auth principale = Supabase Auth)
+  passwordHash String?
+  role         UserRole
+  /// UUID auth.users (Supabase) quand l’utilisateur est lié
+  supabaseId   String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   player       Player?
   parentLinks  ParentPlayer[] @relation("ParentUser")

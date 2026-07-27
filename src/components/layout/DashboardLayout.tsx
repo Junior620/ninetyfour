@@ -14,7 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ToastHost, toast } from "@/components/ui/toast";
-import { clearRoleClient, getRoleClient, ROLE_PATHS } from "@/lib/auth/session";
+import {
+  getRoleClient,
+  logoutClient,
+  ROLE_PATHS,
+} from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/types";
 
@@ -79,8 +83,8 @@ export function DashboardLayout({
 
   const dateLabel = useMemo(() => formatDashboardDate(locale), [locale]);
 
-  function handleLogout() {
-    clearRoleClient();
+  async function handleLogout() {
+    await logoutClient();
     router.replace("/login");
   }
 

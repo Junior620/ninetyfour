@@ -1,9 +1,14 @@
 import type { UserRole } from "@/types";
+import {
+  ROLE_COOKIE,
+  SESSION_COOKIE,
+} from "@/lib/auth/session-token";
 
-export const AUTH_COOKIE = "nofa_role";
+export { ROLE_COOKIE, SESSION_COOKIE };
 export const AUTH_STORAGE_KEY = "nofa_role";
 
-const MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
+/** @deprecated Use ROLE_COOKIE — kept for older references */
+export const AUTH_COOKIE = ROLE_COOKIE;
 
 export const ROLE_PATHS: Record<UserRole, string> = {
   player: "/dashboard/joueur",
@@ -22,10 +27,9 @@ export function parseRoleCookie(value: string | undefined | null): UserRole | nu
   return isUserRole(value) ? value : null;
 }
 
-/** Client-only: persist role in cookie + localStorage. */
+/** Client-only: mirror role for UI (server also sets ROLE_COOKIE). */
 export function setRoleClient(role: UserRole) {
   if (typeof document === "undefined") return;
-  document.cookie = `${AUTH_COOKIE}=${encodeURIComponent(role)}; Path=/; Max-Age=${MAX_AGE_SECONDS}; SameSite=Lax`;
   try {
     localStorage.setItem(AUTH_STORAGE_KEY, role);
   } catch {
@@ -33,10 +37,9 @@ export function setRoleClient(role: UserRole) {
   }
 }
 
-/** Client-only: clear session. */
+/** Client-only: clear local role cache. */
 export function clearRoleClient() {
   if (typeof document === "undefined") return;
-  document.cookie = `${AUTH_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
   try {
     localStorage.removeItem(AUTH_STORAGE_KEY);
   } catch {
@@ -50,7 +53,7 @@ export function getRoleClient(): UserRole | null {
 
   const match = document.cookie
     .split("; ")
-    .find((row) => row.startsWith(`${AUTH_COOKIE}=`));
+    .find((row) => row.startsWith(`${ROLE_COOKIE}=`));
   if (match) {
     const raw = decodeURIComponent(match.split("=").slice(1).join("="));
     const fromCookie = parseRoleCookie(raw);
@@ -61,5 +64,19 @@ export function getRoleClient(): UserRole | null {
     return parseRoleCookie(localStorage.getItem(AUTH_STORAGE_KEY));
   } catch {
     return null;
+  }
+}
+
+/** Client-only: invalidate server session then clear local cache. */
+export async function logoutClient() {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch {
+    // still clear local state
+  } finally {
+    clearRoleClient();
   }
 }
