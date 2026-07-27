@@ -1,42 +1,100 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import type { Player } from "@/types";
-import type { Locale } from "@/types";
+import type { Player, Locale } from "@/types";
 import { localized } from "@/lib/utils";
 
 interface PlayerProgressCardProps {
   player: Player;
   locale: Locale;
+  /** Coach dashboard shows actions linking to evals; public pages stay read-only */
+  showCoachActions?: boolean;
 }
 
-export function PlayerProgressCard({ player, locale }: PlayerProgressCardProps) {
+function categoryFromAge(age: number) {
+  if (age <= 14) return "U-14";
+  if (age <= 16) return "U-16";
+  return "U-18";
+}
+
+export function PlayerProgressCard({
+  player,
+  locale,
+  showCoachActions = false,
+}: PlayerProgressCardProps) {
+  const t = useTranslations("dashboard.coach");
+
   const scores = [
-    { label: locale === "fr" ? "Technique" : "Technical", value: player.technicalScore },
-    { label: locale === "fr" ? "Tactique" : "Tactical", value: player.tacticalScore },
-    { label: locale === "fr" ? "Physique" : "Physical", value: player.physicalScore },
-    { label: locale === "fr" ? "Mental" : "Mental", value: player.mentalScore },
+    {
+      label: locale === "fr" ? "Technique" : "Technical",
+      value: player.technicalScore,
+    },
+    {
+      label: locale === "fr" ? "Tactique" : "Tactical",
+      value: player.tacticalScore,
+    },
+    {
+      label: locale === "fr" ? "Physique" : "Physical",
+      value: player.physicalScore,
+    },
+    {
+      label: locale === "fr" ? "Mental" : "Mental",
+      value: player.mentalScore,
+    },
   ];
 
+  const progress = localized(player.lastProgress, locale);
+  const tone = progress.includes("-")
+    ? "bg-red-50 text-red-700"
+    : progress.includes("+")
+      ? "bg-emerald-50 text-emerald-800"
+      : "bg-slate-100 text-slate-600";
+
   return (
-    <Card className="border-0 bg-white shadow-sm">
+    <Card className="border border-[#E5E2D9] bg-white shadow-[0_8px_24px_rgba(7,20,38,0.04)]">
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-xl font-bold text-black-premium">
-              {player.firstName} {player.lastName}
-            </CardTitle>
-            <p className="mt-1 text-sm text-text-muted">
-              {localized(player.position, locale)} · {player.age}{" "}
-              {locale === "fr" ? "ans" : "years"} ·{" "}
-              {localized(player.strongFoot, locale)}
-            </p>
+        <div className="flex flex-wrap items-start gap-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-navy text-lg font-bold text-gold">
+            {player.firstName[0]}
+            {player.lastName[0]}
           </div>
-          <Badge className="bg-gold/10 text-gold">
-            {localized(player.lastProgress, locale)}
-          </Badge>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle className="text-xl font-bold text-navy">
+                {player.firstName} {player.lastName}
+              </CardTitle>
+              <Badge className={tone}>{progress}</Badge>
+            </div>
+            <p className="mt-1 text-sm text-text-muted">
+              {categoryFromAge(player.age)} • {localized(player.position, locale)} •{" "}
+              {locale === "fr" ? "Groupe Élite" : "Elite group"}
+            </p>
+            <p className="mt-1 text-xs text-text-muted">
+              {localized(player.strongFoot, locale)} • N°
+              {player.id === "p1" ? "8" : player.id === "p2" ? "9" : "4"} •{" "}
+              {locale === "fr" ? "Dernière évaluation" : "Last evaluation"} : 21/07/2026
+            </p>
+            {showCoachActions ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link
+                  href="/dashboard/coach/joueurs"
+                  className="inline-flex h-9 items-center rounded-lg border border-[#E5E2D9] px-3 text-xs font-semibold text-navy"
+                >
+                  {t("fullProfile")}
+                </Link>
+                <Link
+                  href="/dashboard/coach/evaluations"
+                  className="inline-flex h-9 items-center rounded-lg bg-gold px-3 text-xs font-bold text-navy"
+                >
+                  {t("newEval")}
+                </Link>
+              </div>
+            ) : null}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -79,7 +137,7 @@ export function PlayerProgressCard({ player, locale }: PlayerProgressCardProps) 
           </div>
           <div>
             <h4 className="mb-2 text-xs font-bold uppercase tracking-wider text-gold">
-              {locale === "fr" ? "Axes de travail" : "Areas to improve"}
+              {locale === "fr" ? "Axes de travail" : "Focus areas"}
             </h4>
             <ul className="space-y-1">
               {player.improvements.map((i) => (
@@ -88,6 +146,14 @@ export function PlayerProgressCard({ player, locale }: PlayerProgressCardProps) 
                 </li>
               ))}
             </ul>
+            {showCoachActions ? (
+              <p className="mt-3 text-xs text-navy">
+                <span className="font-semibold">{t("recommendedDrill")} :</span>{" "}
+                {locale === "fr"
+                  ? "série de frappes après conduite de balle"
+                  : "finishing series after dribbling"}
+              </p>
+            ) : null}
           </div>
         </div>
       </CardContent>

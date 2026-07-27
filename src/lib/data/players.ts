@@ -8,9 +8,14 @@ export const mockPlayer: Player = {
   position: { fr: "Milieu central", en: "Central midfielder" },
   strongFoot: { fr: "Droit", en: "Right" },
   objectives: [
-    { fr: "Améliorer la vision de jeu", en: "Improve game vision" },
-    { fr: "Renforcer le jeu de tête", en: "Strengthen heading" },
-    { fr: "Progresser en finition", en: "Progress in finishing" },
+    {
+      fr: "Réussir 7 tirs cadrés sur 10 avant le 31 août",
+      en: "Hit 7/10 shots on target by August 31",
+    },
+    {
+      fr: "Améliorer la vision de jeu en 1 contre 1",
+      en: "Improve game vision in 1v1 situations",
+    },
   ],
   strengths: [
     { fr: "Passe courte et longue", en: "Short and long passing" },
@@ -18,9 +23,8 @@ export const mockPlayer: Player = {
     { fr: "Lecture du jeu", en: "Game reading" },
   ],
   improvements: [
-    { fr: "Jeu aérien", en: "Aerial play" },
-    { fr: "Finition", en: "Finishing" },
-    { fr: "Prise de décision sous pression", en: "Decision making under pressure" },
+    { fr: "Finition sous pression", en: "Finishing under pressure" },
+    { fr: "Prise de décision rapide", en: "Quick decision making" },
   ],
   technicalScore: 78,
   tacticalScore: 82,
@@ -89,13 +93,49 @@ export const mockPlayers: Player[] = [
 ];
 
 export const performanceChartData: PerformanceDataPoint[] = [
-  { month: "Jan", technical: 65, physical: 60 },
-  { month: "Fév", technical: 68, physical: 63 },
-  { month: "Mar", technical: 72, physical: 67 },
-  { month: "Avr", technical: 74, physical: 70 },
-  { month: "Mai", technical: 76, physical: 73 },
-  { month: "Jun", technical: 78, physical: 75 },
+  { month: "Jan", technical: 65, physical: 60, tactical: 70, mental: 68 },
+  { month: "Fév", technical: 68, physical: 63, tactical: 72, mental: 70 },
+  { month: "Mar", technical: 72, physical: 67, tactical: 74, mental: 72 },
+  { month: "Avr", technical: 74, physical: 70, tactical: 76, mental: 74 },
+  { month: "Mai", technical: 76, physical: 73, tactical: 78, mental: 76 },
+  { month: "Jun", technical: 78, physical: 75, tactical: 82, mental: 80 },
 ];
+
+export const coachData = {
+  nextSession: {
+    date: "2026-07-28",
+    time: "16:00",
+    location: { fr: "Stade de Bonamoussadi", en: "Bonamoussadi Stadium" },
+    type: { fr: "Séance technique U16", en: "U16 technical session" },
+  },
+  todos: [
+    { id: "t1", label: { fr: "3 joueurs à évaluer", en: "3 players to evaluate" } },
+    { id: "t2", label: { fr: "2 absences à justifier", en: "2 absences to justify" } },
+    { id: "t3", label: { fr: "1 rapport à publier", en: "1 report to publish" } },
+  ],
+  recentEvals: [
+    {
+      player: "Amara Diallo",
+      date: "2026-07-22",
+      type: { fr: "Mensuelle", en: "Monthly" },
+    },
+    {
+      player: "Jean Nkoulou",
+      date: "2026-07-18",
+      type: { fr: "Après-match", en: "Post-match" },
+    },
+  ],
+  attention: [
+    {
+      id: "p3",
+      reason: { fr: "Sans évaluation depuis 3 semaines", en: "No evaluation for 3 weeks" },
+    },
+    {
+      id: "p2",
+      reason: { fr: "Baisse tactique récente", en: "Recent tactical drop" },
+    },
+  ],
+};
 
 export const mockApplications: Application[] = [
   {
@@ -175,30 +215,155 @@ export const videosToReview = [
 ];
 
 export const parentData = {
-  attendance: { present: 18, total: 20, percentage: 90 },
+  children: [
+    {
+      id: "p1",
+      firstName: "Kofi",
+      lastName: "Mensah",
+      category: "U-16",
+      position: { fr: "Milieu de terrain", en: "Midfielder" },
+      group: { fr: "Groupe Élite", en: "Elite group" },
+      status: "active" as const,
+      lastEvaluation: "2026-07-21",
+      jersey: "8",
+    },
+    {
+      id: "p2",
+      firstName: "Awa",
+      lastName: "Mensah",
+      category: "U-14",
+      position: { fr: "Ailière droite", en: "Right winger" },
+      group: { fr: "Groupe Espoir", en: "Hope group" },
+      status: "active" as const,
+      lastEvaluation: "2026-07-18",
+      jersey: "11",
+    },
+  ],
+  attendance: {
+    present: 18,
+    total: 20,
+    percentage: 90,
+    absences: [
+      { date: "2026-07-08", reason: { fr: "Maladie", en: "Illness" } },
+      { date: "2026-06-22", reason: { fr: "Examen scolaire", en: "School exam" } },
+    ],
+  },
+  kpi: {
+    technical: { value: 78, delta: 4, hint: { fr: "Bon niveau", en: "Good level" } },
+    physical: {
+      value: 75,
+      delta: 2,
+      target: 80,
+      hint: { fr: "À renforcer", en: "Needs work" },
+    },
+    academicAverage: 14,
+    academicDelta: 0.8,
+    academicHint: { fr: "Niveau satisfaisant", en: "Satisfactory level" },
+  },
+  nextSession: {
+    date: "2026-07-28",
+    time: "16:00",
+    location: { fr: "Stade de Bonamoussadi", en: "Bonamoussadi Stadium" },
+    kit: { fr: "tenue blanche", en: "white kit" },
+    type: { fr: "Séance technique", en: "Technical session" },
+  },
   academic: {
-    grade: { fr: "Bien", en: "Good" },
+    average: "14/20",
+    averageValue: 14,
+    delta: 1.2,
+    updatedAt: "2026-07-15",
+    focus: { fr: "Anglais", en: "English" },
+    grade: { fr: "Niveau satisfaisant", en: "Satisfactory level" },
     subjects: [
-      { name: { fr: "Mathématiques", en: "Mathematics" }, grade: "14/20" },
-      { name: { fr: "Français", en: "French" }, grade: "15/20" },
-      { name: { fr: "Anglais", en: "English" }, grade: "13/20" },
+      { name: { fr: "Mathématiques", en: "Mathematics" }, grade: "14/20", value: 14 },
+      { name: { fr: "Français", en: "French" }, grade: "15/20", value: 15 },
+      { name: { fr: "Anglais", en: "English" }, grade: "13/20", value: 13 },
     ],
   },
   messages: [
     {
-      date: "2026-03-20",
-      title: { fr: "Réunion parents — Avril 2026", en: "Parents meeting — April 2026" },
-      preview: { fr: "Nous vous invitons à la réunion trimestrielle...", en: "We invite you to the quarterly meeting..." },
+      id: "m1",
+      date: "2026-07-25",
+      sender: { fr: "Coach Martin", en: "Coach Martin" },
+      title: { fr: "Préparation séance de mardi", en: "Tuesday session prep" },
+      preview: {
+        fr: "Merci d’amener la tenue blanche et les crampons secs.",
+        en: "Please bring the white kit and dry boots.",
+      },
+      unread: true,
+      needsReply: false,
     },
     {
-      date: "2026-03-10",
-      title: { fr: "Rapport de progression — Mars", en: "Progress report — March" },
-      preview: { fr: "Le rapport mensuel de Kofi est disponible...", en: "Kofi's monthly report is available..." },
+      id: "m2",
+      date: "2026-07-22",
+      sender: { fr: "Administration NOFA", en: "NOFA Admin" },
+      title: { fr: "Rapport de progression — Juillet", en: "Progress report — July" },
+      preview: {
+        fr: "Le rapport mensuel de Kofi est disponible au téléchargement.",
+        en: "Kofi's monthly report is ready to download.",
+      },
+      unread: true,
+      needsReply: false,
+    },
+    {
+      id: "m3",
+      date: "2026-07-18",
+      sender: { fr: "Service scolaire", en: "Academic service" },
+      title: { fr: "Bulletin trimestriel disponible", en: "Term report available" },
+      preview: {
+        fr: "Veuillez confirmer la lecture du bulletin avant le 30 juillet.",
+        en: "Please confirm you have read the report before July 30.",
+      },
+      unread: false,
+      needsReply: true,
     },
   ],
   documents: [
-    { name: { fr: "Règlement intérieur", en: "Internal regulations" }, type: "PDF" },
-    { name: { fr: "Calendrier scolaire 2026", en: "2026 school calendar" }, type: "PDF" },
-    { name: { fr: "Autorisation parentale", en: "Parental authorization" }, type: "PDF" },
+    {
+      id: "d1",
+      name: { fr: "Règlement intérieur", en: "Internal regulations" },
+      type: "PDF",
+      updatedAt: "2026-07-15",
+      size: "1,2 Mo",
+      toSign: false,
+    },
+    {
+      id: "d2",
+      name: { fr: "Calendrier scolaire 2026", en: "2026 school calendar" },
+      type: "PDF",
+      updatedAt: "2026-07-01",
+      size: "840 Ko",
+      toSign: false,
+    },
+    {
+      id: "d3",
+      name: { fr: "Autorisation parentale", en: "Parental authorization" },
+      type: "PDF",
+      updatedAt: "2026-07-20",
+      size: "320 Ko",
+      toSign: true,
+    },
+  ],
+  calendar: [
+    {
+      date: "2026-07-28",
+      time: "16:00",
+      title: { fr: "Séance technique", en: "Technical session" },
+    },
+    {
+      date: "2026-07-30",
+      time: "17:00",
+      title: { fr: "Match amical U16", en: "U16 friendly match" },
+    },
+    {
+      date: "2026-08-02",
+      time: "09:00",
+      title: { fr: "Évaluation physique", en: "Physical assessment" },
+    },
+    {
+      date: "2026-08-05",
+      time: "16:00",
+      title: { fr: "Séance tactique", en: "Tactical session" },
+    },
   ],
 };

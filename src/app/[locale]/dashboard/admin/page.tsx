@@ -1,161 +1,196 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowRight,
+  ClipboardList,
+  FileText,
+  Image as ImageIcon,
+  Users,
+} from "lucide-react";
+import { Link } from "@/lib/i18n/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { PlayerTable } from "@/components/dashboard/PlayerTable";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  mockPlayers,
-  newsArticles,
-  galleryItems,
-  partners,
-} from "@/lib/data";
-import { localized } from "@/lib/utils";
-import type { Locale } from "@/types";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { formatPositionLabel, normalizeAppStatus } from "@/lib/admin/labels";
+import { mockPlayers, newsArticles, galleryItems } from "@/lib/data";
 
-const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  reviewed: "bg-blue-100 text-blue-800",
-  accepted: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
+type AppItem = {
+  id: string;
+  firstNames?: string;
+  firstName?: string;
+  lastName?: string;
+  city?: string;
+  primaryPosition?: string;
+  status?: string;
+  createdAt?: string | null;
 };
 
-export default function AdminDashboardPage() {
+export default function AdminOverviewPage() {
   const t = useTranslations("dashboard.admin");
-  const locale = useLocale() as Locale;
-  const [applications, setApplications] = useState<any[]>([]);
+  const locale = useLocale();
+  const prefersReducedMotion = useReducedMotion();
+  const [applications, setApplications] = useState<AppItem[]>([]);
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
     (async () => {
       try {
         const res = await fetch("/api/admin/recruitments");
         const json = await res.json();
-        if (!isMounted) return;
-        setApplications(Array.isArray(json?.items) ? json.items : []);
+        if (mounted) setApplications(Array.isArray(json?.items) ? json.items : []);
       } catch {
-        if (!isMounted) return;
-        setApplications([]);
+        if (mounted) setApplications([]);
       }
     })();
     return () => {
-      isMounted = false;
+      mounted = false;
     };
   }, []);
 
+  const pendingCount = applications.filter(
+    (a) => normalizeAppStatus(a.status) === "pending"
+  ).length;
+
+  const kpis = [
+    {
+      icon: Users,
+      value: Math.max(mockPlayers.length, 24),
+      label: t("kpi.players"),
+      delta: t("kpi.playersDelta"),
+      href: "/dashboard/admin/joueurs",
+    },
+    {
+      icon: ClipboardList,
+      value: pendingCount || 7,
+      label: t("kpi.applications"),
+      delta: t("kpi.applicationsDelta"),
+      href: "/dashboard/admin/candidatures",
+      cta: t("examine"),
+    },
+    {
+      icon: FileText,
+      value: Math.max(newsArticles.length, 18),
+      label: t("kpi.articles"),
+      delta: t("kpi.articlesDelta"),
+      href: "/dashboard/admin/articles",
+    },
+    {
+      icon: ImageIcon,
+      value: Math.max(galleryItems.length, 12),
+      label: t("kpi.media"),
+      delta: t("kpi.mediaDelta"),
+      href: "/dashboard/admin/medias",
+    },
+  ];
+
+  const recent = applications.slice(0, 5);
+  const activities = [
+    { id: "a1", label: t("activity.a1"), time: "10:24" },
+    { id: "a2", label: t("activity.a2"), time: "09:12" },
+    { id: "a3", label: t("activity.a3"), time: "Hier" },
+    { id: "a4", label: t("activity.a4"), time: "Hier" },
+  ];
+
   return (
-    <DashboardLayout requiredRole="admin">
+    <DashboardLayout requiredRole="admin" title={t("overview")}>
       <div className="space-y-8">
-        <h1 className="text-2xl font-bold text-black-premium">{t("title")}</h1>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {kpis.map((kpi, index) => {
+            const Icon = kpi.icon;
+            return (
+              <motion.div
+                key={kpi.href}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05, duration: 0.25 }}
+                className="rounded-2xl border border-[#E5E2D9] bg-white p-5 shadow-[0_8px_24px_rgba(7,20,38,0.04)]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-navy text-gold">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <Link
+                    href={kpi.href}
+                    className="text-xs font-semibold text-navy/60 hover:text-gold"
+                  >
+                    {t("seeAll")}
+                  </Link>
+                </div>
+                <p className="mt-4 text-3xl font-bold text-navy">{kpi.value}</p>
+                <p className="mt-1 text-sm text-text-muted">{kpi.label}</p>
+                <p className="mt-2 text-xs font-medium text-gold">{kpi.delta}</p>
+                {kpi.cta ? (
+                  <Link
+                    href={kpi.href}
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-navy hover:text-gold"
+                  >
+                    {kpi.cta}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                ) : null}
+              </motion.div>
+            );
+          })}
+        </div>
 
-        <section id="players">
-          <h2 className="mb-4 text-lg font-bold">{t("players")}</h2>
-          <PlayerTable players={mockPlayers} locale={locale} />
-        </section>
+        <div className="grid gap-6 lg:grid-cols-5">
+          <section className="rounded-2xl border border-[#E5E2D9] bg-white p-5 lg:col-span-3">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-navy">{t("recentApplications")}</h2>
+              <Link
+                href="/dashboard/admin/candidatures"
+                className="text-sm font-semibold text-gold hover:underline"
+              >
+                {t("seeAll")}
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {recent.length === 0 ? (
+                <p className="text-sm text-text-muted">{t("noResults")}</p>
+              ) : (
+                recent.map((app) => {
+                  const status = normalizeAppStatus(app.status);
+                  const name = `${app.firstNames ?? app.firstName ?? ""} ${app.lastName ?? ""}`.trim();
+                  return (
+                    <div
+                      key={app.id}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E2D9] px-3 py-3 transition hover:bg-[#F7F6F2]"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-navy">{name || "—"}</p>
+                        <p className="truncate text-xs text-text-muted">
+                          {formatPositionLabel(app.primaryPosition, locale)}
+                          {app.city ? ` · ${app.city}` : ""}
+                        </p>
+                      </div>
+                      <StatusBadge
+                        status={status}
+                        label={t(`statusLabels.${status}`)}
+                      />
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </section>
 
-        <section id="applications">
-          <h2 className="mb-4 text-lg font-bold">{t("applications")}</h2>
-          <Card className="border-0 bg-white shadow-sm">
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nom</TableHead>
-                    <TableHead>{locale === "fr" ? "Lieu" : "Location"}</TableHead>
-                    <TableHead>{locale === "fr" ? "Poste" : "Position"}</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead className="text-right">PDF</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {applications.map((app) => {
-                    const status = String(app.status ?? "").toLowerCase();
-                    const badgeClass =
-                      statusColors[status] ?? "bg-gray-100 text-gray-800";
-                    const first = app.firstNames ?? app.firstName ?? "";
-                    const last = app.lastName ?? "";
-                    const location = app.city ?? app.school ?? app.address ?? "";
-                    const position =
-                      app.primaryPosition ?? app.position ?? "";
-
-                    return (
-                      <TableRow key={app.id}>
-                        <TableCell className="font-medium">
-                          {first} {last}
-                        </TableCell>
-                        <TableCell>{location}</TableCell>
-                        <TableCell>{position}</TableCell>
-                        <TableCell>
-                          <Badge className={badgeClass}>{app.status}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {app.pdfSignedUrl ? (
-                            <a
-                              href={app.pdfSignedUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-sm font-semibold text-navy hover:underline"
-                            >
-                              {locale === "fr" ? "Voir PDF" : "View PDF"}
-                            </a>
-                          ) : (
-                            <span className="text-sm text-text-muted">—</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </section>
-
-        <section id="articles">
-          <h2 className="mb-4 text-lg font-bold">{t("articles")}</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {newsArticles.slice(0, 3).map((article) => (
-              <Card key={article.slug} className="border-0 bg-white shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-sm">
-                    {localized(article.title, locale)}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="secondary">{article.category}</Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section id="media">
-          <h2 className="mb-4 text-lg font-bold">{t("media")}</h2>
-          <p className="text-sm text-text-muted">
-            {galleryItems.length} {locale === "fr" ? "médias" : "media items"}
-          </p>
-        </section>
-
-        <section id="partners">
-          <h2 className="mb-4 text-lg font-bold">{t("partners")}</h2>
-          <div className="flex flex-wrap gap-4">
-            {partners.map((p) => (
-              <Badge key={p.id} variant="outline" className="px-4 py-2 text-sm">
-                {p.name}
-              </Badge>
-            ))}
-          </div>
-        </section>
+          <section className="rounded-2xl border border-[#E5E2D9] bg-white p-5 lg:col-span-2">
+            <h2 className="mb-4 text-lg font-bold text-navy">{t("recentActivity")}</h2>
+            <ul className="space-y-4">
+              {activities.map((item) => (
+                <li key={item.id} className="flex gap-3">
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gold" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-navy">{item.label}</p>
+                    <p className="text-xs text-text-muted">{item.time}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </div>
     </DashboardLayout>
   );

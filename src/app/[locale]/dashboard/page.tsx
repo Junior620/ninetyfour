@@ -2,22 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "@/lib/i18n/navigation";
-import type { UserRole } from "@/types";
-
-const rolePaths: Record<UserRole, string> = {
-  player: "/dashboard/joueur",
-  parent: "/dashboard/parent",
-  coach: "/dashboard/coach",
-  admin: "/dashboard/admin",
-};
+import { getRoleClient, ROLE_PATHS } from "@/lib/auth/session";
 
 export default function DashboardRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const role = localStorage.getItem("nofa_role") as UserRole | null;
-    if (role && rolePaths[role]) {
-      router.replace(rolePaths[role]);
+    const role = getRoleClient();
+    if (role) {
+      router.replace(ROLE_PATHS[role]);
     } else {
       router.replace("/login");
     }

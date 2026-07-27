@@ -30,11 +30,19 @@ export type ContactFormData = z.infer<typeof contactSchema>;
 
 export const evaluationSchema = z.object({
   playerId: z.string().min(1),
+  date: z.string().min(1),
+  evalType: z.enum(["monthly", "quarterly", "match"]),
+  session: z.string().min(1),
+  evaluator: z.string().min(1),
   technical: z.number().min(0).max(100),
   tactical: z.number().min(0).max(100),
   physical: z.number().min(0).max(100),
   mental: z.number().min(0).max(100),
-  comment: z.string().min(5, "Commentaire requis"),
+  positives: z.string().optional(),
+  axes: z.string().optional(),
+  nextObjective: z.string().optional(),
+  commentInternal: z.string().optional(),
+  commentVisible: z.string().min(5, "Commentaire requis"),
 });
 
 export type EvaluationFormData = z.infer<typeof evaluationSchema>;

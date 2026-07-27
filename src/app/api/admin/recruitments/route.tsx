@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/serverClient";
+import { normalizeAppStatus } from "@/lib/admin/labels";
 
 type RecruitmentApplicationRow = {
   id: string;
@@ -9,12 +10,15 @@ type RecruitmentApplicationRow = {
   createdAt?: string;
 };
 
+function canUseSupabase() {
+  return (
+    !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+}
+
 export async function GET() {
   try {
-    const canUseSupabase =
-      !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!canUseSupabase) {
+    if (!canUseSupabase()) {
       return NextResponse.json({ items: [] });
     }
 
@@ -47,7 +51,6 @@ export async function GET() {
           status: row.status,
           pdfSignedUrl,
           createdAt: row.createdAt ?? null,
-          // form_data contient des clés comme firstNames/lastName/school/primaryPosition
           ...(row.form_data ?? {}),
         };
       })
@@ -60,3 +63,61 @@ export async function GET() {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const id = typeof body.id === "string" ? body.id : "";
+    const status = normalizeAppStatus(body.status);
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "missing_id" }, { status: 400 });
+    }
+
+    if (!canUseSupabase()) {
+      return NextResponse.json({ success: true, id, status, persisted: false });
+    }
+
+    const supabase = getSupabaseAdminClient();
+    const { error } = await supabase
+      .from("recruitment_applications")
+      .update({ status: status.toUpperCase() })
+      .eq("id", id);
+
+    if (error) {
+      console.error("[admin recruitments] patch error", error);
+      return NextResponse.json({ success: false, error: "update_failed" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, id, status, persisted: true });
+  } catch (e) {
+    console.error("[admin recruitments] patch error", e);
+    return NextResponse.json({ success: false, error: "server_error" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id") ?? "";
+    if (!id) {
+      return NextResponse.json({ success: false, error: "missing_id" }, { status: 400 });
+    }
+
+    if (!canUseSupabase()) {
+      return NextResponse.json({ success: true, id, persisted: false });
+    }
+
+    const supabase = getSupabaseAdminClient();
+    const { error } = await supabase.from("recruitment_applications").delete().eq("id", id);
+
+    if (error) {
+      console.error("[admin recruitments] delete error", error);
+      return NextResponse.json({ success: false, error: "delete_failed" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, id, persisted: true });
+  } catch (e) {
+    console.error("[admin recruitments] delete error", e);
+    return NextResponse.json({ success: false, error: "server_error" }, { status: 500 });
+  }
+}

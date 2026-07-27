@@ -97,6 +97,8 @@ export interface PerformanceDataPoint {
   month: string;
   technical: number;
   physical: number;
+  tactical?: number;
+  mental?: number;
 }
 
 export interface Application {

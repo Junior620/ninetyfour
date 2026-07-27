@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/lib/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { Menu, LogOut } from "lucide-react";
 import {
   Sheet,
@@ -10,8 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { AcademyLogo } from "./AcademyLogo";
-import { dashboardRoleNav } from "@/lib/dashboard-nav";
+import { dashboardRoleNav, isNavActive } from "@/lib/dashboard-nav";
 import { cn } from "@/lib/utils";
+import { clearRoleClient } from "@/lib/auth/session";
 import type { UserRole } from "@/types";
 
 interface DashboardMobileNavProps {
@@ -21,11 +22,12 @@ interface DashboardMobileNavProps {
 export function DashboardMobileNav({ role }: DashboardMobileNavProps) {
   const t = useTranslations("dashboard");
   const pathname = usePathname();
+  const router = useRouter();
   const links = dashboardRoleNav[role];
 
   function handleLogout() {
-    localStorage.removeItem("nofa_role");
-    window.location.href = "/login";
+    clearRoleClient();
+    router.replace("/login");
   }
 
   return (
@@ -36,36 +38,43 @@ export function DashboardMobileNav({ role }: DashboardMobileNavProps) {
       >
         <Menu className="h-6 w-6" />
       </SheetTrigger>
-      <SheetContent side="left" className="w-[280px] border-0 bg-navy p-0 text-white">
+      <SheetContent side="left" className="flex w-[280px] flex-col border-0 bg-navy p-0 text-white">
         <SheetTitle className="sr-only">Navigation dashboard</SheetTitle>
-        <div className="flex h-16 items-center border-b border-white/10 px-5">
+        <div className="border-b border-white/10 px-5 py-4">
           <AcademyLogo variant="sidebar" />
+          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-gold/80">
+            {role === "admin" ? t("admin.portal") : t("portal")}
+          </p>
         </div>
-        <nav className="space-y-1 p-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
           {links.map((link) => {
             const Icon = link.icon;
-            const isActive = pathname === link.href.split("#")[0];
+            const active = isNavActive(pathname, link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
-                  isActive
-                    ? "bg-gold/10 text-gold"
-                    : "text-white/70 hover:bg-white/5 hover:text-white"
+                  "relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200",
+                  active
+                    ? "bg-gold/15 text-white"
+                    : "text-white/65 hover:bg-white/5 hover:text-white"
                 )}
               >
-                <Icon className="h-4 w-4 shrink-0" />
+                {active ? (
+                  <span className="absolute top-1/2 left-0 h-6 w-1 -translate-y-1/2 rounded-r bg-gold" />
+                ) : null}
+                <Icon className={cn("h-4 w-4 shrink-0", active && "text-gold")} />
                 {t(link.label)}
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-white/10 p-4">
+        <div className="mt-auto border-t border-white/10 p-4">
           <button
+            type="button"
             onClick={handleLogout}
-            className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white"
+            className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white/65 hover:bg-white/5 hover:text-white"
           >
             <LogOut className="h-4 w-4" />
             {t("logout")}

@@ -2,9 +2,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { BackToTop } from "@/components/layout/BackToTop";
+import { LocaleChrome } from "@/components/layout/LocaleChrome";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -28,10 +26,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <Header />
-      <main className="flex flex-1 flex-col">{children}</main>
-      <Footer />
-      <BackToTop />
+      <LocaleChrome>{children}</LocaleChrome>
     </NextIntlClientProvider>
   );
 }
