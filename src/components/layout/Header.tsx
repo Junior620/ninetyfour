@@ -21,6 +21,7 @@ const navLinkClass =
 
 export function Header() {
   const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -91,7 +92,7 @@ export function Header() {
 
           <nav
             className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:flex"
-            aria-label="Main navigation"
+            aria-label={tCommon("mainNav")}
           >
             {desktopNavItems.map((item) =>
               item.type === "link"
@@ -156,7 +157,7 @@ export function Header() {
           <button
             className="ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-md text-navy xl:hidden"
             onClick={() => setMobileOpen(true)}
-            aria-label="Ouvrir le menu"
+            aria-label={tCommon("openMenu")}
           >
             <Menu className="h-6 w-6" />
           </button>

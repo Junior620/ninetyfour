@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/schema";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
 import { ProgramTimeline } from "@/components/program/ProgramTimeline";
@@ -15,8 +18,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "program" });
-  return { title: t("title"), description: t("subtitle") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "/programme",
+    title: t("program.title"),
+    description: t("program.description"),
+  });
 }
 
 export default async function ProgramPage({
@@ -28,6 +36,7 @@ export default async function ProgramPage({
   setRequestLocale(locale);
   const loc = locale as Locale;
   const t = await getTranslations({ locale, namespace: "program" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   const steps = programSteps.map((step) => ({
     title: localized(step.title, loc),
@@ -38,6 +47,12 @@ export default async function ProgramPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(locale, [
+          { name: tNav("home"), path: "/" },
+          { name: t("title"), path: "/programme" },
+        ])}
+      />
       <HeroSection title={t("title")} subtitle={t("subtitle")} compact />
 
       <section className="section-padding bg-cream">

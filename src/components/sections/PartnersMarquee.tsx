@@ -19,7 +19,8 @@ export function PartnersMarquee({
   subtitle,
   ctaLabel,
 }: PartnersMarqueeProps) {
-  const items = [...partners, ...partners, ...partners, ...partners];
+  // Visual loop uses clones; only the first set is exposed to AT / SEO
+  const clones = [...partners, ...partners, ...partners];
 
   return (
     <section className="border-b border-border bg-cream py-10 sm:py-14">
@@ -39,9 +40,9 @@ export function PartnersMarquee({
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-cream to-transparent sm:w-20" />
 
         <div className="partners-marquee-track flex w-max items-center gap-10 py-2 sm:gap-16 md:gap-20">
-          {items.map((partner, index) => (
+          {partners.map((partner) => (
             <div
-              key={`${partner.id}-${index}`}
+              key={partner.id}
               className="flex shrink-0 items-center justify-center"
             >
               {partner.logo ? (
@@ -60,6 +61,29 @@ export function PartnersMarquee({
               )}
             </div>
           ))}
+          <div aria-hidden="true" className="flex items-center gap-10 sm:gap-16 md:gap-20">
+            {clones.map((partner, index) => (
+              <div
+                key={`${partner.id}-clone-${index}`}
+                className="flex shrink-0 items-center justify-center"
+              >
+                {partner.logo ? (
+                  <Image
+                    src={partner.logo}
+                    alt=""
+                    width={320}
+                    height={120}
+                    className="h-14 w-auto max-h-14 object-contain opacity-90 drop-shadow-[0_8px_16px_rgba(7,20,38,0.18)] sm:h-20 sm:max-h-20 md:h-24 md:max-h-24"
+                    unoptimized
+                  />
+                ) : (
+                  <span className="text-sm font-bold uppercase tracking-[0.18em] text-navy/50">
+                    {partner.name}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -279,13 +279,15 @@ export const visionContent = {
 
 export const contactInfo = {
   email: "contact@ninetyonefoot.academy",
-  phone: "+237 6XX XXX XXX",
-  whatsapp: "https://wa.me/237600000000",
+  /** Placeholder — do not use in Schema.org until confirmed */
+  phone: null as string | null,
+  whatsapp: null as string | null,
   address: { fr: "Douala, Cameroun", en: "Douala, Cameroon" },
+  /** Only real profile URLs — empty until official accounts are provided */
   social: {
-    instagram: "https://instagram.com",
-    facebook: "https://facebook.com",
-    twitter: "https://twitter.com",
+    instagram: null as string | null,
+    facebook: null as string | null,
+    twitter: null as string | null,
   },
 };
 

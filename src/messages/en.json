@@ -2,7 +2,7 @@
   "metadata": {
     "siteName": "Ninety One Foot Academy",
     "tagline": "Talent. Education. Performance.",
-    "description": "Football academy in Douala dedicated to the sporting, academic and human development of young African talents."
+    "description": "Football academy in Douala, Cameroon: structured training, academic support and development for young African talents aged 15 to 17."
   },
   "nav": {
     "home": "Home",
@@ -40,7 +40,9 @@
     "all": "All",
     "filter": "Filter",
     "close": "Close",
-    "whatsapp": "Message on WhatsApp"
+    "whatsapp": "Message on WhatsApp",
+    "mainNav": "Main navigation",
+    "openMenu": "Open menu"
   },
   "home": {
     "heroTitle": "Shaping tomorrow's African football leaders",
@@ -223,7 +225,9 @@
     "title": "Contact",
     "subtitle": "Let's stay in touch",
     "address": "Douala, Cameroon",
-    "formTitle": "Send us a message"
+    "formTitle": "Send us a message",
+    "phonePending": "Official phone number to be confirmed — please email us.",
+    "emailLabel": "Email"
   },
   "login": {
     "eyebrow": "Member access",
@@ -539,5 +543,63 @@
     "contact": "Contact",
     "social": "Social media",
     "rights": "All rights reserved."
+  },
+  "seo": {
+    "home": {
+      "title": "Youth Football Academy in Douala | Ninety One Foot Academy",
+      "description": "Youth football academy in Douala, Cameroon for ages 15–17: structured training, academic support, performance and leadership. Applications open."
+    },
+    "academy": {
+      "title": "Football Academy in Douala — Our Project",
+      "description": "Discover Ninety One Foot Academy in Douala: history, approach and development model for young African footballers."
+    },
+    "vision": {
+      "title": "Vision and Values — Football Academy Cameroon",
+      "description": "Vision, mission and values of Ninety One Foot Academy: developing African football leaders in Douala."
+    },
+    "program": {
+      "title": "Youth Football Development Program Douala",
+      "description": "Structured football pathway in Douala: recruitment, training, education and support toward elite level."
+    },
+    "training": {
+      "title": "Youth Football Training Cameroon",
+      "description": "Structured football training in Douala: 4 sessions per week covering technique, tactics, fitness and mindset for ages 15–17."
+    },
+    "education": {
+      "title": "Academic Support for Young Footballers — Douala",
+      "description": "Academic follow-up and personal development for young footballers at Ninety One Foot Academy in Douala."
+    },
+    "performanceLab": {
+      "title": "Football Performance Academy Africa",
+      "description": "Performance Lab: video analysis, data and technology supporting youth talent development in Douala."
+    },
+    "partners": {
+      "title": "Partners and Sponsors — African Football Academy",
+      "description": "Partners of Ninety One Foot Academy: an ecosystem supporting youth talent development in Douala."
+    },
+    "ambassadors": {
+      "title": "International Patrons and Ambassadors",
+      "description": "Patrons and ambassadors supporting Ninety One Foot Academy in Douala through their network and commitment."
+    },
+    "news": {
+      "title": "News — Football Academy Douala",
+      "description": "News from Ninety One Foot Academy: trials, training, matches and academy life in Douala."
+    },
+    "gallery": {
+      "title": "Gallery — Academy Life in Douala",
+      "description": "Photos and videos from Ninety One Foot Academy: training, events and youth player life in Douala."
+    },
+    "join": {
+      "title": "Join a Football Academy in Cameroon",
+      "description": "Apply to Ninety One Foot Academy in Douala: trials and training for young footballers aged 15 to 17."
+    },
+    "contact": {
+      "title": "Contact — Football Academy Douala",
+      "description": "Contact Ninety One Foot Academy in Douala: applications, partnerships and football training information."
+    },
+    "login": {
+      "title": "Private Area",
+      "description": "Sign in to the Ninety One Foot Academy private area."
+    }
   }
 }

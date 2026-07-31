@@ -13,7 +13,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx --env-file=.env.local prisma/seed.ts",
-    "db:setup": "prisma db push && npm run db:seed"
+    "db:setup": "prisma db push && npm run db:seed",
+    "indexnow:key": "node --env-file=.env.local scripts/ensure-indexnow-key.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

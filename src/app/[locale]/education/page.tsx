@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/schema";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
 import { QuoteSection } from "@/components/sections/QuoteSection";
@@ -14,8 +17,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "education" });
-  return { title: t("title"), description: t("subtitle") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "/education",
+    title: t("education.title"),
+    description: t("education.description"),
+  });
 }
 
 export default async function EducationPage({
@@ -27,6 +35,7 @@ export default async function EducationPage({
   setRequestLocale(locale);
   const loc = locale as Locale;
   const t = await getTranslations({ locale, namespace: "education" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   const sections = [
     { title: t("academicTitle"), items: educationSections.academic },
@@ -36,6 +45,12 @@ export default async function EducationPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(locale, [
+          { name: tNav("home"), path: "/" },
+          { name: t("title"), path: "/education" },
+        ])}
+      />
       <HeroSection
         title={t("title")}
         subtitle={t("subtitle")}

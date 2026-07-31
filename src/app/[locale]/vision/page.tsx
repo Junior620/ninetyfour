@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/schema";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
 import { QuoteSection } from "@/components/sections/QuoteSection";
@@ -14,8 +17,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "vision" });
-  return { title: t("title") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "/vision",
+    title: t("vision.title"),
+    description: t("vision.description"),
+  });
 }
 
 export default async function VisionPage({
@@ -27,6 +35,7 @@ export default async function VisionPage({
   setRequestLocale(locale);
   const loc = locale as Locale;
   const t = await getTranslations({ locale, namespace: "vision" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   const blocks = [
     { title: t("visionTitle"), content: visionContent.vision },
@@ -36,6 +45,12 @@ export default async function VisionPage({
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(locale, [
+          { name: tNav("home"), path: "/" },
+          { name: t("title"), path: "/vision" },
+        ])}
+      />
       <HeroSection title={t("title")} image={images.team} compact />
 
       <section className="section-padding bg-cream">

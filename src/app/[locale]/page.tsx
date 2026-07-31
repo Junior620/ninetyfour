@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { Link } from "@/lib/i18n/navigation";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
@@ -31,32 +32,14 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "metadata" });
-  const title = t("siteName");
-  const description = t("description");
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      locale: locale === "en" ? "en_US" : "fr_FR",
-      images: [
-        {
-          url: "/og-image.png",
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["/og-image.png"],
-    },
-  };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "",
+    title: t("home.title"),
+    description: t("home.description"),
+    absoluteTitle: true,
+  });
 }
 
 export default async function HomePage({

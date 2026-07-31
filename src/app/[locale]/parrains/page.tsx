@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/schema";
 import {
   Gift,
   Megaphone,
@@ -29,8 +32,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "ambassadors" });
-  return { title: t("title"), description: t("intro") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "/parrains",
+    title: t("ambassadors.title"),
+    description: t("ambassadors.description"),
+  });
 }
 
 export default async function AmbassadorsPage({
@@ -42,10 +50,17 @@ export default async function AmbassadorsPage({
   setRequestLocale(locale);
   const loc = locale as Locale;
   const t = await getTranslations({ locale, namespace: "ambassadors" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(locale, [
+          { name: tNav("home"), path: "/" },
+          { name: t("title"), path: "/parrains" },
+        ])}
+      />
       <HeroSection title={t("heroTitle")} compact />
 
       <section className="section-padding bg-cream">

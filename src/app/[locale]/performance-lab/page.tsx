@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/schema";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { SectionTitle } from "@/components/sections/SectionTitle";
 import { PillarCard, MetricCard } from "@/components/cards/StatCard";
@@ -19,8 +22,13 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "performanceLab" });
-  return { title: t("title"), description: t("heroTitle") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return buildPageMetadata({
+    locale,
+    path: "/performance-lab",
+    title: t("performanceLab.title"),
+    description: t("performanceLab.description"),
+  });
 }
 
 export default async function PerformanceLabPage({
@@ -32,9 +40,16 @@ export default async function PerformanceLabPage({
   setRequestLocale(locale);
   const loc = locale as Locale;
   const t = await getTranslations({ locale, namespace: "performanceLab" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd(locale, [
+          { name: tNav("home"), path: "/" },
+          { name: t("title"), path: "/performance-lab" },
+        ])}
+      />
       <HeroSection
         title={t("heroTitle")}
         image={images.performance}

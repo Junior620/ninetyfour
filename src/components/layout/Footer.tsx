@@ -33,6 +33,7 @@ export function Footer() {
               <li><Link href="/vision" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("vision")}</Link></li>
               <li><Link href="/partenaires" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("partners")}</Link></li>
               <li><Link href="/actualites" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("news")}</Link></li>
+              <li><Link href="/galerie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("gallery")}</Link></li>
             </ul>
           </div>
 

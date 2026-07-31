@@ -2,7 +2,7 @@
   "metadata": {
     "siteName": "Ninety One Foot Academy",
     "tagline": "Talent. Éducation. Performance.",
-    "description": "Académie de football à Douala dédiée au développement sportif, académique et humain des jeunes talents africains."
+    "description": "Académie de football à Douala (Cameroun) : formation sportive, suivi scolaire et développement des jeunes talents africains de 15 à 17 ans."
   },
   "nav": {
     "home": "Accueil",
@@ -40,7 +40,9 @@
     "all": "Tous",
     "filter": "Filtrer",
     "close": "Fermer",
-    "whatsapp": "Écrire sur WhatsApp"
+    "whatsapp": "Écrire sur WhatsApp",
+    "mainNav": "Navigation principale",
+    "openMenu": "Ouvrir le menu"
   },
   "home": {
     "heroTitle": "Former les leaders du football africain de demain",
@@ -104,7 +106,7 @@
       "age": "15–17 ans",
       "sessions": "4 séances/semaine",
       "location": "Douala",
-      "tracking": "Performance tracking"
+      "tracking": "Suivi de performance"
     }
   },
   "academy": {
@@ -223,7 +225,9 @@
     "title": "Contact",
     "subtitle": "Restons en contact",
     "address": "Douala, Cameroun",
-    "formTitle": "Envoyez-nous un message"
+    "formTitle": "Envoyez-nous un message",
+    "phonePending": "Numéro officiel à confirmer — contactez-nous par e-mail.",
+    "emailLabel": "E-mail"
   },
   "login": {
     "eyebrow": "Accès membres",
@@ -539,5 +543,63 @@
     "contact": "Contact",
     "social": "Réseaux sociaux",
     "rights": "Tous droits réservés."
+  },
+  "seo": {
+    "home": {
+      "title": "Académie de football à Douala | Ninety One Foot Academy",
+      "description": "Académie de football à Douala (Cameroun) pour jeunes de 15–17 ans : formation sportive, suivi scolaire, performance et leadership. Candidature ouverte."
+    },
+    "academy": {
+      "title": "Académie de football à Douala — Notre projet",
+      "description": "Découvrez Ninety One Foot Academy à Douala : histoire, approche et modèle de formation pour jeunes footballeurs africains."
+    },
+    "vision": {
+      "title": "Vision et valeurs — Académie football Cameroun",
+      "description": "Vision, mission et valeurs de Ninety One Foot Academy : former des leaders du football africain à Douala."
+    },
+    "program": {
+      "title": "Programme de formation football jeunes Douala",
+      "description": "Parcours structuré de formation football à Douala : recrutement, entraînement, éducation et accompagnement vers le haut niveau."
+    },
+    "training": {
+      "title": "Formation sportive football jeunes Cameroun",
+      "description": "Formation sportive structurée à Douala : 4 séances par semaine, technique, tactique, physique et mental pour les 15–17 ans."
+    },
+    "education": {
+      "title": "Suivi scolaire joueurs de football — Douala",
+      "description": "Suivi scolaire et développement personnel pour les jeunes footballeurs de Ninety One Foot Academy à Douala."
+    },
+    "performanceLab": {
+      "title": "Centre de performance football Cameroun",
+      "description": "Performance Lab : analyse vidéo, données et technologies au service de la progression des jeunes talents à Douala."
+    },
+    "partners": {
+      "title": "Partenaires et sponsors — Académie football Afrique",
+      "description": "Partenaires de Ninety One Foot Academy : écosystème au service de la formation des jeunes talents africains à Douala."
+    },
+    "ambassadors": {
+      "title": "Parrains et ambassadeurs internationaux",
+      "description": "Parrains et ambassadeurs qui soutiennent Ninety One Foot Academy à Douala par leur réseau et leur engagement."
+    },
+    "news": {
+      "title": "Actualités — Académie de football Douala",
+      "description": "Actualités de Ninety One Foot Academy : détections, formation, matchs et vie de l’académie à Douala."
+    },
+    "gallery": {
+      "title": "Galerie — Vie de l’académie à Douala",
+      "description": "Photos et vidéos de Ninety One Foot Academy : entraînements, événements et vie des jeunes joueurs à Douala."
+    },
+    "join": {
+      "title": "Candidature académie de football Cameroun",
+      "description": "Rejoignez Ninety One Foot Academy à Douala : candidature, détections et formation pour jeunes footballeurs de 15 à 17 ans."
+    },
+    "contact": {
+      "title": "Contact — Académie de football Douala",
+      "description": "Contactez Ninety One Foot Academy à Douala : candidatures, partenariats et informations sur la formation football."
+    },
+    "login": {
+      "title": "Espace privé",
+      "description": "Connexion à l’espace privé Ninety One Foot Academy."
+    }
   }
 }

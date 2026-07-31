@@ -1,0 +1,111 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { GalleryGrid } from "@/components/gallery/GalleryGrid";
+import { ImageCarousel } from "@/components/gallery/ImageCarousel";
+import { imageItems, videoItems } from "@/lib/data";
+import { localized } from "@/lib/utils";
+import type { Locale, GalleryCategory } from "@/types";
+import { cn } from "@/lib/utils";
+
+const categories: (GalleryCategory | "all")[] = [
+  "all",
+  "training",
+  "matches",
+  "academy-life",
+  "partners",
+  "education",
+];
+
+export function GalleryPageClient() {
+  const t = useTranslations("gallery");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const [filter, setFilter] = useState<GalleryCategory | "all">("all");
+
+  const categoryLabels = Object.fromEntries(
+    categories
+      .filter((c) => c !== "all")
+      .map((c) => [c, t(`categories.${c}`)])
+  );
+
+  const filtered =
+    filter === "all"
+      ? imageItems
+      : imageItems.filter((item) => item.category === filter);
+
+  const galleryData = filtered.map((item) => ({
+    id: item.id,
+    title: localized(item.title, locale),
+    image: item.image,
+    category: item.category,
+    type: item.type,
+    videoUrl: item.videoUrl,
+  }));
+
+  const videoData = videoItems.map((item) => ({
+    id: item.id,
+    title: localized(item.title, locale),
+    image: item.image,
+    category: item.category,
+    type: item.type as "video",
+    videoUrl: item.videoUrl,
+  }));
+
+  return (
+    <>
+      <section className="section-padding bg-navy">
+        <div className="container-wide text-center">
+          <h1 className="page-hero-title">{t("title")}</h1>
+          <p className="page-hero-subtitle">{t("subtitle")}</p>
+        </div>
+      </section>
+
+      <section className="section-padding bg-cream">
+        <div className="container-wide">
+          {imageItems.length > 0 && (
+            <div className="mb-10">
+              <ImageCarousel
+                items={imageItems.slice(0, 6).map((item) => ({
+                  id: item.id,
+                  title: localized(item.title, locale),
+                  image: item.image,
+                }))}
+              />
+            </div>
+          )}
+
+          <div className="mb-8 flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setFilter(cat)}
+                className={cn(
+                  "filter-chip",
+                  filter === cat
+                    ? "bg-navy text-white"
+                    : "bg-white text-text-muted hover:bg-navy/10"
+                )}
+              >
+                {cat === "all" ? tCommon("all") : t(`categories.${cat}`)}
+              </button>
+            ))}
+          </div>
+
+          <GalleryGrid items={galleryData} categoryLabels={categoryLabels} />
+        </div>
+      </section>
+
+      <section className="section-padding bg-white">
+        <div className="container-wide">
+          <h2 className="mb-8 text-2xl font-bold uppercase tracking-wide text-black-premium">
+            {t("videosTitle")}
+          </h2>
+          <GalleryGrid items={videoData} categoryLabels={categoryLabels} />
+        </div>
+      </section>
+    </>
+  );
+}
