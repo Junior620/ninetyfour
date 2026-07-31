@@ -20,10 +20,14 @@ export const applicationSchema = z.object({
 export type ApplicationFormData = z.infer<typeof applicationSchema>;
 
 export const contactSchema = z.object({
-  name: z.string().min(2, "Nom requis"),
-  email: z.string().email("Email invalide"),
-  subject: z.string().min(3, "Sujet requis"),
-  message: z.string().min(10, "Message trop court"),
+  name: z.string().min(2, "Nom requis").max(120),
+  email: z.string().email("Email invalide").max(200),
+  subject: z.string().min(3, "Sujet requis").max(200),
+  message: z.string().min(10, "Message trop court").max(5000),
+  locale: z.enum(["fr", "en"]).optional(),
+  /** Honeypot — must stay empty */
+  website: z.string().max(200).optional(),
+  idempotencyKey: z.string().min(8).max(80).optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;

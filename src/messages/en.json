@@ -208,7 +208,7 @@
   "recruitment": {
     "title": "Registration sheet (recruitment)",
     "submit": "Submit",
-    "submitted": "Application submitted. Your PDF is downloading and will also be emailed.",
+    "submitted": "Your application was submitted. The PDF is downloading and a confirmation email has been sent.",
     "downloadPdf": "Download PDF",
     "next": "Next",
     "previous": "Previous",
@@ -600,6 +600,35 @@
     "login": {
       "title": "Private Area",
       "description": "Sign in to the Ninety One Foot Academy private area."
+    }
+  },
+  "forms": {
+    "success": {
+      "title": "Your request has been sent",
+      "body": "Thank you for contacting us. A confirmation email has just been sent to {email}.",
+      "reference": "Reference:",
+      "spamHint": "Please check your spam folder if you do not see the email in your inbox.",
+      "home": "Back to home",
+      "academy": "Discover the academy"
+    },
+    "result": {
+      "sending": "Sending…",
+      "successTitle": "Your request has been submitted successfully",
+      "successBody": "Thank you for contacting us. Your request has been received and forwarded to our team.",
+      "receivedTitle": "Your request has been received",
+      "receivedBody": "Your request has been forwarded to our team.",
+      "emailSent": "A confirmation email has been sent to {email}.",
+      "emailFailed": "However, the confirmation email could not be sent at this time.",
+      "reference": "Request reference:",
+      "followUp": "Our team will carefully review your request and contact you if further information is required.",
+      "spamHint": "Please check your spam folder if the confirmation email does not appear in your inbox.",
+      "home": "Back to home",
+      "academy": "Discover the academy",
+      "newRequest": "Submit another request",
+      "errorTitle": "Your request could not be sent",
+      "errorBody": "Something went wrong. Please check your information and try again in a few moments.",
+      "retry": "Try again",
+      "contactOther": "Contact us another way"
     }
   }
 }

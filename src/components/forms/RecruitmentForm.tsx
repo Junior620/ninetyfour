@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FormSubmissionResult, FormSubmitLabel, type FormSubmissionStatus } from "@/components/forms/FormSubmissionResult";
 import { cn } from "@/lib/utils";
+
+function createIdempotencyKey() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `k-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
 
 const STEP_KEYS = ["photo", "contacts", "profile", "health", "documents"] as const;
 
@@ -75,9 +83,17 @@ export function RecruitmentForm() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [docFiles, setDocFiles] = useState<Record<string, File | null>>({});
   const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [view, setView] = useState<"form" | "result">("form");
+  const [resultStatus, setResultStatus] =
+    useState<FormSubmissionStatus>("success");
+  const [successMeta, setSuccessMeta] = useState<{
+    reference?: string;
+    maskedEmail?: string;
+    emailSent?: boolean;
+  } | null>(null);
   const [pdfDownloadUrl, setPdfDownloadUrl] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState("fiche-enregistrement.pdf");
+  const idempotencyKey = useRef(createIdempotencyKey());
   // Évite le mismatch SSR/client sur l’attribut HTML `disabled` (Base UI / React 19)
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
@@ -211,6 +227,9 @@ export function RecruitmentForm() {
       formData.append(k, typeof v === "boolean" ? String(v) : String(v));
     }
     formData.append("photo", photoFile);
+    formData.append("locale", locale === "en" ? "en" : "fr");
+    formData.append("idempotencyKey", idempotencyKey.current);
+    formData.append("website", "");
 
     if (docProvidedKeys.birth) formData.append("birthCertificate", docFiles.birthCertificate as File);
     if (docProvidedKeys.parental) formData.append("parentalAuth", docFiles.parentalAuth as File);
@@ -219,13 +238,21 @@ export function RecruitmentForm() {
 
     try {
       const res = await fetch("/api/recruitments", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Failed");
-
       const json = (await res.json()) as {
         success?: boolean;
         pdfBase64?: string;
         fileName?: string;
+        reference?: string;
+        maskedEmail?: string;
+        emailSent?: boolean;
       };
+
+      if (!res.ok || !json.success) {
+        setResultStatus("error");
+        setSuccessMeta(null);
+        setView("result");
+        return;
+      }
 
       if (json.pdfBase64) {
         downloadPdfFromBase64(
@@ -234,28 +261,51 @@ export function RecruitmentForm() {
         );
       }
 
-      setSubmitted(true);
+      const emailSent = Boolean(json.emailSent);
+      setSuccessMeta({
+        reference: json.reference,
+        maskedEmail: json.maskedEmail,
+        emailSent,
+      });
+      setResultStatus(emailSent ? "success" : "received");
+      setView("result");
     } catch {
-      setError(isFr ? "Une erreur est survenue." : "An error occurred.");
+      setResultStatus("error");
+      setSuccessMeta(null);
+      setView("result");
     }
   }
 
-  if (submitted) {
+  function handleReset() {
+    idempotencyKey.current = createIdempotencyKey();
+    setView("form");
+    setSuccessMeta(null);
+    setResultStatus("success");
+    setError("");
+    setStep(0);
+    setPdfDownloadUrl(null);
+  }
+
+  if (view === "result") {
     return (
-      <Card className="border-0 bg-white shadow-sm">
-        <CardContent className="space-y-4 p-8 text-center">
-          <p className="text-lg font-medium text-royal">{t("submitted")}</p>
-          {pdfDownloadUrl && (
-            <a
-              href={pdfDownloadUrl}
-              download={pdfFileName}
-              className="inline-flex h-8 items-center justify-center rounded-lg bg-gold px-3 text-sm font-medium text-navy transition-colors hover:bg-gold/90"
-            >
-              {t("downloadPdf")}
-            </a>
-          )}
-        </CardContent>
-      </Card>
+      <FormSubmissionResult
+        status={resultStatus}
+        reference={successMeta?.reference}
+        maskedEmail={successMeta?.maskedEmail}
+        emailSent={successMeta?.emailSent}
+        allowReset={resultStatus !== "error"}
+        onReset={handleReset}
+      >
+        {resultStatus !== "error" && pdfDownloadUrl ? (
+          <a
+            href={pdfDownloadUrl}
+            download={pdfFileName}
+            className="inline-flex h-10 items-center justify-center rounded-lg bg-navy px-4 text-sm font-medium text-white transition-colors hover:bg-navy/90"
+          >
+            {t("downloadPdf")}
+          </a>
+        ) : null}
+      </FormSubmissionResult>
     );
   }
 
@@ -306,6 +356,20 @@ export function RecruitmentForm() {
 
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div
+            className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden"
+            aria-hidden
+          >
+            <label htmlFor="recruitment-website">Website</label>
+            <input
+              id="recruitment-website"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              defaultValue=""
+            />
+          </div>
           {step === 0 && (
             <section className="space-y-5">
               <h3 className="text-sm font-bold uppercase tracking-wide text-navy">
@@ -624,9 +688,10 @@ export function RecruitmentForm() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
+                aria-busy={isSubmitting}
+                className="min-h-11 w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
               >
-                {isSubmitting ? (isFr ? "Envoi..." : "Sending...") : t("submit")}
+                <FormSubmitLabel loading={isSubmitting} idleLabel={t("submit")} />
               </Button>
             ) : (
               <Button

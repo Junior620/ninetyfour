@@ -208,7 +208,7 @@
   "recruitment": {
     "title": "Fiche d’enregistrement (recrutement)",
     "submit": "Soumettre",
-    "submitted": "Candidature envoyée. Le PDF se télécharge et arrive aussi par email.",
+    "submitted": "Votre dossier a été transmis. Le PDF se télécharge et une confirmation vous a été envoyée par email.",
     "downloadPdf": "Télécharger le PDF",
     "next": "Suivant",
     "previous": "Précédent",
@@ -600,6 +600,35 @@
     "login": {
       "title": "Espace privé",
       "description": "Connexion à l’espace privé Ninety One Foot Academy."
+    }
+  },
+  "forms": {
+    "success": {
+      "title": "Votre demande a bien été envoyée",
+      "body": "Merci de nous avoir contactés. Un email de confirmation vient d’être envoyé à {email}.",
+      "reference": "Référence :",
+      "spamHint": "Pensez à vérifier vos courriers indésirables si l’email n’apparaît pas dans votre boîte de réception.",
+      "home": "Retour à l’accueil",
+      "academy": "Découvrir l’académie"
+    },
+    "result": {
+      "sending": "Envoi en cours…",
+      "successTitle": "Votre demande a bien été envoyée",
+      "successBody": "Merci de nous avoir contactés. Votre demande a été reçue et transmise à notre équipe.",
+      "receivedTitle": "Votre demande a bien été reçue",
+      "receivedBody": "Votre demande a été transmise à notre équipe.",
+      "emailSent": "Un email de confirmation vient d’être envoyé à {email}.",
+      "emailFailed": "Cependant, l’email de confirmation n’a pas pu être envoyé pour le moment.",
+      "reference": "Référence de votre demande :",
+      "followUp": "Notre équipe examinera votre demande avec attention et reviendra vers vous si des informations complémentaires sont nécessaires.",
+      "spamHint": "Pensez à vérifier votre dossier de courriers indésirables si vous ne trouvez pas l’email de confirmation.",
+      "home": "Retour à l’accueil",
+      "academy": "Découvrir l’académie",
+      "newRequest": "Envoyer une nouvelle demande",
+      "errorTitle": "Votre demande n’a pas pu être envoyée",
+      "errorBody": "Une erreur est survenue. Veuillez vérifier vos informations et réessayer dans quelques instants.",
+      "retry": "Réessayer",
+      "contactOther": "Nous contacter autrement"
     }
   }
 }
