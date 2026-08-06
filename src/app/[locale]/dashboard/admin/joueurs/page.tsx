@@ -18,10 +18,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { mockPlayers } from "@/lib/data";
 import { localized, cn } from "@/lib/utils";
-import type { Locale } from "@/types";
+import type { Locale, Player } from "@/types";
 
 function categoryFromAge(age: number) {
   if (age <= 14) return "U-14";
@@ -35,13 +42,7 @@ function progressTone(text: string) {
   return "text-slate-600 bg-slate-100";
 }
 
-function ScoreBar({
-  value,
-  label,
-}: {
-  value: number;
-  label: string;
-}) {
+function ScoreBar({ value, label }: { value: number; label: string }) {
   const filled = Math.round(value / 20);
   return (
     <div className="min-w-[7rem]" title={`${label} ${value}/100`}>
@@ -64,26 +65,97 @@ function ScoreBar({
   );
 }
 
+type PlayerStatus = "active" | "injured" | "suspended";
+
+type PlayerRow = Player & { status: PlayerStatus };
+
 export default function AdminPlayersPage() {
   const t = useTranslations("dashboard.admin");
   const locale = useLocale() as Locale;
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("all");
   const [page, setPage] = useState(0);
+  const [players, setPlayers] = useState<PlayerRow[]>(() =>
+    mockPlayers.map((p, idx) => ({
+      ...p,
+      status: idx === 1 ? "injured" : idx === 2 ? "suspended" : "active",
+    }))
+  );
+  const [selected, setSelected] = useState<PlayerRow | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState({
+    firstName: "",
+    lastName: "",
+    age: 0,
+    technicalScore: 0,
+    tacticalScore: 0,
+    physicalScore: 0,
+    status: "active" as PlayerStatus,
+  });
   const pageSize = 8;
 
   const filtered = useMemo(() => {
-    return mockPlayers.filter((p) => {
+    return players.filter((p) => {
       const name = `${p.firstName} ${p.lastName}`.toLowerCase();
       const cat = categoryFromAge(p.age);
       const matchQ = !q || name.includes(q.toLowerCase());
       const matchCat = category === "all" || cat === category;
       return matchQ && matchCat;
     });
-  }, [q, category]);
+  }, [players, q, category]);
 
   const pageItems = filtered.slice(page * pageSize, page * pageSize + pageSize);
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+
+  function openProfile(player: PlayerRow, edit = false) {
+    setSelected(player);
+    setEditing(edit);
+    setDraft({
+      firstName: player.firstName,
+      lastName: player.lastName,
+      age: player.age,
+      technicalScore: player.technicalScore,
+      tacticalScore: player.tacticalScore,
+      physicalScore: player.physicalScore,
+      status: player.status,
+    });
+  }
+
+  function savePlayer() {
+    if (!selected) return;
+    setPlayers((prev) =>
+      prev.map((p) =>
+        p.id === selected.id
+          ? {
+              ...p,
+              firstName: draft.firstName.trim() || p.firstName,
+              lastName: draft.lastName.trim() || p.lastName,
+              age: draft.age,
+              technicalScore: draft.technicalScore,
+              tacticalScore: draft.tacticalScore,
+              physicalScore: draft.physicalScore,
+              status: draft.status,
+            }
+          : p
+      )
+    );
+    setSelected((prev) =>
+      prev
+        ? {
+            ...prev,
+            firstName: draft.firstName.trim() || prev.firstName,
+            lastName: draft.lastName.trim() || prev.lastName,
+            age: draft.age,
+            technicalScore: draft.technicalScore,
+            tacticalScore: draft.tacticalScore,
+            physicalScore: draft.physicalScore,
+            status: draft.status,
+          }
+        : null
+    );
+    setEditing(false);
+    toast(t("toastSaved"));
+  }
 
   return (
     <DashboardLayout requiredRole="admin" title={t("players")}>
@@ -128,13 +200,16 @@ export default function AdminPlayersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pageItems.map((player, idx) => {
+              {pageItems.map((player) => {
                 const progress = localized(player.lastProgress, locale);
-                const statusKey = idx === 1 ? "injured" : idx === 2 ? "suspended" : "active";
                 return (
                   <TableRow key={player.id} className="hover:bg-[#F7F6F2]/60">
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => openProfile(player)}
+                        className="flex items-center gap-3 text-left"
+                      >
                         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-navy text-xs font-bold text-gold">
                           {player.firstName[0]}
                           {player.lastName[0]}
@@ -148,12 +223,12 @@ export default function AdminPlayersPage() {
                             {locale === "fr" ? "ans" : "yrs"}
                           </p>
                         </div>
-                      </div>
+                      </button>
                     </TableCell>
                     <TableCell>{categoryFromAge(player.age)}</TableCell>
                     <TableCell>
                       <span className="rounded-full bg-[#F7F6F2] px-2.5 py-0.5 text-xs font-semibold text-navy">
-                        {t(`playerStatus.${statusKey}`)}
+                        {t(`playerStatus.${player.status}`)}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -181,12 +256,10 @@ export default function AdminPlayersPage() {
                           <MoreHorizontal className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => toast(t("toastMock"))}
-                          >
+                          <DropdownMenuItem onClick={() => openProfile(player)}>
                             {t("viewProfile")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => toast(t("toastMock"))}>
+                          <DropdownMenuItem onClick={() => openProfile(player, true)}>
                             {t("edit")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -226,6 +299,195 @@ export default function AdminPlayersPage() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={!!selected}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelected(null);
+            setEditing(false);
+          }
+        }}
+      >
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+          {selected ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-lg font-bold text-navy">
+                  {selected.firstName} {selected.lastName}
+                </DialogTitle>
+                <DialogDescription>
+                  {localized(selected.position, locale)} ·{" "}
+                  {categoryFromAge(selected.age)} ·{" "}
+                  {t(`playerStatus.${selected.status}`)}
+                </DialogDescription>
+              </DialogHeader>
+
+              {editing ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block text-sm">
+                    <span className="mb-1 block text-xs font-semibold text-text-muted">
+                      {locale === "fr" ? "Prénom" : "First name"}
+                    </span>
+                    <input
+                      value={draft.firstName}
+                      onChange={(e) =>
+                        setDraft((d) => ({ ...d, firstName: e.target.value }))
+                      }
+                      className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mb-1 block text-xs font-semibold text-text-muted">
+                      {locale === "fr" ? "Nom" : "Last name"}
+                    </span>
+                    <input
+                      value={draft.lastName}
+                      onChange={(e) =>
+                        setDraft((d) => ({ ...d, lastName: e.target.value }))
+                      }
+                      className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mb-1 block text-xs font-semibold text-text-muted">
+                      {locale === "fr" ? "Âge" : "Age"}
+                    </span>
+                    <input
+                      type="number"
+                      min={10}
+                      max={20}
+                      value={draft.age}
+                      onChange={(e) =>
+                        setDraft((d) => ({
+                          ...d,
+                          age: Number(e.target.value) || d.age,
+                        }))
+                      }
+                      className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                    />
+                  </label>
+                  <label className="block text-sm">
+                    <span className="mb-1 block text-xs font-semibold text-text-muted">
+                      {t("status")}
+                    </span>
+                    <select
+                      value={draft.status}
+                      onChange={(e) =>
+                        setDraft((d) => ({
+                          ...d,
+                          status: e.target.value as PlayerStatus,
+                        }))
+                      }
+                      className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                    >
+                      <option value="active">{t("playerStatus.active")}</option>
+                      <option value="injured">{t("playerStatus.injured")}</option>
+                      <option value="suspended">
+                        {t("playerStatus.suspended")}
+                      </option>
+                    </select>
+                  </label>
+                  {(
+                    [
+                      ["technicalScore", t("scores.tech")],
+                      ["tacticalScore", t("scores.tact")],
+                      ["physicalScore", t("scores.phys")],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <label key={key} className="block text-sm">
+                      <span className="mb-1 block text-xs font-semibold text-text-muted">
+                        {label}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        value={draft[key]}
+                        onChange={(e) =>
+                          setDraft((d) => ({
+                            ...d,
+                            [key]: Number(e.target.value) || 0,
+                          }))
+                        }
+                        className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                      />
+                    </label>
+                  ))}
+                  <div className="flex gap-2 sm:col-span-2">
+                    <button
+                      type="button"
+                      onClick={savePlayer}
+                      className="h-10 flex-1 rounded-xl bg-gold text-sm font-bold text-navy"
+                    >
+                      {locale === "fr" ? "Enregistrer" : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditing(false)}
+                      className="h-10 flex-1 rounded-xl border border-[#E5E2D9] text-sm font-semibold"
+                    >
+                      {locale === "fr" ? "Annuler" : "Cancel"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <dl className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <dt className="text-[11px] font-semibold uppercase text-text-muted">
+                        {locale === "fr" ? "Pied fort" : "Strong foot"}
+                      </dt>
+                      <dd className="text-sm text-navy">
+                        {localized(selected.strongFoot, locale)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-[11px] font-semibold uppercase text-text-muted">
+                        {locale === "fr" ? "Progression" : "Progress"}
+                      </dt>
+                      <dd className="text-sm text-navy">
+                        {localized(selected.lastProgress, locale)}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <ScoreBar
+                      value={selected.technicalScore}
+                      label={t("scores.tech")}
+                    />
+                    <ScoreBar
+                      value={selected.tacticalScore}
+                      label={t("scores.tact")}
+                    />
+                    <ScoreBar
+                      value={selected.physicalScore}
+                      label={t("scores.phys")}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase text-text-muted">
+                      {locale === "fr" ? "Points forts" : "Strengths"}
+                    </p>
+                    <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-navy">
+                      {selected.strengths.map((s) => (
+                        <li key={s.fr}>{localized(s, locale)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(true)}
+                    className="h-10 w-full rounded-xl bg-gold text-sm font-bold text-navy"
+                  >
+                    {t("edit")}
+                  </button>
+                </div>
+              )}
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

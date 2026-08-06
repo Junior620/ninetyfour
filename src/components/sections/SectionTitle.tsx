@@ -46,12 +46,6 @@ export function SectionTitle({
           {subtitle}
         </p>
       )}
-      <div
-        className={cn(
-          "mt-4 h-1 w-16 bg-gold",
-          align === "center" && "mx-auto"
-        )}
-      />
     </ScrollReveal>
   );
 }

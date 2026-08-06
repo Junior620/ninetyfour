@@ -12,6 +12,7 @@ export type SessionPayload = {
   email: string;
   name: string;
   role: UserRole;
+  status?: "active" | "pending" | "rejected" | "disabled";
 };
 
 function isSessionRole(value: unknown): value is UserRole {
@@ -33,6 +34,7 @@ export async function createSessionToken(
     email: payload.email,
     name: payload.name,
     role: payload.role,
+    status: payload.status ?? "active",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
@@ -52,10 +54,19 @@ export async function verifySessionToken(
     const email = typeof payload.email === "string" ? payload.email : null;
     const name = typeof payload.name === "string" ? payload.name : null;
     const role = isSessionRole(payload.role) ? payload.role : null;
+    const rawStatus = payload.status;
+    const status =
+      rawStatus === "pending" ||
+      rawStatus === "rejected" ||
+      rawStatus === "disabled" ||
+      rawStatus === "active"
+        ? rawStatus
+        : "active";
 
     if (!sub || !email || !name || !role) return null;
+    if (status !== "active") return null;
 
-    return { sub, email, name, role };
+    return { sub, email, name, role, status };
   } catch {
     return null;
   }

@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAuthClient } from "@/lib/supabase/serverClient";
+import {
+  readAccountStatus,
+  readNameFromUser,
+  readRoleFromUser,
+} from "@/lib/auth/credentials";
 import { isUserRole } from "@/lib/auth/session";
 import {
   ROLE_COOKIE,
@@ -8,27 +13,6 @@ import {
   roleCookieOptions,
   sessionCookieOptions,
 } from "@/lib/auth/session-token";
-import type { UserRole } from "@/types";
-
-function readRole(user: {
-  app_metadata?: Record<string, unknown>;
-  user_metadata?: Record<string, unknown>;
-}): UserRole | null {
-  const fromApp = user.app_metadata?.role;
-  const fromUser = user.user_metadata?.role;
-  if (typeof fromApp === "string" && isUserRole(fromApp)) return fromApp;
-  if (typeof fromUser === "string" && isUserRole(fromUser)) return fromUser;
-  return null;
-}
-
-function readName(user: {
-  email?: string | null;
-  user_metadata?: Record<string, unknown>;
-}): string {
-  const name = user.user_metadata?.name;
-  if (typeof name === "string" && name.trim()) return name.trim();
-  return user.email?.split("@")[0] ?? "User";
-}
 
 export async function POST(request: Request) {
   try {
@@ -59,9 +43,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const role = readRole(data.user);
+    const role = readRoleFromUser(data.user);
     if (!role) {
       console.error("[auth/login] missing role metadata for", email);
+      await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
       return NextResponse.json(
         { success: false, error: "invalid_credentials" },
         { status: 401 }
@@ -69,21 +54,38 @@ export async function POST(request: Request) {
     }
 
     if (requestedRole && requestedRole !== role) {
+      await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
       return NextResponse.json(
         { success: false, error: "invalid_credentials" },
         { status: 401 }
       );
     }
 
-    const name = readName(data.user);
+    const status = readAccountStatus(data.user);
+    if (status === "pending") {
+      await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+      return NextResponse.json(
+        { success: false, error: "pending_approval" },
+        { status: 403 }
+      );
+    }
+    if (status === "rejected" || status === "disabled") {
+      await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+      return NextResponse.json(
+        { success: false, error: "account_disabled" },
+        { status: 403 }
+      );
+    }
+
+    const name = readNameFromUser(data.user);
     const token = await createSessionToken({
       sub: data.user.id,
       email: data.user.email ?? email,
       name,
       role,
+      status: "active",
     });
 
-    // On utilise notre cookie de session ; pas besoin de garder la session Supabase JS
     await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
 
     const response = NextResponse.json({

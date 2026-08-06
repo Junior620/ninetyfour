@@ -13,13 +13,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ToastHost, toast } from "@/components/ui/toast";
+import { ToastHost } from "@/components/ui/toast";
 import {
   getRoleClient,
   logoutClient,
   ROLE_PATHS,
 } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
+import { Link } from "@/lib/i18n/navigation";
 import type { UserRole } from "@/types";
 
 const roleNames: Record<UserRole, string> = {
@@ -121,14 +122,13 @@ export function DashboardLayout({
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             {role === "parent" ? (
-              <button
-                type="button"
-                onClick={() => toast(t("parent.contactToast"))}
+              <Link
+                href="/contact"
                 className="hidden h-10 items-center gap-2 rounded-xl bg-gold px-4 text-sm font-bold text-navy transition hover:translate-y-[-1px] lg:inline-flex"
               >
                 <MessageCircle className="h-4 w-4" />
                 {t("parent.contactAcademy")}
-              </button>
+              </Link>
             ) : (
               <label className="relative hidden lg:block">
                 <span className="sr-only">{t("searchPlaceholder")}</span>

@@ -4,12 +4,38 @@ import { useLocale, useTranslations } from "next-intl";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { toast } from "@/components/ui/toast";
 import { parentData } from "@/lib/data";
+import { downloadTextFile } from "@/lib/download";
 import { formatDate, localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
 export default function ParentDocumentsPage() {
   const t = useTranslations("dashboard.parent");
   const locale = useLocale() as Locale;
+
+  function downloadDoc(doc: (typeof parentData.documents)[number]) {
+    const name = localized(doc.name, locale);
+    downloadTextFile(
+      `${name.replace(/\s+/g, "-").toLowerCase()}.txt`,
+      [
+        "Ninety One Foot Academy",
+        name,
+        `Mis à jour: ${doc.updatedAt}`,
+        `Taille: ${doc.size}`,
+        doc.toSign
+          ? locale === "fr"
+            ? "Statut: à signer"
+            : "Status: to sign"
+          : locale === "fr"
+            ? "Statut: disponible"
+            : "Status: available",
+        "",
+        locale === "fr"
+          ? "Document généré depuis l’espace parent."
+          : "Document generated from the parent portal.",
+      ].join("\n")
+    );
+    toast(locale === "fr" ? "Téléchargement démarré" : "Download started");
+  }
 
   return (
     <DashboardLayout requiredRole="parent" title={t("documents")}>
@@ -40,7 +66,7 @@ export default function ParentDocumentsPage() {
             </div>
             <button
               type="button"
-              onClick={() => toast(t("actionToast"))}
+              onClick={() => downloadDoc(doc)}
               className="mt-4 h-10 w-full rounded-xl bg-gold text-sm font-bold text-navy"
             >
               {t("download")}

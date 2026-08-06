@@ -2,7 +2,19 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { MoreHorizontal } from "lucide-react";
+import {
+  Cake,
+  FileText,
+  GraduationCap,
+  Mail,
+  MapPin,
+  MoreHorizontal,
+  Phone,
+  Ruler,
+  Shield,
+  Users,
+} from "lucide-react";
+import { Link } from "@/lib/i18n/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import {
@@ -20,12 +32,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import {
   formatPositionLabel,
   normalizeAppStatus,
   type AppStatus,
 } from "@/lib/admin/labels";
+import { cn } from "@/lib/utils";
 
 type AppItem = {
   id: string;
@@ -34,9 +54,33 @@ type AppItem = {
   lastName?: string;
   email?: string;
   city?: string;
+  neighborhood?: string;
   school?: string;
   address?: string;
   primaryPosition?: string;
+  secondaryPosition?: string;
+  strongFoot?: string;
+  category?: string;
+  zone?: string;
+  nationality?: string;
+  birthPlace?: string;
+  dobDay?: string;
+  dobMonth?: string;
+  dobYear?: string;
+  age?: string;
+  heightCm?: string;
+  weightKg?: string;
+  playerPhone?: string;
+  fatherTutorName?: string;
+  fatherTutorPhone?: string;
+  motherName?: string;
+  motherPhone?: string;
+  currentClub?: string;
+  previousClubs?: string;
+  injuryCurrent?: boolean;
+  injuryDetails?: string;
+  allergies?: string;
+  reference?: string;
   status?: string;
   pdfSignedUrl?: string | null;
   createdAt?: string | null;
@@ -44,6 +88,69 @@ type AppItem = {
 
 function fullName(app: AppItem) {
   return `${app.firstNames ?? app.firstName ?? ""} ${app.lastName ?? ""}`.trim();
+}
+
+function initials(app: AppItem) {
+  const first = (app.firstNames ?? app.firstName ?? "?").trim();
+  const last = (app.lastName ?? "").trim();
+  return `${first[0] ?? ""}${last[0] ?? ""}`.toUpperCase() || "?";
+}
+
+function formatHeight(raw?: string) {
+  if (!raw?.trim()) return null;
+  const n = Number(String(raw).replace(",", "."));
+  if (!Number.isFinite(n)) return raw;
+  // Values like 1.75 are metres; 175 is cm
+  if (n > 0 && n < 3) return `${String(raw).replace(".", ",")} m`;
+  return `${raw} cm`;
+}
+
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon?: typeof Mail;
+  label: string;
+  value?: string | null;
+}) {
+  if (!value) return null;
+  return (
+    <div className="flex gap-3 py-2.5">
+      {Icon ? (
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#F7F6F2] text-navy/70">
+          <Icon className="h-3.5 w-3.5" aria-hidden />
+        </span>
+      ) : null}
+      <div className="min-w-0">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+          {label}
+        </p>
+        <p className="mt-0.5 text-sm font-medium leading-snug text-navy">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function ProfileSection({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cn("rounded-xl border border-[#E8E4DA] bg-white", className)}>
+      <div className="border-b border-[#E8E4DA] px-4 py-2.5">
+        <h3 className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold">
+          {title}
+        </h3>
+      </div>
+      <div className="divide-y divide-[#F0EDE5] px-4">{children}</div>
+    </section>
+  );
 }
 
 export default function AdminApplicationsPage() {
@@ -56,6 +163,7 @@ export default function AdminApplicationsPage() {
   const [position, setPosition] = useState("all");
   const [city, setCity] = useState("all");
   const [sortAsc, setSortAsc] = useState(false);
+  const [selected, setSelected] = useState<AppItem | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -152,7 +260,11 @@ export default function AdminApplicationsPage() {
               : "toastPending";
       toast(t(toastKey));
     } catch {
-      toast(t("toastMock"));
+      toast(
+        locale === "en"
+          ? "Unable to update status"
+          : "Impossible de mettre à jour le statut"
+      );
     }
   }
 
@@ -250,13 +362,12 @@ export default function AdminApplicationsPage() {
           >
             {t("exportCsv")}
           </button>
-          <button
-            type="button"
-            onClick={() => toast(t("toastMock"))}
-            className="h-10 rounded-xl bg-gold px-4 text-sm font-bold text-navy transition hover:translate-y-[-1px]"
+          <Link
+            href="/rejoindre"
+            className="inline-flex h-10 items-center rounded-xl bg-gold px-4 text-sm font-bold text-navy transition hover:translate-y-[-1px]"
           >
             {t("newApplication")}
-          </button>
+          </Link>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-[#E5E2D9] bg-white">
@@ -333,7 +444,7 @@ export default function AdminApplicationsPage() {
                             <MoreHorizontal className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem onClick={() => toast(t("toastMock"))}>
+                            <DropdownMenuItem onClick={() => setSelected(app)}>
                               {t("viewProfile")}
                             </DropdownMenuItem>
                             {app.pdfSignedUrl ? (
@@ -376,6 +487,258 @@ export default function AdminApplicationsPage() {
           )}
         </div>
       </div>
+
+      <Dialog
+        open={!!selected}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null);
+        }}
+      >
+        <DialogContent className="max-h-[90vh] gap-0 overflow-hidden p-0 sm:max-w-2xl [&_[data-slot=dialog-close]]:text-white [&_[data-slot=dialog-close]]:hover:bg-white/10">
+          {selected ? (
+            <>
+              <div className="relative overflow-hidden bg-navy px-5 pb-5 pt-5 text-white sm:px-6">
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-40"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(ellipse 80% 60% at 100% 0%, rgba(201,154,46,0.35), transparent 55%)",
+                  }}
+                  aria-hidden
+                />
+                <DialogHeader className="relative space-y-0 text-left">
+                  <div className="flex items-start gap-4 pr-8">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gold text-lg font-bold text-navy shadow-lg">
+                      {initials(selected)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <DialogTitle className="font-heading text-xl font-bold leading-tight tracking-wide text-white sm:text-2xl">
+                        {fullName(selected) || t("candidate")}
+                      </DialogTitle>
+                      <DialogDescription className="mt-2 flex flex-wrap items-center gap-2">
+                        <StatusBadge
+                          status={normalizeAppStatus(selected.status)}
+                          label={t(
+                            `statusLabels.${normalizeAppStatus(selected.status)}`
+                          )}
+                        />
+                        {selected.category ? (
+                          <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">
+                            {selected.category}
+                          </span>
+                        ) : null}
+                        {selected.primaryPosition ? (
+                          <span className="rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">
+                            {formatPositionLabel(selected.primaryPosition, locale)}
+                          </span>
+                        ) : null}
+                        {selected.reference ? (
+                          <span className="text-[11px] text-white/50">
+                            {selected.reference}
+                          </span>
+                        ) : null}
+                      </DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                <div className="relative mt-4 grid grid-cols-3 gap-2">
+                  <div className="rounded-xl bg-white/10 px-3 py-2.5 ring-1 ring-white/10">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">
+                      {t("profileSize")}
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold text-white">
+                      {[formatHeight(selected.heightCm), selected.weightKg ? `${selected.weightKg} kg` : null]
+                        .filter(Boolean)
+                        .join(" · ") || "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/10 px-3 py-2.5 ring-1 ring-white/10">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">
+                      {t("profileStrongFoot")}
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold capitalize text-white">
+                      {selected.strongFoot || "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-white/10 px-3 py-2.5 ring-1 ring-white/10">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-white/45">
+                      {t("location")}
+                    </p>
+                    <p className="mt-0.5 truncate text-sm font-semibold text-white">
+                      {selected.city || selected.birthPlace || "—"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="max-h-[min(52vh,28rem)] space-y-3 overflow-y-auto bg-[#F7F6F2] p-4 sm:p-5">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <ProfileSection
+                    title={locale === "fr" ? "Identité" : "Identity"}
+                  >
+                    <InfoRow
+                      icon={Cake}
+                      label={t("profileDob")}
+                      value={
+                        selected.dobDay && selected.dobMonth && selected.dobYear
+                          ? `${selected.dobDay}/${selected.dobMonth}/${selected.dobYear}${
+                              selected.age ? ` · ${selected.age} ans` : ""
+                            }`
+                          : selected.age
+                            ? `${selected.age} ans`
+                            : null
+                      }
+                    />
+                    <InfoRow
+                      icon={MapPin}
+                      label={t("profileBirthPlace")}
+                      value={selected.birthPlace}
+                    />
+                    <InfoRow
+                      icon={Shield}
+                      label={t("profileNationality")}
+                      value={selected.nationality}
+                    />
+                    <InfoRow
+                      icon={MapPin}
+                      label={t("profileAddress")}
+                      value={
+                        [selected.address, selected.neighborhood, selected.city]
+                          .filter(Boolean)
+                          .join(", ") || null
+                      }
+                    />
+                  </ProfileSection>
+
+                  <ProfileSection
+                    title={locale === "fr" ? "Football" : "Football"}
+                  >
+                    <InfoRow
+                      icon={Shield}
+                      label={t("filterPosition")}
+                      value={
+                        selected.primaryPosition
+                          ? formatPositionLabel(selected.primaryPosition, locale)
+                          : null
+                      }
+                    />
+                    <InfoRow
+                      label={t("profileSecondaryPosition")}
+                      value={
+                        selected.secondaryPosition
+                          ? formatPositionLabel(
+                              selected.secondaryPosition,
+                              locale
+                            )
+                          : null
+                      }
+                    />
+                    <InfoRow
+                      label={t("profileCurrentClub")}
+                      value={selected.currentClub}
+                    />
+                    <InfoRow
+                      label={t("profilePreviousClubs")}
+                      value={selected.previousClubs}
+                    />
+                    <InfoRow
+                      icon={GraduationCap}
+                      label={t("profileSchool")}
+                      value={selected.school}
+                    />
+                  </ProfileSection>
+
+                  <ProfileSection
+                    title={locale === "fr" ? "Contact" : "Contact"}
+                  >
+                    <InfoRow
+                      icon={Mail}
+                      label={t("profileEmail")}
+                      value={selected.email}
+                    />
+                    <InfoRow
+                      icon={Phone}
+                      label={t("profilePhone")}
+                      value={selected.playerPhone}
+                    />
+                  </ProfileSection>
+
+                  <ProfileSection
+                    title={locale === "fr" ? "Famille & santé" : "Family & health"}
+                  >
+                    <InfoRow
+                      icon={Users}
+                      label={t("profileFather")}
+                      value={
+                        [selected.fatherTutorName, selected.fatherTutorPhone]
+                          .filter(Boolean)
+                          .join(" · ") || null
+                      }
+                    />
+                    <InfoRow
+                      icon={Users}
+                      label={t("profileMother")}
+                      value={
+                        [selected.motherName, selected.motherPhone]
+                          .filter(Boolean)
+                          .join(" · ") || null
+                      }
+                    />
+                    <InfoRow
+                      icon={Ruler}
+                      label={t("profileInjuries")}
+                      value={
+                        selected.injuryCurrent
+                          ? selected.injuryDetails || t("profileInjuryYes")
+                          : selected.injuryDetails || null
+                      }
+                    />
+                    <InfoRow
+                      label={t("profileAllergies")}
+                      value={selected.allergies}
+                    />
+                  </ProfileSection>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 border-t border-[#E5E2D9] bg-white p-4 sm:px-5">
+                {selected.pdfSignedUrl ? (
+                  <a
+                    href={selected.pdfSignedUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-navy px-4 text-sm font-bold text-white transition hover:bg-navy/90 sm:flex-none sm:min-w-[10rem]"
+                  >
+                    <FileText className="h-4 w-4" aria-hidden />
+                    {t("viewPdf")}
+                  </a>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    void updateStatus(selected.id, "accepted");
+                    setSelected(null);
+                  }}
+                  className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-emerald-600 px-4 text-sm font-bold text-white transition hover:bg-emerald-700 sm:flex-none"
+                >
+                  {t("accept")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void updateStatus(selected.id, "rejected");
+                    setSelected(null);
+                  }}
+                  className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-[#E5E2D9] px-4 text-sm font-semibold text-navy transition hover:border-red-300 hover:text-red-700 sm:flex-none"
+                >
+                  {t("reject")}
+                </button>
+              </div>
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

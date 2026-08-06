@@ -154,4 +154,65 @@ export async function sendAdminNotification(params: {
   }
 }
 
+export async function notifyAdminNewRegistration(params: {
+  locale: EmailLocale;
+  name: string;
+  email: string;
+  role: string;
+  userId: string;
+}): Promise<{ sent: boolean; error?: string }> {
+  const config = getEmailConfig();
+  if (!config.apiKey || !config.from || !config.adminTo) {
+    console.info("[email] registration notify skipped — not configured");
+    return { sent: false, error: "not_configured" };
+  }
+
+  const isFr = params.locale === "fr";
+  const roleLabel =
+    params.role === "player"
+      ? isFr
+        ? "Joueur"
+        : "Player"
+      : params.role === "parent"
+        ? "Parent"
+        : params.role === "coach"
+          ? "Coach"
+          : params.role;
+
+  const subject = isFr
+    ? `[NOFA] Nouvelle inscription à valider — ${params.name}`
+    : `[NOFA] New registration to approve — ${params.name}`;
+
+  const text = [
+    isFr ? "Nouvelle inscription en attente de validation" : "New registration pending approval",
+    `${isFr ? "Nom" : "Name"}: ${params.name}`,
+    `Email: ${params.email}`,
+    `${isFr ? "Profil" : "Role"}: ${roleLabel}`,
+    `ID: ${params.userId}`,
+    "",
+    isFr
+      ? `Validez le compte dans le dashboard : ${config.siteUrl}/fr/dashboard/admin/utilisateurs`
+      : `Approve in dashboard: ${config.siteUrl}/en/dashboard/admin/utilisateurs`,
+  ].join("\n");
+
+  try {
+    const resend = new Resend(config.apiKey);
+    const { error } = await resend.emails.send({
+      from: config.from,
+      to: config.adminTo,
+      replyTo: params.email,
+      subject,
+      text,
+    });
+    if (error) {
+      console.error("[email] registration notify failed", error);
+      return { sent: false, error: "send_failed" };
+    }
+    return { sent: true };
+  } catch (e) {
+    console.error("[email] registration notify exception", e);
+    return { sent: false, error: "send_failed" };
+  }
+}
+
 export { requestTypeLabel, formatReceivedAt };

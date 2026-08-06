@@ -3,17 +3,30 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { newsArticles } from "@/lib/data";
 import { localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
+type ArticleRow = (typeof newsArticles)[number] & {
+  status: "draft" | "published";
+  views: number;
+  author: string;
+};
+
 export default function AdminArticlesPage() {
   const t = useTranslations("dashboard.admin");
   const locale = useLocale() as Locale;
   const [q, setQ] = useState("");
-  const [items, setItems] = useState(
+  const [items, setItems] = useState<ArticleRow[]>(
     newsArticles.map((a, i) => ({
       ...a,
       status: i % 4 === 0 ? "draft" : "published",
@@ -21,12 +34,74 @@ export default function AdminArticlesPage() {
       author: "Admin NOFA",
     }))
   );
+  const [editing, setEditing] = useState<ArticleRow | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [draft, setDraft] = useState({
+    title: "",
+    status: "draft" as "draft" | "published",
+  });
 
   const filtered = useMemo(() => {
     return items.filter((a) =>
       localized(a.title, locale).toLowerCase().includes(q.toLowerCase())
     );
   }, [items, q, locale]);
+
+  function openCreate() {
+    setCreating(true);
+    setDraft({ title: "", status: "draft" });
+  }
+
+  function openEdit(article: ArticleRow) {
+    setEditing(article);
+    setDraft({
+      title: localized(article.title, locale),
+      status: article.status,
+    });
+  }
+
+  function saveCreate() {
+    const title = draft.title.trim();
+    if (!title) return;
+    const slug = `brouillon-${Date.now()}`;
+    const image = newsArticles[0]?.image ?? "/images/hero.jpg";
+    setItems((prev) => [
+      {
+        slug,
+        title: { fr: title, en: title },
+        excerpt: { fr: "", en: "" },
+        content: { fr: "", en: "" },
+        category: "academy",
+        date: new Date().toISOString().slice(0, 10),
+        image,
+        status: draft.status,
+        views: 0,
+        author: "Admin NOFA",
+      },
+      ...prev,
+    ]);
+    setCreating(false);
+    toast(t("toastSaved"));
+  }
+
+  function saveEdit() {
+    if (!editing) return;
+    const title = draft.title.trim();
+    if (!title) return;
+    setItems((prev) =>
+      prev.map((a) =>
+        a.slug === editing.slug
+          ? {
+              ...a,
+              title: { ...a.title, [locale]: title },
+              status: draft.status,
+            }
+          : a
+      )
+    );
+    setEditing(null);
+    toast(t("toastSaved"));
+  }
 
   return (
     <DashboardLayout requiredRole="admin" title={t("articles")}>
@@ -40,7 +115,7 @@ export default function AdminArticlesPage() {
           />
           <button
             type="button"
-            onClick={() => toast(t("toastMock"))}
+            onClick={openCreate}
             className="h-10 rounded-xl bg-gold px-4 text-sm font-bold text-navy transition hover:translate-y-[-1px]"
           >
             + {t("newArticle")}
@@ -86,18 +161,27 @@ export default function AdminArticlesPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => toast(t("toastMock"))}
+                    onClick={() => openEdit(article)}
                     className="h-9 flex-1 rounded-lg bg-gold text-xs font-bold text-navy"
                   >
                     {t("edit")}
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => toast(t("toastMock"))}
-                    className="h-9 flex-1 rounded-lg border border-[#E5E2D9] text-xs font-semibold text-navy"
-                  >
-                    {t("preview")}
-                  </button>
+                  {newsArticles.some((a) => a.slug === article.slug) ? (
+                    <Link
+                      href={`/actualites/${article.slug}`}
+                      className="inline-flex h-9 flex-1 items-center justify-center rounded-lg border border-[#E5E2D9] text-xs font-semibold text-navy"
+                    >
+                      {t("preview")}
+                    </Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => openEdit(article)}
+                      className="h-9 flex-1 rounded-lg border border-[#E5E2D9] text-xs font-semibold text-navy"
+                    >
+                      {t("preview")}
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
@@ -115,6 +199,61 @@ export default function AdminArticlesPage() {
           ))}
         </div>
       </div>
+
+      <Dialog
+        open={creating || !!editing}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCreating(false);
+            setEditing(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy">
+              {creating ? t("newArticle") : t("edit")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Titre" : "Title"}
+              </span>
+              <input
+                value={draft.title}
+                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {t("status")}
+              </span>
+              <select
+                value={draft.status}
+                onChange={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    status: e.target.value as "draft" | "published",
+                  }))
+                }
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              >
+                <option value="draft">{t("draft")}</option>
+                <option value="published">{t("published")}</option>
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={creating ? saveCreate : saveEdit}
+              className="h-10 w-full rounded-xl bg-gold text-sm font-bold text-navy"
+            >
+              {locale === "fr" ? "Enregistrer" : "Save"}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

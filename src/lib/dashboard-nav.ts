@@ -11,6 +11,7 @@ import {
   BookOpen,
   MessageSquare,
   CalendarCheck,
+  UserCheck,
 } from "lucide-react";
 import type { UserRole } from "@/types";
 
@@ -38,6 +39,7 @@ export const dashboardRoleNav: Record<
   ],
   admin: [
     { href: "/dashboard/admin", icon: LayoutDashboard, label: "admin.overview" },
+    { href: "/dashboard/admin/utilisateurs", icon: UserCheck, label: "admin.users" },
     { href: "/dashboard/admin/joueurs", icon: Users, label: "admin.players" },
     { href: "/dashboard/admin/candidatures", icon: ClipboardList, label: "admin.applications" },
     { href: "/dashboard/admin/articles", icon: FileText, label: "admin.articles" },

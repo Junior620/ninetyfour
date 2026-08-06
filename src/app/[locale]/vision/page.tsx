@@ -60,7 +60,6 @@ export default async function VisionPage({
               <h2 className="text-xl font-bold uppercase tracking-wide text-black-premium md:text-2xl">
                 {block.title}
               </h2>
-              <div className="mt-2 h-1 w-12 bg-gold" />
               <p className="mt-4 text-lg leading-relaxed text-text-muted">
                 {localized(block.content, loc)}
               </p>

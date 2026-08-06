@@ -4,26 +4,103 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/toast";
 import { partners } from "@/lib/data";
 import { localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
+type PartnerRow = (typeof partners)[number] & {
+  active: boolean;
+  startDate: string;
+};
+
 export default function AdminPartnersPage() {
   const t = useTranslations("dashboard.admin");
   const locale = useLocale() as Locale;
   const [q, setQ] = useState("");
-  const [items, setItems] = useState(
+  const [items, setItems] = useState<PartnerRow[]>(
     partners.map((p, i) => ({
       ...p,
       active: i !== partners.length - 1,
       startDate: `2025-0${(i % 8) + 1}-01`,
     }))
   );
+  const [editing, setEditing] = useState<PartnerRow | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [draft, setDraft] = useState({
+    name: "",
+    role: "",
+    description: "",
+    active: true,
+  });
 
   const filtered = useMemo(() => {
     return items.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
   }, [items, q]);
+
+  function openCreate() {
+    setCreating(true);
+    setDraft({ name: "", role: "", description: "", active: true });
+  }
+
+  function openEdit(partner: PartnerRow) {
+    setEditing(partner);
+    setDraft({
+      name: partner.name,
+      role: localized(partner.role, locale),
+      description: localized(partner.description, locale),
+      active: partner.active,
+    });
+  }
+
+  function saveCreate() {
+    const name = draft.name.trim();
+    if (!name) return;
+    setItems((prev) => [
+      {
+        id: `partner-${Date.now()}`,
+        name,
+        role: { fr: draft.role || "Partenaire", en: draft.role || "Partner" },
+        description: {
+          fr: draft.description,
+          en: draft.description,
+        },
+        logo: "",
+        active: draft.active,
+        startDate: new Date().toISOString().slice(0, 10),
+      } as PartnerRow,
+      ...prev,
+    ]);
+    setCreating(false);
+    toast(t("toastSaved"));
+  }
+
+  function saveEdit() {
+    if (!editing) return;
+    const name = draft.name.trim();
+    if (!name) return;
+    setItems((prev) =>
+      prev.map((p) =>
+        p.id === editing.id
+          ? {
+              ...p,
+              name,
+              role: { ...p.role, [locale]: draft.role },
+              description: { ...p.description, [locale]: draft.description },
+              active: draft.active,
+            }
+          : p
+      )
+    );
+    setEditing(null);
+    toast(t("toastSaved"));
+  }
 
   return (
     <DashboardLayout requiredRole="admin" title={t("partners")}>
@@ -37,7 +114,7 @@ export default function AdminPartnersPage() {
           />
           <button
             type="button"
-            onClick={() => toast(t("toastMock"))}
+            onClick={openCreate}
             className="h-10 rounded-xl bg-gold px-4 text-sm font-bold text-navy transition hover:translate-y-[-1px]"
           >
             + {t("partners")}
@@ -92,7 +169,7 @@ export default function AdminPartnersPage() {
               <div className="mt-4 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => toast(t("toastMock"))}
+                  onClick={() => openEdit(partner)}
                   className="h-9 flex-1 rounded-lg bg-gold text-xs font-bold text-navy"
                 >
                   {t("edit")}
@@ -109,13 +186,83 @@ export default function AdminPartnersPage() {
                   }}
                   className="h-9 flex-1 rounded-lg border border-[#E5E2D9] text-xs font-semibold text-navy"
                 >
-                  {t("deactivate")}
+                  {partner.active ? t("deactivate") : t("active")}
                 </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      <Dialog
+        open={creating || !!editing}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCreating(false);
+            setEditing(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy">
+              {creating ? `+ ${t("partners")}` : t("edit")}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Nom" : "Name"}
+              </span>
+              <input
+                value={draft.name}
+                onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {t("partnershipType")}
+              </span>
+              <input
+                value={draft.role}
+                onChange={(e) => setDraft((d) => ({ ...d, role: e.target.value }))}
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Description" : "Description"}
+              </span>
+              <textarea
+                value={draft.description}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, description: e.target.value }))
+                }
+                rows={3}
+                className="w-full rounded-xl border border-[#E5E2D9] px-3 py-2"
+              />
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, active: e.target.checked }))
+                }
+              />
+              {t("active")}
+            </label>
+            <button
+              type="button"
+              onClick={creating ? saveCreate : saveEdit}
+              className="h-10 w-full rounded-xl bg-gold text-sm font-bold text-navy"
+            >
+              {locale === "fr" ? "Enregistrer" : "Save"}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

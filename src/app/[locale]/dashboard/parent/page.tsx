@@ -17,8 +17,16 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PerformanceChart } from "@/components/charts/PerformanceChart";
 import { toast } from "@/components/ui/toast";
 import { parentData, performanceChartData } from "@/lib/data";
+import { downloadTextFile } from "@/lib/download";
 import { cn, formatDate, localized } from "@/lib/utils";
 import type { Locale } from "@/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 function CompactKpi({
   icon: Icon,
@@ -64,6 +72,9 @@ export default function ParentOverviewPage() {
   const t = useTranslations("dashboard.parent");
   const locale = useLocale() as Locale;
   const [childId, setChildId] = useState(parentData.children[0].id);
+  const [selectedMsg, setSelectedMsg] = useState<
+    (typeof parentData.messages)[number] | null
+  >(null);
 
   const child = useMemo(
     () => parentData.children.find((c) => c.id === childId) ?? parentData.children[0],
@@ -147,32 +158,64 @@ export default function ParentOverviewPage() {
           </section>
           <section className="grid grid-cols-2 gap-2 lg:col-span-2">
             {[
-              { label: t("contactCoach"), icon: UserRound },
-              { label: t("reportAbsence"), icon: CalendarDays },
-              { label: t("viewCalendar"), icon: CalendarDays, href: "/dashboard/parent/calendrier" },
-              { label: t("downloadReport"), icon: Download },
+              {
+                label: t("contactCoach"),
+                icon: UserRound,
+                href: "/contact",
+              },
+              {
+                label: t("reportAbsence"),
+                icon: CalendarDays,
+                href: "/dashboard/parent/presences",
+              },
+              {
+                label: t("viewCalendar"),
+                icon: CalendarDays,
+                href: "/dashboard/parent/calendrier",
+              },
+              {
+                label: t("downloadReport"),
+                icon: Download,
+                href: "#download-report",
+              },
             ].map((action) => {
               const Icon = action.icon;
               const className =
                 "flex min-h-[72px] flex-col items-start justify-center gap-1 rounded-2xl border border-[#E5E2D9] bg-white px-3 py-2 text-left text-xs font-semibold text-navy transition hover:-translate-y-0.5 hover:border-gold/40";
-              if (action.href) {
+              if (action.href === "#download-report") {
                 return (
-                  <Link key={action.label} href={action.href} className={className}>
+                  <button
+                    key={action.label}
+                    type="button"
+                    className={className}
+                    onClick={() => {
+                      downloadTextFile(
+                        `rapport-parent-${new Date().toISOString().slice(0, 10)}.txt`,
+                        [
+                          "Ninety One Foot Academy — Rapport parent",
+                          `${child.firstName} ${child.lastName}`,
+                          `Catégorie: ${child.category}`,
+                          `Présences: ${parentData.attendance.percentage}%`,
+                          `Moyenne scolaire: ${parentData.academic.average}`,
+                        ].join("\n")
+                      );
+                      toast(
+                        locale === "fr"
+                          ? "Téléchargement démarré"
+                          : "Download started"
+                      );
+                    }}
+                  >
                     <Icon className="h-4 w-4 text-gold" />
                     {action.label}
-                  </Link>
+                  </button>
                 );
               }
               return (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => toast(t("actionToast"))}
-                  className={className}
-                >
+                <Link key={action.label} href={action.href} className={className}>
                   <Icon className="h-4 w-4 text-gold" />
                   {action.label}
-                </button>
+                </Link>
               );
             })}
           </section>
@@ -292,7 +335,7 @@ export default function ParentOverviewPage() {
                 <button
                   key={msg.id}
                   type="button"
-                  onClick={() => toast(t("actionToast"))}
+                  onClick={() => setSelectedMsg(msg)}
                   className="w-full rounded-xl border border-[#E5E2D9] bg-[#F7F6F2] p-3 text-left transition hover:border-gold/40"
                 >
                   <div className="flex flex-wrap items-center gap-2">
@@ -365,7 +408,23 @@ export default function ParentOverviewPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => toast(t("actionToast"))}
+                  onClick={() => {
+                    const name = localized(doc.name, locale);
+                    downloadTextFile(
+                      `${name.replace(/\s+/g, "-").toLowerCase()}.txt`,
+                      [
+                        "Ninety One Foot Academy",
+                        name,
+                        `Mis à jour: ${doc.updatedAt}`,
+                        `Taille: ${doc.size}`,
+                      ].join("\n")
+                    );
+                    toast(
+                      locale === "fr"
+                        ? "Téléchargement démarré"
+                        : "Download started"
+                    );
+                  }}
                   className="mt-3 h-9 w-full rounded-lg bg-gold text-xs font-bold text-navy"
                 >
                   {t("download")}
@@ -375,6 +434,38 @@ export default function ParentOverviewPage() {
           </div>
         </section>
       </div>
+
+      <Dialog
+        open={!!selectedMsg}
+        onOpenChange={(open) => {
+          if (!open) setSelectedMsg(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          {selectedMsg ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="font-bold text-navy">
+                  {localized(selectedMsg.title, locale)}
+                </DialogTitle>
+                <DialogDescription>
+                  {t("from")} {localized(selectedMsg.sender, locale)} •{" "}
+                  {formatDate(selectedMsg.date, locale)}
+                </DialogDescription>
+              </DialogHeader>
+              <p className="text-sm leading-relaxed text-navy">
+                {localized(selectedMsg.preview, locale)}
+              </p>
+              <Link
+                href="/dashboard/parent/messages"
+                className="inline-flex h-10 items-center justify-center rounded-xl bg-gold px-4 text-sm font-bold text-navy"
+              >
+                {t("seeAllMessages")}
+              </Link>
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

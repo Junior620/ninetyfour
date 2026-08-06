@@ -68,7 +68,6 @@ export function StatsSection({
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-text-muted sm:mt-4 sm:text-base">
               {subtitle}
             </p>
-            <div className="mt-4 h-1 w-16 bg-gold" />
           </ScrollReveal>
 
           <div className="mt-8 grid grid-cols-1 gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">

@@ -1,15 +1,58 @@
 import type { UserRole } from "@/types";
 
-export const DEFAULT_DEMO_PASSWORD = "nofa2026";
+export type AccountStatus = "pending" | "active" | "rejected" | "disabled";
 
-/**
- * Comptes démo pré-seedés en base (prisma/seed.ts).
- * Le mot de passe réel est hashé en DB (PRIVATE_SPACE_PASSWORD ou nofa2026).
- */
-export const DEMO_ACCOUNTS: Record<UserRole, { email: string; name: string }> =
-  {
-    player: { email: "joueur@ninetyone.demo", name: "Kofi Mensah" },
-    parent: { email: "parent@ninetyone.demo", name: "M. Mensah" },
-    coach: { email: "coach@ninetyone.demo", name: "Coach Martin" },
-    admin: { email: "admin@ninetyone.demo", name: "Admin NOFA" },
-  };
+export const PUBLIC_ROLES: UserRole[] = ["player", "parent", "coach"];
+
+export const ADMIN_BOOTSTRAP_EMAIL = "christianouragan@gmail.com";
+
+export function isPublicRole(
+  role: string
+): role is "player" | "parent" | "coach" {
+  return PUBLIC_ROLES.includes(role as "player" | "parent" | "coach");
+}
+
+export function readAccountStatus(user: {
+  app_metadata?: Record<string, unknown>;
+  user_metadata?: Record<string, unknown>;
+}): AccountStatus {
+  const fromApp = user.app_metadata?.status;
+  const fromUser = user.user_metadata?.status;
+  if (fromApp === "pending" || fromApp === "active" || fromApp === "rejected" || fromApp === "disabled") {
+    return fromApp;
+  }
+  if (fromUser === "pending" || fromUser === "active" || fromUser === "rejected" || fromUser === "disabled") {
+    return fromUser;
+  }
+  // Legacy users without status: treat as active
+  return "active";
+}
+
+export function readRoleFromUser(user: {
+  app_metadata?: Record<string, unknown>;
+  user_metadata?: Record<string, unknown>;
+}): UserRole | null {
+  const fromApp = user.app_metadata?.role;
+  const fromUser = user.user_metadata?.role;
+  const candidates = [fromApp, fromUser];
+  for (const value of candidates) {
+    if (
+      value === "player" ||
+      value === "parent" ||
+      value === "coach" ||
+      value === "admin"
+    ) {
+      return value;
+    }
+  }
+  return null;
+}
+
+export function readNameFromUser(user: {
+  email?: string | null;
+  user_metadata?: Record<string, unknown>;
+}): string {
+  const name = user.user_metadata?.name;
+  if (typeof name === "string" && name.trim()) return name.trim();
+  return user.email?.split("@")[0] ?? "User";
+}

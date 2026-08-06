@@ -13,6 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -22,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/toast";
 import { mockPlayers } from "@/lib/data";
+import { downloadTextFile } from "@/lib/download";
 import { cn, localized } from "@/lib/utils";
 import type { Locale, Player } from "@/types";
 
@@ -43,10 +51,20 @@ export default function CoachPlayersPage() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("all");
+  const [players, setPlayers] = useState(mockPlayers);
   const [selected, setSelected] = useState<Player>(mockPlayers[0]);
+  const [editing, setEditing] = useState<Player | null>(null);
+  const [draft, setDraft] = useState({
+    firstName: "",
+    lastName: "",
+    age: 0,
+    technicalScore: 0,
+    tacticalScore: 0,
+    physicalScore: 0,
+  });
 
   const filtered = useMemo(() => {
-    return mockPlayers.filter((p) => {
+    return players.filter((p) => {
       const name = `${p.firstName} ${p.lastName}`.toLowerCase();
       const cat = categoryFromAge(p.age);
       return (
@@ -54,7 +72,60 @@ export default function CoachPlayersPage() {
         (category === "all" || cat === category)
       );
     });
-  }, [q, category]);
+  }, [players, q, category]);
+
+  function openEdit(player: Player) {
+    setEditing(player);
+    setDraft({
+      firstName: player.firstName,
+      lastName: player.lastName,
+      age: player.age,
+      technicalScore: player.technicalScore,
+      tacticalScore: player.tacticalScore,
+      physicalScore: player.physicalScore,
+    });
+  }
+
+  function saveEdit() {
+    if (!editing) return;
+    const updated = {
+      ...editing,
+      firstName: draft.firstName.trim() || editing.firstName,
+      lastName: draft.lastName.trim() || editing.lastName,
+      age: draft.age,
+      technicalScore: draft.technicalScore,
+      tacticalScore: draft.tacticalScore,
+      physicalScore: draft.physicalScore,
+    };
+    setPlayers((prev) => prev.map((p) => (p.id === editing.id ? updated : p)));
+    if (selected.id === editing.id) setSelected(updated);
+    setEditing(null);
+    toast(locale === "fr" ? "Informations enregistrées" : "Information saved");
+  }
+
+  function downloadPlayerReport(player: Player) {
+    const lines = [
+      `Ninety One Foot Academy — Rapport joueur`,
+      `${player.firstName} ${player.lastName}`,
+      `Âge: ${player.age}`,
+      `Poste: ${localized(player.position, locale)}`,
+      `Pied fort: ${localized(player.strongFoot, locale)}`,
+      "",
+      `Technique: ${player.technicalScore}`,
+      `Tactique: ${player.tacticalScore}`,
+      `Physique: ${player.physicalScore}`,
+      `Mental: ${player.mentalScore}`,
+      "",
+      `Progression: ${localized(player.lastProgress, locale)}`,
+      "",
+      "Objectifs:",
+      ...player.objectives.map((o) => `- ${localized(o, locale)}`),
+    ];
+    downloadTextFile(
+      `rapport-${player.lastName}-${player.firstName}.txt`.toLowerCase(),
+      lines.join("\n")
+    );
+  }
 
   return (
     <DashboardLayout requiredRole="coach" title={t("players")}>
@@ -173,10 +244,12 @@ export default function CoachPlayersPage() {
                           >
                             {t("viewStats")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => toast(t("toast"))}>
+                          <DropdownMenuItem onClick={() => openEdit(player)}>
                             {t("editInfo")}
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => toast(t("toast"))}>
+                          <DropdownMenuItem
+                            onClick={() => downloadPlayerReport(player)}
+                          >
                             {t("downloadPlayerReport")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -191,6 +264,103 @@ export default function CoachPlayersPage() {
 
         <PlayerProgressCard player={selected} locale={locale} showCoachActions />
       </div>
+
+      <Dialog
+        open={!!editing}
+        onOpenChange={(open) => {
+          if (!open) setEditing(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-bold text-navy">
+              {t("editInfo")}
+            </DialogTitle>
+            <DialogDescription>
+              {editing
+                ? `${editing.firstName} ${editing.lastName}`
+                : undefined}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Prénom" : "First name"}
+              </span>
+              <input
+                value={draft.firstName}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, firstName: e.target.value }))
+                }
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Nom" : "Last name"}
+              </span>
+              <input
+                value={draft.lastName}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, lastName: e.target.value }))
+                }
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block text-xs font-semibold text-text-muted">
+                {locale === "fr" ? "Âge" : "Age"}
+              </span>
+              <input
+                type="number"
+                min={10}
+                max={20}
+                value={draft.age}
+                onChange={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    age: Number(e.target.value) || d.age,
+                  }))
+                }
+                className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+              />
+            </label>
+            {(
+              [
+                ["technicalScore", "Tech"],
+                ["tacticalScore", "Tact"],
+                ["physicalScore", "Phys"],
+              ] as const
+            ).map(([key, label]) => (
+              <label key={key} className="block text-sm">
+                <span className="mb-1 block text-xs font-semibold text-text-muted">
+                  {label}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={draft[key]}
+                  onChange={(e) =>
+                    setDraft((d) => ({
+                      ...d,
+                      [key]: Number(e.target.value) || 0,
+                    }))
+                  }
+                  className="h-10 w-full rounded-xl border border-[#E5E2D9] px-3"
+                />
+              </label>
+            ))}
+            <button
+              type="button"
+              onClick={saveEdit}
+              className="h-10 rounded-xl bg-gold text-sm font-bold text-navy sm:col-span-2"
+            >
+              {locale === "fr" ? "Enregistrer" : "Save"}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

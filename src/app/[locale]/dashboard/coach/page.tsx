@@ -13,8 +13,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { toast } from "@/components/ui/toast";
 import { coachData, mockPlayers, performanceChartData } from "@/lib/data";
+import { downloadTextFile } from "@/lib/download";
 import { formatDate, localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
@@ -39,11 +39,11 @@ export default function CoachOverviewPage() {
 
   const actions = [
     { label: t("newEval"), href: "/dashboard/coach/evaluations", icon: ClipboardList },
-    { label: t("addAttendance"), icon: CalendarDays },
-    { label: t("createSession"), icon: CalendarDays },
-    { label: t("addComment"), icon: MessageSquare },
-    { label: t("contactParent"), icon: UserPlus },
-    { label: t("downloadReport"), icon: FileText },
+    { label: t("addAttendance"), href: "/dashboard/coach/joueurs", icon: CalendarDays },
+    { label: t("createSession"), href: "/dashboard/coach/joueurs", icon: CalendarDays },
+    { label: t("addComment"), href: "/dashboard/coach/evaluations", icon: MessageSquare },
+    { label: t("contactParent"), href: "/contact", icon: UserPlus },
+    { label: t("downloadReport"), href: "#download-report", icon: FileText },
   ];
 
   return (
@@ -106,24 +106,42 @@ export default function CoachOverviewPage() {
               const Icon = action.icon;
               const className =
                 "flex min-h-14 items-center gap-2 rounded-xl border border-[#E5E2D9] bg-white px-3 text-sm font-semibold text-navy transition hover:-translate-y-0.5 hover:border-gold/40";
-              if (action.href) {
+              if (action.href === "#download-report") {
                 return (
-                  <Link key={action.label} href={action.href} className={className}>
+                  <button
+                    key={action.label}
+                    type="button"
+                    className={className}
+                    onClick={() => {
+                      const lines = [
+                        "Ninety One Foot Academy — Rapport coach",
+                        `Date: ${new Date().toISOString().slice(0, 10)}`,
+                        "",
+                        `Joueurs: ${mockPlayers.length}`,
+                        `Évaluations (période): 18`,
+                        `Joueurs à suivre: ${coachData.attention.length}`,
+                        "",
+                        ...mockPlayers.map(
+                          (p) =>
+                            `- ${p.firstName} ${p.lastName}: tech ${p.technicalScore}, tact ${p.tacticalScore}, phys ${p.physicalScore}`
+                        ),
+                      ];
+                      downloadTextFile(
+                        `rapport-coach-${new Date().toISOString().slice(0, 10)}.txt`,
+                        lines.join("\n")
+                      );
+                    }}
+                  >
                     <Icon className="h-4 w-4 text-gold" />
                     {action.label}
-                  </Link>
+                  </button>
                 );
               }
               return (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => toast(t("toast"))}
-                  className={className}
-                >
+                <Link key={action.label} href={action.href} className={className}>
                   <Icon className="h-4 w-4 text-gold" />
                   {action.label}
-                </button>
+                </Link>
               );
             })}
           </div>

@@ -4,12 +4,31 @@ import { useLocale, useTranslations } from "next-intl";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { toast } from "@/components/ui/toast";
 import { parentData } from "@/lib/data";
+import { downloadTextFile } from "@/lib/download";
 import { cn, formatDate, localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
 export default function ParentAcademicPage() {
   const t = useTranslations("dashboard.parent");
   const locale = useLocale() as Locale;
+
+  function downloadReport() {
+    const lines = [
+      "Ninety One Foot Academy — Rapport scolaire",
+      `Moyenne: ${parentData.academic.average}`,
+      `Focus: ${localized(parentData.academic.focus, locale)}`,
+      `Mis à jour: ${parentData.academic.updatedAt}`,
+      "",
+      ...parentData.academic.subjects.map(
+        (s) => `${localized(s.name, locale)}: ${s.grade}`
+      ),
+    ];
+    downloadTextFile(
+      `rapport-scolaire-${new Date().toISOString().slice(0, 10)}.txt`,
+      lines.join("\n")
+    );
+    toast(locale === "fr" ? "Téléchargement démarré" : "Download started");
+  }
 
   return (
     <DashboardLayout requiredRole="parent" title={t("academic")}>
@@ -21,7 +40,9 @@ export default function ParentAcademicPage() {
           </p>
           <p className="mt-2 text-sm font-medium text-gold">
             +{parentData.academic.delta}{" "}
-            {locale === "fr" ? "point depuis le trimestre précédent" : "pts vs previous term"}
+            {locale === "fr"
+              ? "point depuis le trimestre précédent"
+              : "pts vs previous term"}
           </p>
           <p className="mt-1 text-sm text-text-muted">
             {t("academicFocus", {
@@ -35,7 +56,7 @@ export default function ParentAcademicPage() {
           </p>
           <button
             type="button"
-            onClick={() => toast(t("actionToast"))}
+            onClick={downloadReport}
             className="mt-4 h-10 rounded-xl bg-gold px-4 text-sm font-bold text-navy"
           >
             {t("downloadReport")}

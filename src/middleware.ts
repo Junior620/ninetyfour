@@ -38,7 +38,7 @@ export default async function middleware(request: NextRequest) {
       request.cookies.get(SESSION_COOKIE)?.value
     );
 
-    if (!session) {
+    if (!session || (session.status && session.status !== "active")) {
       const locale = getLocaleFromPath(pathname);
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }

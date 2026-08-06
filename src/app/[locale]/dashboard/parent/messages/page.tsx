@@ -1,18 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { toast } from "@/components/ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { parentData } from "@/lib/data";
 import { formatDate, localized } from "@/lib/utils";
 import type { Locale } from "@/types";
 
+type Msg = (typeof parentData.messages)[number];
+
 export default function ParentMessagesPage() {
   const t = useTranslations("dashboard.parent");
   const locale = useLocale() as Locale;
-  const sorted = [...parentData.messages].sort(
+  const [messages, setMessages] = useState(parentData.messages);
+  const [selected, setSelected] = useState<Msg | null>(null);
+  const sorted = [...messages].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  function openMessage(msg: Msg) {
+    setSelected(msg);
+    setMessages((prev) =>
+      prev.map((m) => (m.id === msg.id ? { ...m, unread: false } : m))
+    );
+  }
 
   return (
     <DashboardLayout requiredRole="parent" title={t("messagesNav")}>
@@ -21,7 +40,7 @@ export default function ParentMessagesPage() {
           <button
             key={msg.id}
             type="button"
-            onClick={() => toast(t("actionToast"))}
+            onClick={() => openMessage(msg)}
             className="w-full rounded-2xl border border-[#E5E2D9] bg-white p-4 text-left transition hover:border-gold/40"
           >
             <div className="flex flex-wrap items-center gap-2">
@@ -49,6 +68,40 @@ export default function ParentMessagesPage() {
           </button>
         ))}
       </div>
+
+      <Dialog
+        open={!!selected}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          {selected ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="font-bold text-navy">
+                  {localized(selected.title, locale)}
+                </DialogTitle>
+                <DialogDescription>
+                  {t("from")} {localized(selected.sender, locale)} •{" "}
+                  {formatDate(selected.date, locale)}
+                </DialogDescription>
+              </DialogHeader>
+              <p className="text-sm leading-relaxed text-navy">
+                {localized(selected.preview, locale)}
+              </p>
+              {selected.needsReply ? (
+              <Link
+                href="/contact"
+                className="inline-flex h-10 items-center justify-center rounded-xl bg-gold px-4 text-sm font-bold text-navy"
+              >
+                {t("needsReply")}
+              </Link>
+              ) : null}
+            </>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

@@ -133,9 +133,11 @@ export function EvaluationForm({
       toast(
         mode === "draft"
           ? locale === "fr"
-            ? "Brouillon enregistré (démo)"
-            : "Draft saved (demo)"
-          : t("toast")
+            ? "Brouillon enregistré"
+            : "Draft saved"
+          : locale === "fr"
+            ? "Évaluation publiée"
+            : "Evaluation published"
       );
       onPublished?.();
     })();

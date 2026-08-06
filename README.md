@@ -72,7 +72,7 @@ prisma/
 | `/galerie` | Photos et vidéos |
 | `/rejoindre` | Formulaire de candidature |
 | `/contact` | Contact + carte Douala |
-| `/login` | Espace privé (simulation) |
+| `/login` | Espace privé (auth + inscription) |
 | `/dashboard/*` | Tableaux de bord par rôle |
 
 ## Internationalisation
@@ -93,23 +93,23 @@ Tout le contenu éditorial est centralisé dans `src/lib/data/` :
 - `gallery.ts` — médias
 - `players.ts` — joueurs fictifs, dashboards
 
-## Espace privé (MVP)
+## Espace privé
 
-La page `/login` permet de simuler 4 profils :
+La page `/login` propose les profils **Joueur**, **Parent** et **Coach** (connexion ou inscription). Les nouveaux comptes restent **en attente** jusqu’à validation par un administrateur (`/dashboard/admin/utilisateurs`). L’admin se connecte via le lien discret « Accès staff ».
 
-- **Joueur** — progression, objectifs, vidéos
-- **Parent** — suivi scolaire, présences, messages
-- **Coach** — liste joueurs, évaluations
-- **Admin** — gestion globale
+Auth : Supabase Auth + cookie JWT d’application (`AUTH_SECRET`).
 
-Le rôle est stocké en `localStorage`. L'authentification Supabase sera branchée en phase 2.
+### Bootstrap admin
 
-## Connexion Supabase (futur)
+1. Définir `ADMIN_BOOTSTRAP_PASSWORD` dans `.env.local` (et sur Vercel)
+2. Renseigner les clés Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`)
+3. Exécuter `npm run db:seed` — crée / met à jour `christianouragan@gmail.com` (rôle admin, status active) et désactive les comptes `*.demo`
 
-1. Copier `.env.example` vers `.env`
-2. Renseigner `DATABASE_URL` et les clés Supabase
-3. Exécuter `npx prisma migrate dev`
-4. Brancher les API routes sur Prisma
+## Connexion Supabase
+
+1. Copier `.env.example` vers `.env.local`
+2. Renseigner `DATABASE_URL` et les clés Supabase + `AUTH_SECRET` + `ADMIN_BOOTSTRAP_PASSWORD`
+3. Exécuter `npx prisma db push` puis `npm run db:seed`
 
 ## Setup Supabase — Recrutement (PDF + e-mails)
 

@@ -1,33 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
-import type { UserRole } from "../src/types";
 
-const DEFAULT_PASSWORD = process.env.PRIVATE_SPACE_PASSWORD?.trim() || "nofa2026";
+const ADMIN_EMAIL = "christianouragan@gmail.com";
+const ADMIN_NAME = "Christian";
 
-const USERS: Array<{
-  email: string;
-  name: string;
-  role: UserRole;
-}> = [
-  {
-    email: "joueur@ninetyone.demo",
-    name: "Kofi Mensah",
-    role: "player",
-  },
-  {
-    email: "parent@ninetyone.demo",
-    name: "M. Mensah",
-    role: "parent",
-  },
-  {
-    email: "coach@ninetyone.demo",
-    name: "Coach Martin",
-    role: "coach",
-  },
-  {
-    email: "admin@ninetyone.demo",
-    name: "Admin NOFA",
-    role: "admin",
-  },
+const DEMO_EMAILS = [
+  "joueur@ninetyone.demo",
+  "parent@ninetyone.demo",
+  "coach@ninetyone.demo",
+  "admin@ninetyone.demo",
 ];
 
 function requireEnv(name: string): string {
@@ -41,49 +21,82 @@ function requireEnv(name: string): string {
 async function main() {
   const url = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
   const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const password = process.env.ADMIN_BOOTSTRAP_PASSWORD?.trim();
+
+  if (!password || password.length < 8) {
+    throw new Error(
+      "ADMIN_BOOTSTRAP_PASSWORD is required (min 8 characters) to seed the admin account."
+    );
+  }
 
   const admin = createClient(url, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
   const listed = await admin.auth.admin.listUsers({ perPage: 1000 });
-  if (listed.error) {
-    throw listed.error;
-  }
+  if (listed.error) throw listed.error;
 
+  const users = listed.data.users ?? [];
   const byEmail = new Map(
-    (listed.data.users ?? []).map((user) => [user.email?.toLowerCase() ?? "", user])
+    users.map((user) => [user.email?.toLowerCase() ?? "", user])
   );
 
-  for (const account of USERS) {
-    const existing = byEmail.get(account.email.toLowerCase());
-
-    if (existing) {
-      const { error } = await admin.auth.admin.updateUserById(existing.id, {
-        password: DEFAULT_PASSWORD,
-        email_confirm: true,
-        app_metadata: { role: account.role },
-        user_metadata: { name: account.name, role: account.role },
-      });
-      if (error) throw error;
-      console.log(`updated ${account.email} (${account.role})`);
-      continue;
+  // Disable legacy demo accounts
+  for (const demoEmail of DEMO_EMAILS) {
+    const existing = byEmail.get(demoEmail);
+    if (!existing) continue;
+    const { error } = await admin.auth.admin.updateUserById(existing.id, {
+      ban_duration: "876000h",
+      app_metadata: {
+        ...(existing.app_metadata ?? {}),
+        status: "disabled",
+        role: existing.app_metadata?.role ?? "player",
+      },
+      user_metadata: {
+        ...(existing.user_metadata ?? {}),
+        status: "disabled",
+      },
+    });
+    if (error) {
+      console.warn(`Could not disable ${demoEmail}:`, error.message);
+    } else {
+      console.log(`disabled demo ${demoEmail}`);
     }
+  }
 
-    const { error } = await admin.auth.admin.createUser({
-      email: account.email,
-      password: DEFAULT_PASSWORD,
+  const existingAdmin = byEmail.get(ADMIN_EMAIL.toLowerCase());
+  const meta = {
+    role: "admin",
+    status: "active",
+  };
+
+  if (existingAdmin) {
+    const { error } = await admin.auth.admin.updateUserById(existingAdmin.id, {
+      password,
       email_confirm: true,
-      app_metadata: { role: account.role },
-      user_metadata: { name: account.name, role: account.role },
+      ban_duration: "none",
+      app_metadata: { ...existingAdmin.app_metadata, ...meta },
+      user_metadata: {
+        ...existingAdmin.user_metadata,
+        name: ADMIN_NAME,
+        ...meta,
+      },
     });
     if (error) throw error;
-    console.log(`created ${account.email} (${account.role})`);
+    console.log(`updated admin ${ADMIN_EMAIL}`);
+  } else {
+    const { error } = await admin.auth.admin.createUser({
+      email: ADMIN_EMAIL,
+      password,
+      email_confirm: true,
+      app_metadata: meta,
+      user_metadata: { name: ADMIN_NAME, ...meta },
+    });
+    if (error) throw error;
+    console.log(`created admin ${ADMIN_EMAIL}`);
   }
 
-  console.log(
-    `Auth seed OK — password: ${DEFAULT_PASSWORD === "nofa2026" ? "nofa2026" : "***"}`
-  );
+  console.log("Auth seed OK — admin bootstrap ready");
 }
 
 main().catch((error) => {
