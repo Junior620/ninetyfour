@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Bell, ChevronDown, LogOut, MessageCircle } from "lucide-react";
-import { useRouter } from "@/lib/i18n/navigation";
+import { Link, useRouter } from "@/lib/i18n/navigation";
 import { Sidebar } from "./Sidebar";
 import { DashboardMobileNav } from "./DashboardMobileNav";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -20,7 +20,6 @@ import {
   ROLE_PATHS,
 } from "@/lib/auth/session";
 import { cn } from "@/lib/utils";
-import { Link } from "@/lib/i18n/navigation";
 import type { UserRole } from "@/types";
 
 const roleNames: Record<UserRole, string> = {
@@ -35,6 +34,122 @@ const roleLabels: Record<UserRole, { fr: string; en: string }> = {
   parent: { fr: "Parent", en: "Parent" },
   coach: { fr: "Coach", en: "Coach" },
   admin: { fr: "Administrateur", en: "Administrator" },
+};
+
+type NotifItem = {
+  id: string;
+  titleKey: string;
+  bodyKey: string;
+  href: string;
+  unread: boolean;
+  time: string;
+};
+
+const NOTIFS_BY_ROLE: Record<UserRole, NotifItem[]> = {
+  admin: [
+    {
+      id: "a1",
+      titleKey: "notif.admin1Title",
+      bodyKey: "notif.admin1Body",
+      href: "/dashboard/admin/candidatures",
+      unread: true,
+      time: "10 min",
+    },
+    {
+      id: "a2",
+      titleKey: "notif.admin2Title",
+      bodyKey: "notif.admin2Body",
+      href: "/dashboard/admin/utilisateurs",
+      unread: true,
+      time: "1 h",
+    },
+    {
+      id: "a3",
+      titleKey: "notif.admin3Title",
+      bodyKey: "notif.admin3Body",
+      href: "/dashboard/admin/candidatures",
+      unread: true,
+      time: "Hier",
+    },
+  ],
+  coach: [
+    {
+      id: "c1",
+      titleKey: "notif.coach1Title",
+      bodyKey: "notif.coach1Body",
+      href: "/dashboard/coach/evaluations",
+      unread: true,
+      time: "20 min",
+    },
+    {
+      id: "c2",
+      titleKey: "notif.coach2Title",
+      bodyKey: "notif.coach2Body",
+      href: "/dashboard/coach/joueurs",
+      unread: true,
+      time: "2 h",
+    },
+    {
+      id: "c3",
+      titleKey: "notif.coach3Title",
+      bodyKey: "notif.coach3Body",
+      href: "/dashboard/coach",
+      unread: false,
+      time: "Hier",
+    },
+  ],
+  parent: [
+    {
+      id: "p1",
+      titleKey: "notif.parent1Title",
+      bodyKey: "notif.parent1Body",
+      href: "/dashboard/parent/scolaire",
+      unread: true,
+      time: "30 min",
+    },
+    {
+      id: "p2",
+      titleKey: "notif.parent2Title",
+      bodyKey: "notif.parent2Body",
+      href: "/dashboard/parent/calendrier",
+      unread: true,
+      time: "3 h",
+    },
+    {
+      id: "p3",
+      titleKey: "notif.parent3Title",
+      bodyKey: "notif.parent3Body",
+      href: "/dashboard/parent/documents",
+      unread: true,
+      time: "Hier",
+    },
+  ],
+  player: [
+    {
+      id: "j1",
+      titleKey: "notif.player1Title",
+      bodyKey: "notif.player1Body",
+      href: "/dashboard/joueur",
+      unread: true,
+      time: "15 min",
+    },
+    {
+      id: "j2",
+      titleKey: "notif.player2Title",
+      bodyKey: "notif.player2Body",
+      href: "/dashboard/joueur",
+      unread: true,
+      time: "1 h",
+    },
+    {
+      id: "j3",
+      titleKey: "notif.player3Title",
+      bodyKey: "notif.player3Body",
+      href: "/dashboard/joueur",
+      unread: false,
+      time: "Hier",
+    },
+  ],
 };
 
 interface DashboardLayoutProps {
@@ -55,7 +170,6 @@ function formatDashboardDate(locale: string) {
     return raw;
   }
 
-  // FR: "lundi 27 juillet 2026" — capitalize weekday only
   return raw.replace(/^(\p{L})/u, (c) => c.toUpperCase());
 }
 
@@ -68,6 +182,7 @@ export function DashboardLayout({
   const locale = useLocale();
   const t = useTranslations("dashboard");
   const [role, setRole] = useState<UserRole | null>(null);
+  const [notifs, setNotifs] = useState<NotifItem[]>([]);
 
   useEffect(() => {
     const stored = getRoleClient();
@@ -80,13 +195,26 @@ export function DashboardLayout({
       return;
     }
     setRole(stored);
+    setNotifs(NOTIFS_BY_ROLE[stored].map((n) => ({ ...n })));
   }, [requiredRole, router]);
 
   const dateLabel = useMemo(() => formatDashboardDate(locale), [locale]);
+  const unreadCount = notifs.filter((n) => n.unread).length;
 
   async function handleLogout() {
     await logoutClient();
     router.replace("/login");
+  }
+
+  function markAllRead() {
+    setNotifs((prev) => prev.map((n) => ({ ...n, unread: false })));
+  }
+
+  function openNotif(item: NotifItem) {
+    setNotifs((prev) =>
+      prev.map((n) => (n.id === item.id ? { ...n, unread: false } : n))
+    );
+    router.push(item.href);
   }
 
   if (!role) {
@@ -140,16 +268,84 @@ export function DashboardLayout({
               </label>
             )}
 
-            <button
-              type="button"
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E2D9] bg-white text-navy transition hover:border-gold/40"
-              aria-label={t("notifications")}
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-navy">
-                3
-              </span>
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E2D9] bg-white text-navy transition hover:border-gold/40"
+                aria-label={t("notifications")}
+              >
+                <Bell className="h-4 w-4" />
+                {unreadCount > 0 ? (
+                  <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 text-[10px] font-bold text-navy">
+                    {unreadCount}
+                  </span>
+                ) : null}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[20rem] p-0">
+                <div className="flex items-center justify-between border-b border-[#E5E2D9] px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-bold text-navy">
+                      {t("notifications")}
+                    </p>
+                    {unreadCount > 0 ? (
+                      <p className="text-[11px] text-text-muted">
+                        {t("notificationsUnread", { count: unreadCount })}
+                      </p>
+                    ) : null}
+                  </div>
+                  {unreadCount > 0 ? (
+                    <button
+                      type="button"
+                      onClick={markAllRead}
+                      className="text-[11px] font-semibold text-gold hover:underline"
+                    >
+                      {t("notificationsMarkAll")}
+                    </button>
+                  ) : null}
+                </div>
+                <div className="max-h-80 overflow-y-auto py-1">
+                  {notifs.length === 0 ? (
+                    <p className="px-3 py-6 text-center text-sm text-text-muted">
+                      {t("notificationsEmpty")}
+                    </p>
+                  ) : (
+                    notifs.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => openNotif(item)}
+                        className={cn(
+                          "flex w-full gap-3 px-3 py-2.5 text-left transition hover:bg-[#F7F6F2]",
+                          item.unread && "bg-gold/[0.06]"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "mt-1.5 h-2 w-2 shrink-0 rounded-full",
+                            item.unread ? "bg-gold" : "bg-transparent"
+                          )}
+                          aria-hidden
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-start justify-between gap-2">
+                            <span className="text-sm font-semibold text-navy">
+                              {t(item.titleKey)}
+                            </span>
+                            <span className="shrink-0 text-[10px] text-text-muted">
+                              {item.time === "Hier" && locale === "en"
+                                ? "Yesterday"
+                                : item.time}
+                            </span>
+                          </span>
+                          <span className="mt-0.5 block text-xs leading-snug text-text-muted">
+                            {t(item.bodyKey)}
+                          </span>
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <DropdownMenu>
               <DropdownMenuTrigger

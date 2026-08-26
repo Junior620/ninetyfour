@@ -39,6 +39,30 @@ export interface Ambassador {
   photo: string;
 }
 
+export type StaffDepartment =
+  | "direction"
+  | "technical"
+  | "medical"
+  | "performance";
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  role: LocalizedString;
+  bio: LocalizedString;
+  photo: string;
+  department?: StaffDepartment;
+}
+
+export type TeamCategoryId = "u14" | "u16" | "u18";
+
+export interface TeamCategory {
+  id: TeamCategoryId;
+  label: LocalizedString;
+  description: LocalizedString;
+  coaches: StaffMember[];
+}
+
 export interface NewsArticle {
   slug: string;
   title: LocalizedString;

@@ -46,6 +46,8 @@ export function Footer() {
               <li><Link href="/formation-sportive" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("training")}</Link></li>
               <li><Link href="/education" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("education")}</Link></li>
               <li><Link href="/performance-lab" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("performanceLab")}</Link></li>
+              <li><Link href="/encadrement" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("coaching")}</Link></li>
+              <li><Link href="/equipes" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("teams")}</Link></li>
             </ul>
           </div>
 

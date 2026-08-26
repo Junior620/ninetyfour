@@ -5,3 +5,4 @@ export * from "./program";
 export * from "./news";
 export * from "./gallery";
 export * from "./players";
+export * from "./staff";

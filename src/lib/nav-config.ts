@@ -34,6 +34,14 @@ export const desktopNavItems: NavItem[] = [
   },
   {
     type: "group",
+    key: "staffGroup",
+    children: [
+      { href: "/encadrement", key: "coaching" },
+      { href: "/equipes", key: "teams" },
+    ],
+  },
+  {
+    type: "group",
     key: "mediaGroup",
     children: [
       { href: "/actualites", key: "news" },
@@ -53,6 +61,8 @@ export const mobileNavLinks = [
   { href: "/formation-sportive", key: "training" },
   { href: "/performance-lab", key: "performanceLab" },
   { href: "/education", key: "education" },
+  { href: "/encadrement", key: "coaching" },
+  { href: "/equipes", key: "teams" },
   { href: "/partenaires", key: "partners" },
   { href: "/parrains", key: "ambassadors" },
   { href: "/actualites", key: "news" },

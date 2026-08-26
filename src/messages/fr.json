@@ -21,9 +21,12 @@
     "privateShort": "Privé",
     "academyGroup": "Académie",
     "programGroup": "Programme",
+    "staffGroup": "Staff",
     "mediaGroup": "Médias",
     "vision": "Vision & Valeurs",
-    "training": "Formation sportive"
+    "training": "Formation sportive",
+    "coaching": "Encadrement",
+    "teams": "Équipes"
   },
   "common": {
     "learnMore": "En savoir plus",
@@ -74,34 +77,6 @@
     "ambassadorsTitle": "Nos parrains et ambassadeurs internationaux",
     "ambassadorsSubtitle": "Des personnalités basées à l'étranger qui soutiennent l'académie par leurs dons, leur réseau et leur visibilité.",
     "ambassadorsCta": "Voir tous les parrains",
-    "promo": {
-      "eyebrowOpen": "Inscriptions ouvertes",
-      "headline": "Entre dans la première promotion",
-      "tagline": "Ta chance. Ton terrain. Ton avenir commence ici.",
-      "cta": "Je m’inscris aux détections",
-      "ctaHint": "Inscription rapide • Places limitées",
-      "helpLink": "Besoin d’aide ? Nous contacter",
-      "close": "Non merci, fermer",
-      "phones": "678 259 540 / 693 881 971",
-      "countdown": "Clôture des inscriptions dans {days} J : {hours} H : {mins} MIN",
-      "countdownLive": "Inscriptions en cours",
-      "zoneA": {
-        "zone": "Zone A",
-        "dates": "25 & 26 juillet 2026",
-        "place": "Stade Terkocam, Bonamoussadi",
-        "time": "13 h – 15 h",
-        "day1": "25 juillet : U-14 & U-16",
-        "day2": "26 juillet : U-18"
-      },
-      "zoneB": {
-        "zone": "Zone B",
-        "dates": "27 & 28 juillet 2026",
-        "place": "Stade École Publique Deido",
-        "time": "10 h – 13 h",
-        "day1": "27 juillet : U-14 & U-16",
-        "day2": "28 juillet : U-18"
-      }
-    },
     "badges": {
       "age": "15–17 ans",
       "sessions": "4 séances/semaine",
@@ -174,6 +149,23 @@
       "connections": "Mettre en relation avec des clubs et organisations à l'étranger"
     },
     "ctaTitle": "Rejoindre le réseau des parrains"
+  },
+  "coaching": {
+    "title": "Encadrement",
+    "heroTitle": "Notre staff technique",
+    "intro": "Un encadrement qualifié accompagne chaque joueur au quotidien : direction sportive, entraînement, préparation physique et suivi médical.",
+    "sectionTitle": "L'équipe d'encadrement",
+    "sectionSubtitle": "Des professionnels engagés pour former la prochaine génération.",
+    "ctaTitle": "Découvrir nos équipes par catégorie",
+    "ctaButton": "Voir les équipes"
+  },
+  "teams": {
+    "title": "Équipes",
+    "heroTitle": "Nos catégories",
+    "intro": "Ninety One Foot Academy structure sa formation autour de trois catégories d'âge : U-14, U-16 et U-18. Chaque groupe dispose d'un encadrement dédié.",
+    "coachesLabel": "Encadrement de la catégorie",
+    "ctaTitle": "Rencontrer tout le staff",
+    "ctaButton": "Voir l'encadrement"
   },
   "news": {
     "title": "Actualités",
@@ -279,6 +271,35 @@
     "portal": "Espace privé",
     "searchPlaceholder": "Rechercher…",
     "notifications": "Notifications",
+    "notificationsEmpty": "Aucune notification",
+    "notificationsMarkAll": "Tout marquer comme lu",
+    "notificationsUnread": "{count} non lue(s)",
+    "notif": {
+      "admin1Title": "Nouvelle candidature",
+      "admin1Body": "Philémon Ntang a soumis une fiche d’enregistrement.",
+      "admin2Title": "Compte à valider",
+      "admin2Body": "Une inscription coach attend votre validation.",
+      "admin3Title": "PDF disponible",
+      "admin3Body": "Le dossier de Boumtje est prêt à télécharger.",
+      "coach1Title": "Évaluation à finaliser",
+      "coach1Body": "3 brouillons d’évaluation sont en attente.",
+      "coach2Title": "Joueur à suivre",
+      "coach2Body": "Kofi Mensah : baisse de présence cette semaine.",
+      "coach3Title": "Prochaine séance",
+      "coach3Body": "Entraînement U-16 demain à 16h30.",
+      "parent1Title": "Message de l’académie",
+      "parent1Body": "Nouveau bulletin scolaire disponible.",
+      "parent2Title": "Rappel séance",
+      "parent2Body": "Entraînement demain — prévoir la tenue complète.",
+      "parent3Title": "Document à signer",
+      "parent3Body": "Autorisation parentale en attente.",
+      "player1Title": "Nouveau commentaire coach",
+      "player1Body": "Bonne progression sur les passes longues.",
+      "player2Title": "Objectif du mois",
+      "player2Body": "Atteindre 80 en score technique.",
+      "player3Title": "Vidéo à revoir",
+      "player3Body": "Analyse de la dernière séance disponible."
+    },
     "player": {
       "title": "Tableau de bord joueur",
       "nextTraining": "Prochain entraînement",
@@ -637,6 +658,14 @@
     "ambassadors": {
       "title": "Parrains et ambassadeurs internationaux",
       "description": "Parrains et ambassadeurs qui soutiennent Ninety One Foot Academy à Douala par leur réseau et leur engagement."
+    },
+    "coaching": {
+      "title": "Encadrement technique — Académie football Douala",
+      "description": "Découvrez le staff technique de Ninety One Foot Academy à Douala : direction sportive, entraîneurs, préparation physique et suivi médical."
+    },
+    "teams": {
+      "title": "Équipes U-14, U-16, U-18 — Académie football Douala",
+      "description": "Les catégories U-14, U-16 et U-18 de Ninety One Foot Academy à Douala : organisation et encadrement par âge."
     },
     "news": {
       "title": "Actualités — Académie de football Douala",
