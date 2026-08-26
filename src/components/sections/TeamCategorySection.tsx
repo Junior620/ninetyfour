@@ -31,7 +31,7 @@ export function TeamCategorySection({
     <section
       id={category.id}
       className={cn(
-        "section-padding",
+        "section-padding scroll-mt-24",
         background === "cream" ? "bg-cream" : "bg-white"
       )}
     >
@@ -55,7 +55,7 @@ export function TeamCategorySection({
             "mx-auto grid gap-6 sm:gap-8",
             category.coaches.length === 1
               ? "max-w-xs grid-cols-1"
-              : "grid-cols-2 sm:max-w-2xl sm:grid-cols-2"
+              : "max-w-2xl grid-cols-1 sm:grid-cols-2"
           )}
         >
           {category.coaches.map((coach, i) => (

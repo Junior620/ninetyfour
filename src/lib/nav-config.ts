@@ -13,14 +13,13 @@ export type NavGroup = {
 export type NavItem = NavLink | NavGroup;
 
 export const desktopNavItems: NavItem[] = [
-  { type: "link", href: "/", key: "home" },
+  { type: "link", href: "/actualites", key: "news" },
   {
     type: "group",
-    key: "academyGroup",
+    key: "clubGroup",
     children: [
       { href: "/academie", key: "academy" },
       { href: "/vision", key: "vision" },
-      { href: "/formation-sportive", key: "training" },
     ],
   },
   {
@@ -28,24 +27,24 @@ export const desktopNavItems: NavItem[] = [
     key: "programGroup",
     children: [
       { href: "/programme", key: "program" },
+      { href: "/formation-sportive", key: "training" },
       { href: "/education", key: "education" },
       { href: "/performance-lab", key: "performanceLab" },
     ],
   },
   {
     type: "group",
-    key: "staffGroup",
+    key: "teamsGroup",
     children: [
       { href: "/encadrement", key: "coaching" },
       { href: "/equipes", key: "teams" },
     ],
   },
+  { type: "link", href: "/galerie", key: "media" },
   {
     type: "group",
-    key: "mediaGroup",
+    key: "partnersGroup",
     children: [
-      { href: "/actualites", key: "news" },
-      { href: "/galerie", key: "gallery" },
       { href: "/partenaires", key: "partners" },
       { href: "/parrains", key: "ambassadors" },
     ],
@@ -54,19 +53,18 @@ export const desktopNavItems: NavItem[] = [
 ];
 
 export const mobileNavLinks = [
-  { href: "/", key: "home" },
+  { href: "/actualites", key: "news" },
   { href: "/academie", key: "academy" },
   { href: "/vision", key: "vision" },
   { href: "/programme", key: "program" },
   { href: "/formation-sportive", key: "training" },
-  { href: "/performance-lab", key: "performanceLab" },
   { href: "/education", key: "education" },
+  { href: "/performance-lab", key: "performanceLab" },
   { href: "/encadrement", key: "coaching" },
   { href: "/equipes", key: "teams" },
+  { href: "/galerie", key: "media" },
   { href: "/partenaires", key: "partners" },
   { href: "/parrains", key: "ambassadors" },
-  { href: "/actualites", key: "news" },
-  { href: "/galerie", key: "gallery" },
   { href: "/contact", key: "contact" },
 ] as const;
 

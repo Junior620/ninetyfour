@@ -26,12 +26,11 @@ export function Footer() {
 
           <div>
             <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">
-              {t("academy")}
+              {tNav("clubGroup")}
             </h3>
             <ul className="space-y-1 text-sm text-white/70">
               <li><Link href="/academie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("academy")}</Link></li>
               <li><Link href="/vision" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("vision")}</Link></li>
-              <li><Link href="/partenaires" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("partners")}</Link></li>
               <li><Link href="/actualites" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("news")}</Link></li>
               <li><Link href="/galerie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("gallery")}</Link></li>
             </ul>
@@ -59,6 +58,8 @@ export function Footer() {
               <li><Link href="/contact" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("contact")}</Link></li>
               <li><Link href="/rejoindre" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("join")}</Link></li>
               <li><Link href="/login" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("privateSpace")}</Link></li>
+              <li><Link href="/partenaires" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("partners")}</Link></li>
+              <li><Link href="/parrains" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("ambassadors")}</Link></li>
             </ul>
           </div>
         </div>

@@ -52,6 +52,9 @@ export default async function TeamsPage({
             <p className="text-center text-base leading-relaxed text-text-muted sm:text-lg">
               {t("intro")}
             </p>
+            <p className="mt-4 text-center text-sm italic leading-relaxed text-text-muted/80">
+              {t("photoNote")}
+            </p>
           </ScrollReveal>
         </div>
       </section>

@@ -57,32 +57,46 @@ export default async function HomePage({
 
   const explorePages = [
     {
+      key: "club",
+      href: "/academie",
+      title: tNav("clubGroup"),
+      description: t("explore.club"),
+      image: images.academy,
+    },
+    {
       key: "program",
       href: "/programme",
       title: tNav("program"),
       description: t("explore.program"),
-      image: images.academy,
-    },
-    {
-      key: "training",
-      href: "/formation-sportive",
-      title: tNav("training"),
-      description: t("explore.training"),
       image: images.training,
     },
     {
-      key: "education",
-      href: "/education",
-      title: tNav("education"),
-      description: t("explore.education"),
+      key: "teams",
+      href: "/equipes",
+      title: tNav("teams"),
+      description: t("explore.teams"),
+      image: images.team,
+    },
+    {
+      key: "coaching",
+      href: "/encadrement",
+      title: tNav("coaching"),
+      description: t("explore.coaching"),
+      image: images.performance,
+    },
+    {
+      key: "news",
+      href: "/actualites",
+      title: tNav("news"),
+      description: t("explore.news"),
       image: images.education,
     },
     {
-      key: "performanceLab",
-      href: "/performance-lab",
-      title: tNav("performanceLab"),
-      description: t("explore.performanceLab"),
-      image: images.performance,
+      key: "partners",
+      href: "/partenaires",
+      title: tNav("partners"),
+      description: t("explore.partners"),
+      image: images.academy,
     },
   ];
 
@@ -188,7 +202,7 @@ export default async function HomePage({
             title={t("exploreTitle")}
             subtitle={t("exploreSubtitle")}
           />
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {explorePages.map((page, i) => (
               <ExploreCard
                 key={page.key}

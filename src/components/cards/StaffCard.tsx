@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ScrollReveal } from "@/components/motion/ScrollReveal";
+import { STAFF_PHOTO_PLACEHOLDER } from "@/lib/data/staff";
 import { cn } from "@/lib/utils";
 
 interface StaffCardProps {
@@ -21,6 +22,8 @@ export function StaffCard({
   index = 0,
   className,
 }: StaffCardProps) {
+  const isPlaceholder = photo === STAFF_PHOTO_PLACEHOLDER;
+
   return (
     <ScrollReveal
       variant="fadeUp"
@@ -28,13 +31,20 @@ export function StaffCard({
       className={cn("group text-center", className)}
     >
       <article className="hover-lift flex flex-col items-center rounded-2xl p-4 sm:p-6">
-        <div className="relative mb-4 h-28 w-28 shrink-0 overflow-hidden rounded-full shadow-lg ring-2 ring-gold/30 transition-shadow duration-300 group-hover:shadow-xl group-hover:ring-gold/50 sm:mb-5 sm:h-36 sm:w-36">
+        <div
+          className={cn(
+            "relative mb-4 h-28 w-28 shrink-0 overflow-hidden rounded-full shadow-lg ring-2 ring-gold/30 transition-shadow duration-300 group-hover:shadow-xl group-hover:ring-gold/50 sm:mb-5 sm:h-36 sm:w-36",
+            isPlaceholder && "bg-cream"
+          )}
+        >
           <Image
             src={photo}
             alt={name}
             fill
             sizes="(max-width: 640px) 112px, 144px"
-            className="object-cover"
+            className={cn(
+              isPlaceholder ? "object-contain p-5 sm:p-6" : "object-cover"
+            )}
           />
         </div>
         <h3 className="text-base font-bold text-navy sm:text-lg">{name}</h3>

@@ -59,7 +59,9 @@ export type TeamCategoryId = "u14" | "u16" | "u18";
 export interface TeamCategory {
   id: TeamCategoryId;
   label: LocalizedString;
+  shortLabel: LocalizedString;
   description: LocalizedString;
+  image: string;
   coaches: StaffMember[];
 }
 
