@@ -223,7 +223,8 @@
     "address": "Douala, Cameroun",
     "formTitle": "Envoyez-nous un message",
     "phonePending": "Numéro officiel à confirmer — contactez-nous par e-mail.",
-    "emailLabel": "E-mail"
+    "emailLabel": "E-mail",
+    "socialLabel": "Réseaux sociaux"
   },
   "login": {
     "eyebrow": "Accès membres",

@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { usePathname } from "@/lib/i18n/navigation";
-import { partners } from "@/lib/data";
+import { FacebookIcon, InstagramIcon } from "@/components/icons/SocialIcons";
+import { contactInfo, partners } from "@/lib/data";
 import { AcademyLogo } from "./AcademyLogo";
 
 export function Footer() {
@@ -22,6 +23,30 @@ export function Footer() {
               <AcademyLogo variant="footer" />
             </div>
             <p className="text-sm leading-relaxed text-white/60">{t("slogan")}</p>
+            <div className="mt-5 flex items-center gap-3">
+              {contactInfo.social.instagram ? (
+                <a
+                  href={contactInfo.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-gold hover:text-gold"
+                >
+                  <InstagramIcon />
+                </a>
+              ) : null}
+              {contactInfo.social.facebook ? (
+                <a
+                  href={contactInfo.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-gold hover:text-gold"
+                >
+                  <FacebookIcon />
+                </a>
+              ) : null}
+            </div>
           </div>
 
           <div>

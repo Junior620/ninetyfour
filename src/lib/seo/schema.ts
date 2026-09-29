@@ -35,6 +35,9 @@ export function organizationJsonLd(locale: "fr" | "en") {
       name: "Douala",
     },
     sport: "Football",
+    sameAs: [contactInfo.social.instagram, contactInfo.social.facebook].filter(
+      (url): url is string => Boolean(url)
+    ),
   };
 }
 

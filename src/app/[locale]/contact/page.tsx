@@ -8,6 +8,7 @@ import { SectionTitle } from "@/components/sections/SectionTitle";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { buttonVariants } from "@/components/ui/button";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
+import { FacebookIcon, InstagramIcon } from "@/components/icons/SocialIcons";
 import { contactInfo } from "@/lib/data";
 import { localized, cn } from "@/lib/utils";
 import type { Locale } from "@/types";
@@ -91,6 +92,47 @@ export default async function ContactPage({
                 ) : (
                   <p className="text-text-muted">{t("phonePending")}</p>
                 )}
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center text-gold">
+                <InstagramIcon className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-black-premium">
+                  {t("socialLabel")}
+                </h3>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  {contactInfo.social.instagram ? (
+                    <a
+                      href={contactInfo.social.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        buttonVariants({ variant: "outline" }),
+                        "border-navy text-navy hover:bg-navy hover:text-white"
+                      )}
+                    >
+                      <InstagramIcon className="mr-2 h-4 w-4" />
+                      Instagram
+                    </a>
+                  ) : null}
+                  {contactInfo.social.facebook ? (
+                    <a
+                      href={contactInfo.social.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        buttonVariants({ variant: "outline" }),
+                        "border-navy text-navy hover:bg-navy hover:text-white"
+                      )}
+                    >
+                      <FacebookIcon className="mr-2 h-4 w-4" />
+                      Facebook
+                    </a>
+                  ) : null}
+                </div>
               </div>
             </div>
 

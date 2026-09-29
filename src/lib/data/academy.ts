@@ -283,10 +283,9 @@ export const contactInfo = {
   phone: null as string | null,
   whatsapp: null as string | null,
   address: { fr: "Douala, Cameroun", en: "Douala, Cameroon" },
-  /** Only real profile URLs — empty until official accounts are provided */
   social: {
-    instagram: null as string | null,
-    facebook: null as string | null,
+    instagram: "https://www.instagram.com/ninetyone_footacademy/",
+    facebook: "https://www.facebook.com/share/1DJUpqqd3x/",
     twitter: null as string | null,
   },
 };
