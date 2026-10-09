@@ -1,109 +1,16 @@
 "use client";
-
-import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import Image from "next/image";
 import { Link } from "@/lib/i18n/navigation";
-import { usePathname } from "@/lib/i18n/navigation";
-import { FacebookIcon, InstagramIcon } from "@/components/icons/SocialIcons";
-import { contactInfo, partners } from "@/lib/data";
-import { AcademyLogo } from "./AcademyLogo";
-
+import { contactInfo } from "@/lib/data/academy";
+import { clubNav, words } from "@/lib/club";
+import { PartnerGrid } from "@/components/club/ClubUI";
+import type { Locale } from "@/types";
 export function Footer() {
-  const t = useTranslations("footer");
-  const tNav = useTranslations("nav");
-  const pathname = usePathname();
-
-  if (pathname.startsWith("/dashboard")) return null;
-
-  return (
-    <footer className="bg-navy text-white">
-      <div className="container-wide section-padding">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <div className="mb-4">
-              <AcademyLogo variant="footer" />
-            </div>
-            <p className="text-sm leading-relaxed text-white/60">{t("slogan")}</p>
-            <div className="mt-5 flex items-center gap-3">
-              {contactInfo.social.instagram ? (
-                <a
-                  href={contactInfo.social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-gold hover:text-gold"
-                >
-                  <InstagramIcon />
-                </a>
-              ) : null}
-              {contactInfo.social.facebook ? (
-                <a
-                  href={contactInfo.social.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors hover:border-gold hover:text-gold"
-                >
-                  <FacebookIcon />
-                </a>
-              ) : null}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">
-              {tNav("clubGroup")}
-            </h3>
-            <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/academie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("academy")}</Link></li>
-              <li><Link href="/vision" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("vision")}</Link></li>
-              <li><Link href="/actualites" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("news")}</Link></li>
-              <li><Link href="/galerie" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("gallery")}</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">
-              {t("program")}
-            </h3>
-            <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/programme" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("program")}</Link></li>
-              <li><Link href="/formation-sportive" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("training")}</Link></li>
-              <li><Link href="/education" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("education")}</Link></li>
-              <li><Link href="/performance-lab" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("performanceLab")}</Link></li>
-              <li><Link href="/encadrement" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("coaching")}</Link></li>
-              <li><Link href="/equipes" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("teams")}</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-gold">
-              {t("contact")}
-            </h3>
-            <ul className="space-y-1 text-sm text-white/70">
-              <li><Link href="/contact" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("contact")}</Link></li>
-              <li><Link href="/rejoindre" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("join")}</Link></li>
-              <li><Link href="/login" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("privateSpace")}</Link></li>
-              <li><Link href="/partenaires" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("partners")}</Link></li>
-              <li><Link href="/parrains" className="hover-link flex min-h-11 items-center hover:text-gold">{tNav("ambassadors")}</Link></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t border-white/10 pt-8">
-          {partners.map((p) => (
-            <span
-              key={p.id}
-              className="text-sm font-bold uppercase tracking-widest text-white/30 transition-colors duration-200 hover:text-gold/70"
-            >
-              {p.name}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-8 text-center text-xs text-white/40">
-          © {new Date().getFullYear()} Ninety One Foot Academy. {t("rights")}
-        </div>
-      </div>
-    </footer>
-  );
+  const locale=useLocale() as Locale;
+  return <><PartnerGrid locale={locale}/><footer className="club-footer"><div className="club-container">
+    <div className="footer-top"><div><Image src="/logo-crest.png" alt="Ninety One Foot Academy" width={72} height={72}/><h2>NINETY ONE<br/>FOOT ACADEMY.</h2><p>{words(locale,"Ancrée à Douala. Tournée vers demain.","Rooted in Douala. Looking ahead.")}</p></div><div className="footer-nav">{clubNav.map(group=><div key={group.href}><h3><Link href={group.href}>{group[locale]}</Link></h3>{group.children.slice(0,4).map(c=><Link key={c.href} href={c.href}>{c[locale]}</Link>)}</div>)}</div></div>
+    <div className="footer-service"><div><span className="club-kicker">{words(locale,"Restons en contact","Keep in touch")}</span><a href={`mailto:${contactInfo.email}`}>{contactInfo.email}</a><span>{contactInfo.address[locale]}</span></div><div><Link href="/contact#venir">{words(locale,"Venir nous rencontrer","Visit us")}</Link><Link href="/rejoindre">{words(locale,"Candidater","Apply")}</Link><Link href="/login">{words(locale,"Espace privé","Member area")}</Link></div><div><a href={contactInfo.social.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href={contactInfo.social.facebook} target="_blank" rel="noopener noreferrer">Facebook ↗</a></div></div>
+    <div className="footer-bottom"><span>© {new Date().getFullYear()} Ninety One Foot Academy</span><Link href="/informations-legales">{words(locale,"Informations légales","Legal information")}</Link><Link href="/confidentialite">{words(locale,"Confidentialité","Privacy")}</Link></div>
+  </div></footer></>;
 }

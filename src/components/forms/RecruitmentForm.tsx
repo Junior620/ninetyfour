@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Children, cloneElement, isValidElement, useEffect, useId, useRef, useState, useSyncExternalStore, type ReactElement, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useWatch, useForm, type FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { recruitmentSchema, type RecruitmentFormData } from "@/lib/validations/schemas";
+import { createRecruitmentSchema, type RecruitmentFormData } from "@/lib/validations/schemas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,20 @@ import {
 } from "@/components/ui/select";
 import { FormSubmissionResult, FormSubmitLabel, type FormSubmissionStatus } from "@/components/forms/FormSubmissionResult";
 import { cn } from "@/lib/utils";
+import { attachmentMessage, DOCUMENT_ACCEPT, PHOTO_ACCEPT, recruitmentDocuments, validateAttachment, validateRecruitmentAttachments, type AttachmentField, type DocumentField } from "@/lib/recruitment/attachments";
+
+const subscribeHydration = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+const defaultValues: Partial<RecruitmentFormData> = {
+  consent: undefined,
+  injuryCurrent: false,
+  birthCertificateProvided: false,
+  parentalAuthProvided: false,
+  medicalCertificateProvided: false,
+  feesPaidProvided: false,
+  paymentMethod: "cash",
+};
 
 function createIdempotencyKey() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -81,8 +95,9 @@ export function RecruitmentForm() {
 
   const [step, setStep] = useState(0);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [docFiles, setDocFiles] = useState<Record<string, File | null>>({});
+  const [docFiles, setDocFiles] = useState<Partial<Record<DocumentField, File | null>>>({});
   const [error, setError] = useState("");
+  const [fileErrors, setFileErrors] = useState<Partial<Record<AttachmentField, string>>>({});
   const [view, setView] = useState<"form" | "result">("form");
   const [resultStatus, setResultStatus] =
     useState<FormSubmissionStatus>("success");
@@ -93,88 +108,62 @@ export function RecruitmentForm() {
   } | null>(null);
   const [pdfDownloadUrl, setPdfDownloadUrl] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState("fiche-enregistrement.pdf");
-  const idempotencyKey = useRef(createIdempotencyKey());
-  // Évite le mismatch SSR/client sur l’attribut HTML `disabled` (Base UI / React 19)
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  const idempotencyKey = useRef<string | null>(null);
+  const hydrated = useSyncExternalStore(subscribeHydration, clientSnapshot, serverSnapshot);
+  useEffect(() => () => {
+    if (pdfDownloadUrl) URL.revokeObjectURL(pdfDownloadUrl);
+  }, [pdfDownloadUrl]);
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     trigger,
+    getValues,
+    setError: setFieldError,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<RecruitmentFormData>({
-    resolver: zodResolver(recruitmentSchema),
-    defaultValues: {
-      consent: undefined as unknown as true,
-      injuryCurrent: false,
-      birthCertificateProvided: false,
-      parentalAuthProvided: false,
-      medicalCertificateProvided: false,
-      feesPaidProvided: false,
-      paymentMethod: "cash",
-    },
+    resolver: zodResolver(createRecruitmentSchema(locale)),
+    defaultValues,
     mode: "onTouched",
   });
 
-  const injuryCurrent = watch("injuryCurrent");
-  const birthCertificateProvided = watch("birthCertificateProvided");
-  const parentalAuthProvided = watch("parentalAuthProvided");
-  const medicalCertificateProvided = watch("medicalCertificateProvided");
-  const feesPaidProvided = watch("feesPaidProvided");
-  const paymentMethod = watch("paymentMethod");
-  const category = watch("category");
-  const zone = watch("zone");
-  const primaryPosition = watch("primaryPosition");
-  const strongFoot = watch("strongFoot");
-  const consent = watch("consent");
-
-  const docProvidedKeys = useMemo(
-    () => ({
-      birth: birthCertificateProvided,
-      parental: parentalAuthProvided,
-      medical: medicalCertificateProvided,
-      fees: feesPaidProvided,
-    }),
-    [birthCertificateProvided, parentalAuthProvided, medicalCertificateProvided, feesPaidProvided]
-  );
+  const injuryCurrent = useWatch({ control, name: "injuryCurrent" });
+  const birthCertificateProvided = useWatch({ control, name: "birthCertificateProvided" });
+  const parentalAuthProvided = useWatch({ control, name: "parentalAuthProvided" });
+  const medicalCertificateProvided = useWatch({ control, name: "medicalCertificateProvided" });
+  const feesPaidProvided = useWatch({ control, name: "feesPaidProvided" });
+  const paymentMethod = useWatch({ control, name: "paymentMethod" });
+  const category = useWatch({ control, name: "category" });
+  const zone = useWatch({ control, name: "zone" });
+  const primaryPosition = useWatch({ control, name: "primaryPosition" });
+  const strongFoot = useWatch({ control, name: "strongFoot" });
+  const consent = useWatch({ control, name: "consent" });
 
   const totalSteps = STEP_KEYS.length;
   const isLastStep = step === totalSteps - 1;
 
   async function validateCurrentStep(): Promise<boolean> {
-    if (step === 0 && !photoFile) {
-      setError(
-        isFr ? "Veuillez importer la photo d’identité." : "Please upload your ID photo."
-      );
-      return false;
-    }
-
-    if (step === totalSteps - 1) {
-      const requiredDocs: { key: string; fileLabel: string }[] = [];
-      if (docProvidedKeys.birth)
-        requiredDocs.push({ key: "birthCertificate", fileLabel: isFr ? "Acte de naissance" : "Birth certificate" });
-      if (docProvidedKeys.parental)
-        requiredDocs.push({ key: "parentalAuth", fileLabel: isFr ? "Autorisation parentale" : "Parental authorization" });
-      if (docProvidedKeys.medical)
-        requiredDocs.push({ key: "medicalCertificate", fileLabel: isFr ? "Certificat médical" : "Medical certificate" });
-      if (docProvidedKeys.fees)
-        requiredDocs.push({ key: "feesReceipt", fileLabel: isFr ? "Justificatif frais" : "Fee receipt" });
-
-      const missing = requiredDocs.find((d) => !docFiles[d.key]);
-      if (missing) {
-        setError(
-          isFr
-            ? `Veuillez importer le document : ${missing.fileLabel}`
-            : `Please upload the document: ${missing.fileLabel}`
-        );
+    if (step === 0) {
+      const issue = validateAttachment("photo", photoFile);
+      if (issue) {
+        const message = attachmentMessage(issue, locale);
+        setFileErrors(prev => ({ ...prev, photo: message }));
+        setError(message);
         return false;
       }
     }
 
     const valid = await trigger(STEP_FIELDS[step]);
+    // Later steps are still incomplete, so Zod may defer cross-field refinements.
+    if (step === 3 && injuryCurrent && (getValues("injuryDetails")?.trim().length ?? 0) < 2) {
+      const message = isFr ? "Veuillez préciser la blessure." : "Please describe the injury.";
+      setFieldError("injuryDetails", { type: "manual", message });
+      setError(message);
+      return false;
+    }
     if (!valid) {
       setError(isFr ? "Veuillez corriger les champs en rouge." : "Please fix the highlighted fields.");
       return false;
@@ -215,11 +204,15 @@ export function RecruitmentForm() {
   async function onSubmit(values: RecruitmentFormData) {
     setError("");
 
-    if (!photoFile) {
-      setError(isFr ? "Veuillez importer la photo d’identité." : "Please upload your ID photo.");
-      setStep(0);
+    const attachmentIssues = validateRecruitmentAttachments(values, { photo: photoFile, ...docFiles });
+    if (attachmentIssues.length) {
+      setFileErrors(Object.fromEntries(attachmentIssues.map(issue => [issue.field, attachmentMessage(issue, locale)])));
+      setError(isFr ? "Veuillez corriger les pièces jointes." : "Please check the attachments.");
+      setStep(attachmentIssues[0].field === "photo" ? 0 : totalSteps - 1);
       return;
     }
+    if (!photoFile) return;
+    idempotencyKey.current ??= createIdempotencyKey();
 
     const formData = new FormData();
     for (const [k, v] of Object.entries(values)) {
@@ -231,10 +224,10 @@ export function RecruitmentForm() {
     formData.append("idempotencyKey", idempotencyKey.current);
     formData.append("website", "");
 
-    if (docProvidedKeys.birth) formData.append("birthCertificate", docFiles.birthCertificate as File);
-    if (docProvidedKeys.parental) formData.append("parentalAuth", docFiles.parentalAuth as File);
-    if (docProvidedKeys.medical) formData.append("medicalCertificate", docFiles.medicalCertificate as File);
-    if (docProvidedKeys.fees) formData.append("feesReceipt", docFiles.feesReceipt as File);
+    for (const document of recruitmentDocuments) {
+      const file = docFiles[document.field];
+      if (values[document.flag] && file) formData.append(document.field, file);
+    }
 
     try {
       const res = await fetch("/api/recruitments", { method: "POST", body: formData });
@@ -276,14 +269,34 @@ export function RecruitmentForm() {
     }
   }
 
+  function onInvalid(invalid: FieldErrors<RecruitmentFormData>) {
+    const firstInvalidStep = STEP_FIELDS.findIndex(fields => fields.some(field => invalid[field]));
+    if (firstInvalidStep >= 0) setStep(firstInvalidStep);
+    setError(isFr ? "Veuillez corriger les champs en rouge." : "Please fix the highlighted fields.");
+  }
+
   function handleReset() {
-    idempotencyKey.current = createIdempotencyKey();
+    if (resultStatus === "error") { setView("form"); setError(""); return; }
+    idempotencyKey.current = null;
+    reset(defaultValues);
+    setPhotoFile(null);
+    setDocFiles({});
+    setFileErrors({});
+    setPdfFileName("fiche-enregistrement.pdf");
     setView("form");
     setSuccessMeta(null);
     setResultStatus("success");
     setError("");
     setStep(0);
     setPdfDownloadUrl(null);
+  }
+
+  function selectFile(field: AttachmentField, file: File | null) {
+    const issue = validateAttachment(field, file, false);
+    setFileErrors(previous => ({ ...previous, [field]: issue ? attachmentMessage(issue, locale) : undefined }));
+    if (field === "photo") setPhotoFile(issue ? null : file);
+    else setDocFiles(previous => ({ ...previous, [field]: issue ? null : file }));
+    return !issue;
   }
 
   if (view === "result") {
@@ -355,7 +368,10 @@ export function RecruitmentForm() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form method="post" onSubmit={(event) => {
+          if (!isLastStep) { event.preventDefault(); void goNext(); return; }
+          void handleSubmit(onSubmit, onInvalid)(event);
+        }} className="space-y-6" noValidate>
           <div
             className="absolute -left-[9999px] top-auto h-0 w-0 overflow-hidden"
             aria-hidden
@@ -380,10 +396,16 @@ export function RecruitmentForm() {
                 <Input
                   id="photo"
                   type="file"
-                  accept="image/*"
-                  onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
+                  accept={PHOTO_ACCEPT}
+                  aria-invalid={!!fileErrors.photo}
+                  aria-describedby="photo-help photo-error"
+                  onChange={(e) => {
+                    if (!selectFile("photo", e.target.files?.[0] ?? null)) e.target.value = "";
+                  }}
                 />
               </div>
+              <p id="photo-help" className="text-xs text-text-muted">{isFr ? "JPEG ou PNG, 5 Mo maximum." : "JPEG or PNG, maximum 5 MB."}</p>
+              <p id="photo-error" className="text-xs text-destructive" role="alert">{fileErrors.photo}</p>
               {photoFile && (
                 <p className="text-xs text-text-muted">
                   {isFr ? "Photo sélectionnée :" : "Selected photo:"} {photoFile.name}
@@ -425,13 +447,13 @@ export function RecruitmentForm() {
                   <Input {...register("firstNames")} />
                 </Field>
                 <Field label={isFr ? "Jour" : "Day"} error={errors.dobDay?.message}>
-                  <Input {...register("dobDay")} placeholder="JJ" />
+                  <Input {...register("dobDay")} placeholder={isFr ? "JJ" : "DD"} />
                 </Field>
                 <Field label={isFr ? "Mois" : "Month"} error={errors.dobMonth?.message}>
                   <Input {...register("dobMonth")} placeholder="MM" />
                 </Field>
                 <Field label={isFr ? "Année" : "Year"} error={errors.dobYear?.message}>
-                  <Input {...register("dobYear")} placeholder="AAAA" />
+                  <Input {...register("dobYear")} placeholder={isFr ? "AAAA" : "YYYY"} />
                 </Field>
                 <Field label={isFr ? "Âge" : "Age"} error={errors.age?.message}>
                   <Input {...register("age")} />
@@ -554,19 +576,19 @@ export function RecruitmentForm() {
                 {isFr ? "État de santé" : "Health status"}
               </h3>
               <div className="grid gap-5 sm:grid-cols-2">
-                <div>
-                  <Label>{isFr ? "Blessure actuelle" : "Current injury"}</Label>
+                <fieldset>
+                  <legend className="text-sm font-medium">{isFr ? "Blessure actuelle" : "Current injury"}</legend>
                   <div className="mt-2 flex items-center gap-4">
                     <label className="flex items-center gap-2 text-sm">
-                      <input type="radio" checked={injuryCurrent === true} onChange={() => setValue("injuryCurrent", true)} />
+                      <input type="radio" name="injuryCurrent" checked={injuryCurrent === true} onChange={() => setValue("injuryCurrent", true)} />
                       {isFr ? "Oui" : "Yes"}
                     </label>
                     <label className="flex items-center gap-2 text-sm">
-                      <input type="radio" checked={injuryCurrent === false} onChange={() => setValue("injuryCurrent", false)} />
+                      <input type="radio" name="injuryCurrent" checked={injuryCurrent === false} onChange={() => setValue("injuryCurrent", false)} />
                       {isFr ? "Non" : "No"}
                     </label>
                   </div>
-                </div>
+                </fieldset>
                 <Field label={isFr ? "Si oui, laquelle ?" : "If yes, which one?"} error={errors.injuryDetails?.message}>
                   <Input disabled={!injuryCurrent} {...register("injuryDetails")} />
                 </Field>
@@ -590,7 +612,8 @@ export function RecruitmentForm() {
                   value={birthCertificateProvided}
                   onChange={(v) => setValue("birthCertificateProvided", v)}
                   file={docFiles.birthCertificate ?? null}
-                  onFile={(f) => setDocFiles((prev) => ({ ...prev, birthCertificate: f }))}
+                  onFile={(f) => selectFile("birthCertificate", f)}
+                  error={fileErrors.birthCertificate}
                   isFr={isFr}
                 />
                 <DocYesNo
@@ -598,7 +621,8 @@ export function RecruitmentForm() {
                   value={parentalAuthProvided}
                   onChange={(v) => setValue("parentalAuthProvided", v)}
                   file={docFiles.parentalAuth ?? null}
-                  onFile={(f) => setDocFiles((prev) => ({ ...prev, parentalAuth: f }))}
+                  onFile={(f) => selectFile("parentalAuth", f)}
+                  error={fileErrors.parentalAuth}
                   isFr={isFr}
                 />
                 <DocYesNo
@@ -606,7 +630,8 @@ export function RecruitmentForm() {
                   value={medicalCertificateProvided}
                   onChange={(v) => setValue("medicalCertificateProvided", v)}
                   file={docFiles.medicalCertificate ?? null}
-                  onFile={(f) => setDocFiles((prev) => ({ ...prev, medicalCertificate: f }))}
+                  onFile={(f) => selectFile("medicalCertificate", f)}
+                  error={fileErrors.medicalCertificate}
                   isFr={isFr}
                 />
                 <DocYesNo
@@ -614,7 +639,8 @@ export function RecruitmentForm() {
                   value={feesPaidProvided}
                   onChange={(v) => setValue("feesPaidProvided", v)}
                   file={docFiles.feesReceipt ?? null}
-                  onFile={(f) => setDocFiles((prev) => ({ ...prev, feesReceipt: f }))}
+                  onFile={(f) => selectFile("feesReceipt", f)}
+                  error={fileErrors.feesReceipt}
                   isFr={isFr}
                 />
                 <div className="sm:col-span-2">
@@ -622,8 +648,8 @@ export function RecruitmentForm() {
                     <Input disabled={!feesPaidProvided} {...register("amountPaidXaf")} />
                   </Field>
                 </div>
-                <div className="sm:col-span-2">
-                  <Label>{isFr ? "Mode de paiement" : "Payment method"}</Label>
+                <fieldset className="sm:col-span-2" aria-describedby={errors.paymentMethod ? "payment-method-error" : undefined}>
+                  <legend className="text-sm font-medium">{isFr ? "Mode de paiement" : "Payment method"}</legend>
                   <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
                     {(
                       [
@@ -633,12 +659,13 @@ export function RecruitmentForm() {
                       ] as const
                     ).map(([val, lbl]) => (
                       <label key={val} className="flex items-center gap-2 text-sm">
-                        <input type="radio" checked={paymentMethod === val} onChange={() => setValue("paymentMethod", val)} />
+                        <input type="radio" name="paymentMethod" checked={paymentMethod === val} onChange={() => setValue("paymentMethod", val)} />
                         {lbl}
                       </label>
                     ))}
                   </div>
-                </div>
+                  {errors.paymentMethod && <p id="payment-method-error" role="alert" className="mt-1 text-xs text-destructive">{errors.paymentMethod.message}</p>}
+                </fieldset>
                 <div className="sm:col-span-2">
                   <Field label={isFr ? "Préciser (si autre)" : "Specify (if other)"} error={errors.paymentMethodOther?.message}>
                     <Input disabled={paymentMethod !== "other"} {...register("paymentMethodOther")} />
@@ -655,6 +682,8 @@ export function RecruitmentForm() {
               <div className="flex items-start gap-3">
                 <Checkbox
                   id="consent"
+                  aria-invalid={!!errors.consent}
+                  aria-describedby={errors.consent ? "consent-error" : undefined}
                   checked={consent === true}
                   onCheckedChange={(checked) =>
                     setValue("consent", checked === true ? true : (undefined as unknown as true), { shouldValidate: true })
@@ -666,11 +695,11 @@ export function RecruitmentForm() {
                     : "I confirm the information provided is accurate."}
                 </Label>
               </div>
-              {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
+              {errors.consent && <p id="consent-error" role="alert" className="text-xs text-destructive">{errors.consent.message}</p>}
             </section>
           )}
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
           <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
             <Button
@@ -686,8 +715,9 @@ export function RecruitmentForm() {
 
             {isLastStep ? (
               <Button
+                key="submit"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!hydrated || isSubmitting}
                 aria-busy={isSubmitting}
                 className="min-h-11 w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
               >
@@ -695,8 +725,10 @@ export function RecruitmentForm() {
               </Button>
             ) : (
               <Button
+                key="next"
                 type="button"
-                onClick={goNext}
+                onClick={(event) => { event.preventDefault(); void goNext(); }}
+                disabled={!hydrated}
                 className="w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
               >
                 {t("next")}
@@ -710,61 +742,60 @@ export function RecruitmentForm() {
   );
 }
 
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
+// Keep labels and errors attached to the actual input or Base UI select trigger.
+function connectField(children: ReactNode, id: string, describedBy?: string, invalid = false): ReactNode {
+  return Children.map(children, child => {
+    if (!isValidElement(child)) return child;
+    const element = child as ReactElement<{ children?: ReactNode; id?: string; "aria-describedby"?: string; "aria-invalid"?: boolean }>;
+    if (element.type === Input || element.type === Textarea || element.type === SelectTrigger) {
+      return cloneElement(element, { id, "aria-describedby": describedBy, "aria-invalid": invalid });
+    }
+    return element.props.children ? cloneElement(element, {}, connectField(element.props.children, id, describedBy, invalid)) : element;
+  });
+}
+
+function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
+  const id = useId();
+  const errorId = `${id}-error`;
   return (
     <div>
-      <Label>{label}</Label>
-      <div className="mt-1">{children}</div>
-      {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+      <Label htmlFor={id}>{label}</Label>
+      <div className="mt-1">{connectField(children, id, error ? errorId : undefined, !!error)}</div>
+      {error && <p id={errorId} role="alert" className="mt-1 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
 
-function DocYesNo({
-  label,
-  value,
-  onChange,
-  file,
-  onFile,
-  isFr,
-}: {
+function DocYesNo({ label, value, onChange, file, onFile, isFr, error }: {
   label: string;
   value: boolean;
   onChange: (v: boolean) => void;
   file: File | null;
-  onFile: (f: File | null) => void;
+  onFile: (f: File | null) => boolean;
   isFr: boolean;
+  error?: string;
 }) {
+  const id = useId();
   return (
-    <div className="space-y-3">
-      <Label className="text-left">{label}</Label>
+    <fieldset className="space-y-3">
+      <legend className="text-sm font-medium">{label}</legend>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 text-sm">
-          <input type="radio" checked={value} onChange={() => onChange(true)} />
+          <input type="radio" name={`${id}-provided`} checked={value} onChange={() => onChange(true)} />
           {isFr ? "Oui" : "Yes"}
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <input type="radio" checked={!value} onChange={() => onChange(false)} />
+          <input type="radio" name={`${id}-provided`} checked={!value} onChange={() => onChange(false)} />
           {isFr ? "Non" : "No"}
         </label>
       </div>
-      <Input
-        type="file"
-        accept="application/pdf,image/*"
-        disabled={!value}
-        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-      />
-      {value && !file && (
-        <p className="text-xs text-text-muted">{isFr ? "Ajoutez le document" : "Add the document"}</p>
-      )}
-    </div>
+      <Label htmlFor={id} className="sr-only">{isFr ? "Importer : " : "Upload: "}{label}</Label>
+      <Input id={id} type="file" accept={DOCUMENT_ACCEPT} disabled={!value}
+        aria-invalid={value && !!error} aria-describedby={`${id}-help${value && error ? ` ${id}-error` : ""}`}
+        onChange={(e) => { if (!onFile(e.target.files?.[0] ?? null)) e.target.value = ""; }} />
+      <p id={`${id}-help`} className="text-xs text-text-muted">{isFr ? "PDF, JPEG ou PNG, 10 Mo maximum. Pièce requise si vous choisissez Oui." : "PDF, JPEG or PNG, maximum 10 MB. A file is required when you select Yes."}</p>
+      {value && file && <p className="text-xs text-text-muted">{file.name}</p>}
+      {value && error && <p id={`${id}-error`} role="alert" className="text-xs text-destructive">{error}</p>}
+    </fieldset>
   );
 }

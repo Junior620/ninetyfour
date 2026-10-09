@@ -1,0 +1,179 @@
+{
+  "date": "2026-10-08",
+  "browser": "Codex in-app browser",
+  "home": [
+    {
+      "width": 375,
+      "horizontalOverflow": 0
+    },
+    {
+      "width": 430,
+      "horizontalOverflow": 0
+    },
+    {
+      "width": 768,
+      "horizontalOverflow": 0
+    },
+    {
+      "width": 1024,
+      "horizontalOverflow": 0
+    },
+    {
+      "width": 1440,
+      "horizontalOverflow": 0
+    },
+    {
+      "width": 1920,
+      "horizontalOverflow": 0
+    }
+  ],
+  "templates": [
+    {
+      "route": "/fr/actualites",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/actualites/lancement-programme-2026",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/equipes",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/equipes/u16",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/saison",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/galerie",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/partenaires",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/contact",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/rejoindre",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    },
+    {
+      "route": "/fr/academie",
+      "widths": [
+        375,
+        430,
+        768,
+        1024,
+        1440,
+        1920
+      ],
+      "horizontalOverflow": 0,
+      "h1Count": 1
+    }
+  ],
+  "passed": [
+    "Desktop disclosure menu: Escape returns focus",
+    "Mobile dialog: Escape closes, focus returns; focus remains inside dialog",
+    "Gallery: next image via ArrowRight; Escape returns focus to opener",
+    "News search education: 2 FR/EN results; query preserved",
+    "Season u16/home: URL filters preserved switching FR/EN",
+    "Partners CTA: partnership subject translated and retained FR/EN",
+    "Contact EN validation: errors associated with fields",
+    "Contact mock: failure, retry preserves fields, simulated receipt, new request resets fields",
+    "Recruitment mock: 5 steps; conditional injury detail; claimed attachment required before submission",
+    "Recruitment mock: error retains fields, photo and document; simulated receipt and new request resets fields/files",
+    "Partner logo mappings visually corrected"
+  ],
+  "limits": [
+    "After fixing unintended submission on transition to final step, last browser recheck of mock form could not run: access to localhost:3002 was denied. Subsequent production build and typecheck pass.",
+    "No real service delivery, database writes or production deployment."
+  ]
+}

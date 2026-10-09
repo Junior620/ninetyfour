@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { contactSchema, type ContactFormData } from "@/lib/validations/schemas";
+import { createContactSchema, type ContactFormData } from "@/lib/validations/schemas";
 import {
   FormSubmissionResult,
   FormSubmitLabel,
@@ -30,12 +30,17 @@ type ResultState = {
   emailSent?: boolean;
 };
 
-export function ContactForm() {
+const subscribeHydration = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
+
+export function ContactForm({ initialSubject = "" }: { initialSubject?: string }) {
   const t = useTranslations("form");
   const tCommon = useTranslations("common");
   const locale = useLocale();
+  const hydrated = useSyncExternalStore(subscribeHydration, clientSnapshot, serverSnapshot);
   const prefersReducedMotion = useReducedMotion();
-  const idempotencyKey = useRef(createIdempotencyKey());
+  const idempotencyKey = useRef<string | null>(null);
   const [result, setResult] = useState<ResultState | null>(null);
 
   const {
@@ -44,14 +49,16 @@ export function ContactForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(createContactSchema(locale)),
     defaultValues: {
       locale: locale === "en" ? "en" : "fr",
       website: "",
+      subject: initialSubject,
     },
   });
 
   async function onSubmit(data: ContactFormData) {
+    idempotencyKey.current ??= createIdempotencyKey();
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
@@ -89,6 +96,7 @@ export function ContactForm() {
   }
 
   function handleReset() {
+    if (result?.status === "error") { setResult(null); return; }
     idempotencyKey.current = createIdempotencyKey();
     reset({
       name: "",
@@ -123,7 +131,9 @@ export function ContactForm() {
       ) : (
         <motion.form
           key="form"
-          onSubmit={handleSubmit(onSubmit)}
+          method="post"
+          noValidate
+          onSubmit={(event) => { void handleSubmit(onSubmit)(event); }}
           className="relative space-y-5"
           initial={false}
           exit={
@@ -147,14 +157,14 @@ export function ContactForm() {
           <div>
             <Label htmlFor="name">{t("name")}</Label>
             <Input
-              id="name"
+              id="name" aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "name-error" : undefined}
               {...register("name")}
               className="mt-1"
               maxLength={120}
               disabled={isSubmitting}
             />
             {errors.name && (
-              <p className="mt-1 text-xs text-destructive">
+              <p id="name-error" role="alert" className="mt-1 text-xs text-destructive">
                 {errors.name.message}
               </p>
             )}
@@ -162,7 +172,7 @@ export function ContactForm() {
           <div>
             <Label htmlFor="email">{t("email")}</Label>
             <Input
-              id="email"
+              id="email" aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "email-error" : undefined}
               type="email"
               {...register("email")}
               className="mt-1"
@@ -170,7 +180,7 @@ export function ContactForm() {
               disabled={isSubmitting}
             />
             {errors.email && (
-              <p className="mt-1 text-xs text-destructive">
+              <p id="email-error" role="alert" className="mt-1 text-xs text-destructive">
                 {errors.email.message}
               </p>
             )}
@@ -178,14 +188,14 @@ export function ContactForm() {
           <div>
             <Label htmlFor="subject">{t("subject")}</Label>
             <Input
-              id="subject"
+              id="subject" aria-invalid={Boolean(errors.subject)} aria-describedby={errors.subject ? "subject-error" : undefined}
               {...register("subject")}
               className="mt-1"
               maxLength={200}
               disabled={isSubmitting}
             />
             {errors.subject && (
-              <p className="mt-1 text-xs text-destructive">
+              <p id="subject-error" role="alert" className="mt-1 text-xs text-destructive">
                 {errors.subject.message}
               </p>
             )}
@@ -193,7 +203,7 @@ export function ContactForm() {
           <div>
             <Label htmlFor="message">{t("message")}</Label>
             <Textarea
-              id="message"
+              id="message" aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "message-error" : undefined}
               {...register("message")}
               className="mt-1"
               rows={5}
@@ -201,14 +211,14 @@ export function ContactForm() {
               disabled={isSubmitting}
             />
             {errors.message && (
-              <p className="mt-1 text-xs text-destructive">
+              <p id="message-error" role="alert" className="mt-1 text-xs text-destructive">
                 {errors.message.message}
               </p>
             )}
           </div>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={!hydrated || isSubmitting}
             aria-busy={isSubmitting}
             className="min-h-11 w-full bg-gold text-navy hover:bg-gold/90 sm:w-auto"
           >

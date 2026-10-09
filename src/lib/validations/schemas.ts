@@ -19,16 +19,22 @@ export const applicationSchema = z.object({
 
 export type ApplicationFormData = z.infer<typeof applicationSchema>;
 
-export const contactSchema = z.object({
-  name: z.string().min(2, "Nom requis").max(120),
-  email: z.string().email("Email invalide").max(200),
-  subject: z.string().min(3, "Sujet requis").max(200),
-  message: z.string().min(10, "Message trop court").max(5000),
-  locale: z.enum(["fr", "en"]).optional(),
-  /** Honeypot — must stay empty */
-  website: z.string().max(200).optional(),
-  idempotencyKey: z.string().min(8).max(80).optional(),
-});
+export function createContactSchema(locale: string = "fr") {
+  const message = (fr: string, en: string) => locale === "en" ? en : fr;
+  const maximum = (limit: number) => message(`Maximum ${limit} caractères`, `Maximum ${limit} characters`);
+  return z.object({
+    name: z.string().trim().min(2, message("Nom requis", "Please enter your name")).max(120, maximum(120)),
+    email: z.string().trim().email(message("Email invalide", "Enter a valid email address")).max(200, maximum(200)),
+    subject: z.string().trim().min(3, message("Sujet requis", "Enter a subject of at least 3 characters")).max(200, maximum(200)),
+    message: z.string().trim().min(10, message("Message trop court (10 caractères minimum)", "Your message must contain at least 10 characters")).max(5000, maximum(5000)),
+    locale: z.enum(["fr", "en"]).optional(),
+    /** Honeypot — must stay empty */
+    website: z.string().max(200).optional(),
+    idempotencyKey: z.string().min(8).max(80).optional(),
+  });
+}
+
+export const contactSchema = createContactSchema();
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -55,39 +61,43 @@ export type EvaluationFormData = z.infer<typeof evaluationSchema>;
 // Recruitment (Fiche d'enregistrement - PDF identique)
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const recruitmentSchema = z
+export function createRecruitmentSchema(locale: string = "fr") {
+  const message = (fr: string, en: string) => locale === "en" ? en : fr;
+  const requiredText = (fr: string, en: string, minimum = 1) =>
+    z.string({ error: message(fr, en) }).trim().min(minimum, message(fr, en));
+  return z
   .object({
-    playerNumber: z.string().min(1, "Numéro requis"),
-    category: z.enum(["U-14", "U-16", "U-18"]),
-    zone: z.enum(["A", "B", "C", "FINAL"]),
-    lastName: z.string().min(1, "Nom requis"),
-    firstNames: z.string().min(1, "Prénom(s) requis"),
-    dobDay: z.string().min(1, "Jour requis"),
-    dobMonth: z.string().min(1, "Mois requis"),
-    dobYear: z.string().min(4, "Année requise"),
-    age: z.string().min(1, "Âge requis"),
-    nationality: z.string().min(1, "Nationalité requise"),
+    playerNumber: requiredText("Numéro requis", "Player number is required"),
+    category: z.enum(["U-14", "U-16", "U-18"], { message: message("Catégorie requise", "Select a category") }),
+    zone: z.enum(["A", "B", "C", "FINAL"], { message: message("Zone requise", "Select a zone") }),
+    lastName: requiredText("Nom requis", "Last name is required"),
+    firstNames: requiredText("Prénom(s) requis", "First name(s) are required"),
+    dobDay: requiredText("Jour requis", "Day is required"),
+    dobMonth: requiredText("Mois requis", "Month is required"),
+    dobYear: requiredText("Année requise", "A four-digit year is required", 4),
+    age: requiredText("Âge requis", "Age is required"),
+    nationality: requiredText("Nationalité requise", "Nationality is required"),
     birthPlace: z.string().optional(),
     city: z.string().optional(),
     neighborhood: z.string().optional(),
     heightCm: z.string().optional(),
     weightKg: z.string().optional(),
 
-    playerPhone: z.string().min(5, "Téléphone requis"),
-    fatherTutorName: z.string().min(2, "Nom du père/tuteur requis"),
-    fatherTutorPhone: z.string().min(5, "Téléphone requis"),
+    playerPhone: requiredText("Téléphone requis", "Phone number is required", 5),
+    fatherTutorName: requiredText("Nom du père/tuteur requis", "Father or guardian name is required", 2),
+    fatherTutorPhone: requiredText("Téléphone requis", "Phone number is required", 5),
     motherName: z.string().optional(),
     motherPhone: z.string().optional(),
-    email: z.string().email("Email invalide"),
-    address: z.string().min(2, "Adresse requise"),
+    email: z.string({ error: message("Email invalide", "Enter a valid email address") }).trim().email(message("Email invalide", "Enter a valid email address")),
+    address: requiredText("Adresse requise", "Address is required", 2),
 
-    currentClub: z.string().min(1, "Club requis"),
+    currentClub: requiredText("Club requis", "Current club is required"),
     previousClubs: z.string().optional(),
-    school: z.string().min(1, "Établissement scolaire requis"),
+    school: requiredText("Établissement scolaire requis", "School is required"),
 
-    primaryPosition: z.string().min(1, "Poste requis"),
+    primaryPosition: requiredText("Poste requis", "Position is required"),
     secondaryPosition: z.string().optional(),
-    strongFoot: z.enum(["left", "right", "both"]),
+    strongFoot: z.enum(["left", "right", "both"], { message: message("Pied fort requis", "Select a preferred foot") }),
 
     injuryCurrent: z.boolean(),
     injuryDetails: z.string().optional(),
@@ -99,17 +109,17 @@ export const recruitmentSchema = z
     feesPaidProvided: z.boolean(),
 
     amountPaidXaf: z.string().optional(),
-    paymentMethod: z.enum(["cash", "mobile_money", "other"]),
+    paymentMethod: z.enum(["cash", "mobile_money", "other"], { message: message("Mode de paiement requis", "Select a payment method") }),
     paymentMethodOther: z.string().optional(),
 
-    parentDeclarationName: z.string().min(2, "Nom du parent requis"),
-    consent: z.literal(true, { message: "Consentement requis" }),
+    parentDeclarationName: requiredText("Nom du parent requis", "Parent name is required", 2),
+    consent: z.literal(true, { message: message("Consentement requis", "Consent is required") }),
   })
   .superRefine((values, ctx) => {
     if (values.injuryCurrent && (!values.injuryDetails || values.injuryDetails.trim().length < 2)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Veuillez préciser la blessure.",
+        message: message("Veuillez préciser la blessure.", "Please describe the injury."),
         path: ["injuryDetails"],
       });
     }
@@ -117,7 +127,7 @@ export const recruitmentSchema = z
     if (values.feesPaidProvided && (!values.amountPaidXaf || values.amountPaidXaf.trim().length < 1)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Montant requis.",
+        message: message("Montant requis.", "Amount is required."),
         path: ["amountPaidXaf"],
       });
     }
@@ -125,10 +135,14 @@ export const recruitmentSchema = z
     if (values.paymentMethod === "other" && (!values.paymentMethodOther || values.paymentMethodOther.trim().length < 2)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Veuillez préciser le mode de paiement.",
+        message: message("Veuillez préciser le mode de paiement.", "Please specify the payment method."),
         path: ["paymentMethodOther"],
       });
     }
   });
+
+}
+
+export const recruitmentSchema = createRecruitmentSchema();
 
 export type RecruitmentFormData = z.infer<typeof recruitmentSchema>;

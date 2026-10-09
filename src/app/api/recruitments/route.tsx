@@ -1,10 +1,14 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { randomUUID } from "crypto";
+import { ZodError } from "zod";
+import { persistRecruitment } from "@/lib/recruitment/persist";
+import { recruitmentDocuments, validateRecruitmentAttachments } from "@/lib/recruitment/attachments";
 
 import { NextResponse } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 
-import { recruitmentSchema } from "@/lib/validations/schemas";
+import { createRecruitmentSchema } from "@/lib/validations/schemas";
 import { FicheEnregistrementPdf } from "@/lib/recruitment/pdf/FicheEnregistrementPdf";
 import { getSupabaseAdminClient } from "@/lib/supabase/serverClient";
 import { generateReference } from "@/lib/email/reference";
@@ -52,18 +56,8 @@ export async function POST(request: Request) {
     const form = await request.formData();
 
     if (isHoneypotTriggered(getFormString(form, "website"))) {
-      return NextResponse.json({
-        success: true,
-        reference: "NOFA-RECRUITMENT-IGNORED",
-        maskedEmail: maskEmail(getFormString(form, "email") || "x@x.com"),
-        emailSent: false,
-        applicationId: null,
-        pdfSignedUrl: null,
-        pdfBase64: "",
-        fileName: "",
-      } satisfies SuccessPayload);
+      return NextResponse.json({ success: false, error: "invalid_request" }, { status: 400 });
     }
-
     const ip = getClientIp(request);
     if (!checkRateLimit(`recruitment:${ip}`)) {
       return NextResponse.json(
@@ -73,38 +67,6 @@ export async function POST(request: Request) {
     }
 
     const idempotencyKey = getFormString(form, "idempotencyKey");
-    const cached = getIdempotentResult<SuccessPayload>(idempotencyKey);
-    if (cached) {
-      return NextResponse.json(cached);
-    }
-
-    const photo = form.get("photo");
-    if (!(photo instanceof File)) {
-      return NextResponse.json(
-        { success: false, error: "Missing photo" },
-        { status: 400 }
-      );
-    }
-
-    const photoBuffer = Buffer.from(await photo.arrayBuffer());
-    const photoDataUri = toDataUri(photoBuffer, photo.type || "image/jpeg");
-
-    let logoBuffer: Buffer | null = null;
-    for (const name of ["logo-crest.png", "logo.png"]) {
-      try {
-        logoBuffer = await fs.readFile(path.join(process.cwd(), "public", name));
-        break;
-      } catch {
-        // try next
-      }
-    }
-    const logoDataUri = logoBuffer ? toDataUri(logoBuffer, "image/png") : null;
-
-    const birthCertificate = form.get("birthCertificate");
-    const parentalAuth = form.get("parentalAuth");
-    const medicalCertificate = form.get("medicalCertificate");
-    const feesReceipt = form.get("feesReceipt");
-
     const localeRaw = getFormString(form, "locale");
     const locale: EmailLocale = localeRaw === "en" ? "en" : "fr";
 
@@ -151,18 +113,41 @@ export async function POST(request: Request) {
       consent: getFormBool(form, "consent"),
     };
 
-    const data = recruitmentSchema.parse(payload);
+    const data = createRecruitmentSchema(locale).parse(payload);
+    const files = {
+      photo: form.get("photo"),
+      birthCertificate: form.get("birthCertificate"),
+      parentalAuth: form.get("parentalAuth"),
+      medicalCertificate: form.get("medicalCertificate"),
+      feesReceipt: form.get("feesReceipt"),
+    };
+    const attachmentIssues = validateRecruitmentAttachments(data, files);
+    if (attachmentIssues.length) {
+      return NextResponse.json({ success: false, error: "invalid_attachments", issues: attachmentIssues }, { status: 400 });
+    }
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json({ success: false, error: "service_unavailable" }, { status: 503 });
+    }
+    const cacheKey = idempotencyKey ? `recruitment:${data.email}:${idempotencyKey}` : undefined;
+    const cached = getIdempotentResult<SuccessPayload>(cacheKey);
+    if (cached) return NextResponse.json(cached);
+    const photo = files.photo as File;
+    const photoBuffer = Buffer.from(await photo.arrayBuffer());
+    const photoDataUri = toDataUri(photoBuffer, photo.type);
+    let logoBuffer: Buffer | null = null;
+    for (const name of ["logo-crest.png", "logo.png"]) {
+      try {
+        logoBuffer = await fs.readFile(path.join(process.cwd(), "public", name));
+        break;
+      } catch { /* Try the alternate club logo. */ }
+    }
+    const logoDataUri = logoBuffer ? toDataUri(logoBuffer, "image/png") : null;
     const reference = generateReference("recruitment");
     const fullName = `${data.firstNames} ${data.lastName}`.trim();
 
-    const pdfBuffer = await renderToBuffer(
-      <FicheEnregistrementPdf
-        photoDataUri={photoDataUri}
-        logoDataUri={logoDataUri}
-        data={data}
-      />
-    );
-
+    const pdfBuffer = await renderToBuffer(FicheEnregistrementPdf({
+      photoDataUri, logoDataUri, data,
+    }));
     const pdfBase64 = pdfBuffer.toString("base64");
     const fileName =
       `fiche-enregistrement-${data.lastName}-${data.firstNames}.pdf`.replace(
@@ -170,128 +155,61 @@ export async function POST(request: Request) {
         "-"
       );
 
-    let pdfSignedUrl: string | null = null;
-    let applicationId: string | null = null;
-
-    const canUseSupabase =
-      !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      !!process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (canUseSupabase) {
-      const supabase = getSupabaseAdminClient();
-
-      const now = Date.now();
-      const photoPath = `photos/${now}_${photo.name || "photo.jpg"}`;
-      const pdfPath = `pdfs/${now}_recruitment.pdf`;
-
-      await supabase.storage.from("recruitment-photos").upload(photoPath, photoBuffer, {
-        contentType: photo.type || "image/jpeg",
-        upsert: true,
-      });
-
-      const docsToUpload: { file: File | null | undefined; key: string }[] = [
-        {
-          file: birthCertificate instanceof File ? birthCertificate : undefined,
-          key: "birth",
-        },
-        {
-          file: parentalAuth instanceof File ? parentalAuth : undefined,
-          key: "parental",
-        },
-        {
-          file: medicalCertificate instanceof File ? medicalCertificate : undefined,
-          key: "medical",
-        },
-        {
-          file: feesReceipt instanceof File ? feesReceipt : undefined,
-          key: "fees",
-        },
-      ];
-
-      const docsPaths: Record<string, string> = {};
-      for (const d of docsToUpload) {
-        if (!d.file) continue;
-        const buffer = Buffer.from(await d.file.arrayBuffer());
-        const ext = d.file.name?.split(".").pop() || "bin";
-        const docPath = `docs/${now}_${d.key}.${ext}`;
-        await supabase.storage.from("recruitment-docs").upload(docPath, buffer, {
-          contentType: d.file.type,
-          upsert: true,
-        });
-        docsPaths[d.key] = docPath;
-      }
-
-      await supabase.storage.from("recruitment-pdfs").upload(pdfPath, pdfBuffer, {
-        contentType: "application/pdf",
-        upsert: true,
-      });
-
-      const { data: signed } = await supabase.storage
-        .from("recruitment-pdfs")
-        .createSignedUrl(pdfPath, 60 * 60);
-      pdfSignedUrl = signed?.signedUrl ?? null;
-
-      try {
-        const { data: rowData } = await supabase
-          .from("recruitment_applications")
-          .insert({
-            form_data: { ...data, reference, locale },
-            photo_path: photoPath,
-            pdf_path: pdfPath,
-            docs_paths: docsPaths,
-            status: "PENDING",
-          })
-          .select("id")
-          .single();
-
-        if (rowData?.id) applicationId = rowData.id as string;
-      } catch {
-        // table may be missing
-      }
+    const supabase = getSupabaseAdminClient();
+    const batch = randomUUID();
+    const photoPath = `photos/${batch}/photo.${photo.type === "image/png" ? "png" : "jpg"}`;
+    const pdfPath = `pdfs/${batch}/recruitment.pdf`;
+    const uploads = [
+      { bucket: "recruitment-photos", path: photoPath, body: photoBuffer, contentType: photo.type },
+      { bucket: "recruitment-pdfs", path: pdfPath, body: pdfBuffer, contentType: "application/pdf" },
+    ];
+    const docsPaths: Record<string, string> = {};
+    const storageKeys = { birthCertificate: "birth", parentalAuth: "parental", medicalCertificate: "medical", feesReceipt: "fees" } as const;
+    for (const document of recruitmentDocuments) {
+      if (!data[document.flag]) continue;
+      const file = files[document.field] as File;
+      const key = storageKeys[document.field];
+      const ext = file.type === "application/pdf" ? "pdf" : file.type === "image/png" ? "png" : "jpg";
+      const docPath = `docs/${batch}/${key}.${ext}`;
+      uploads.push({ bucket: "recruitment-docs", path: docPath, body: Buffer.from(await file.arrayBuffer()), contentType: file.type });
+      docsPaths[key] = docPath;
     }
-
-    const pdfAttachment = [{ filename: fileName, content: pdfBase64 }];
-
-    await sendAdminNotification({
-      locale,
-      kind: "recruitment",
-      reference,
-      submitterName: fullName,
-      submitterEmail: data.email,
-      summaryLines: [
-        locale === "en"
-          ? `Category: ${data.category} · Zone: ${data.zone}`
-          : `Catégorie : ${data.category} · Zone : ${data.zone}`,
-      ],
-      attachments: pdfAttachment,
+    const applicationId = await persistRecruitment(supabase, uploads, {
+      form_data: { ...data, reference, locale }, photo_path: photoPath,
+      pdf_path: pdfPath, docs_paths: docsPaths, status: "PENDING",
     });
-
-    const ack = await sendAcknowledgment({
-      locale,
-      kind: "recruitment",
-      to: data.email,
-      firstName: extractFirstName(data.firstNames),
-      reference,
-      attachments: pdfAttachment,
-    });
-
+    // Cache the durable receipt before optional notification services can fail.
     const success: SuccessPayload = {
-      success: true,
-      reference,
-      maskedEmail: maskEmail(data.email),
-      emailSent: ack.sent,
-      applicationId,
-      pdfSignedUrl,
-      pdfBase64,
-      fileName,
+      success: true, reference, maskedEmail: maskEmail(data.email), emailSent: false,
+      applicationId, pdfSignedUrl: null, pdfBase64, fileName,
     };
-    setIdempotentResult(idempotencyKey, success);
+    setIdempotentResult(cacheKey, success);
+    try {
+      const { data: signed } = await supabase.storage.from("recruitment-pdfs").createSignedUrl(pdfPath, 3600);
+      success.pdfSignedUrl = signed?.signedUrl ?? null;
+    } catch { /* The saved PDF is still available through the admin area. */ }
+    const pdfAttachment = [{ filename: fileName, content: pdfBase64 }];
+    try {
+      await sendAdminNotification({
+        locale, kind: "recruitment", reference, submitterName: fullName, submitterEmail: data.email,
+        summaryLines: [locale === "en" ? `Category: ${data.category} · Zone: ${data.zone}` : `Catégorie : ${data.category} · Zone : ${data.zone}`],
+        attachments: pdfAttachment,
+      });
+    } catch { /* A notification cannot invalidate an application already saved. */ }
+    try {
+      const ack = await sendAcknowledgment({
+        locale, kind: "recruitment", to: data.email,
+        firstName: extractFirstName(data.firstNames), reference, attachments: pdfAttachment,
+      });
+      success.emailSent = ack.sent;
+    } catch { /* The response accurately reports that no acknowledgement was sent. */ }
+    setIdempotentResult(cacheKey, success);
     return NextResponse.json(success);
   } catch (error) {
-    console.error("[Recruitment error]", error);
+    console.error("[Recruitment error]", error instanceof ZodError ? "validation" : "persistence");
     return NextResponse.json(
-      { success: false, error: "Recruitment failed" },
-      { status: 500 }
+      { success: false, error: error instanceof ZodError ? "validation_failed" : "service_unavailable" },
+      { status: error instanceof ZodError ? 400 : 503 }
     );
   }
 }

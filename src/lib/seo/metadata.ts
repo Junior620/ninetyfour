@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { routing } from "@/lib/i18n/routing";
+import { indexingAllowed } from "./indexing";
 
 const SITE_NAME = "Ninety One Foot Academy";
 
@@ -59,7 +60,7 @@ export function buildPageMetadata({
       ? { absolute: displayTitle }
       : displayTitle,
     description,
-    robots,
+    robots: indexingAllowed() ? robots : { index: false, follow: false },
     alternates: {
       canonical,
       languages: buildLanguageAlternates(path),

@@ -30,17 +30,14 @@ export default function AdminUsersPage() {
   const [filter, setFilter] = useState<"pending" | "all">("pending");
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/admin/users", { credentials: "include" });
-      const json = await res.json();
+  const load = useCallback(() => {
+    return fetch("/api/admin/users", { credentials: "include" }).then(res => res.json()).then(json => {
       setItems(Array.isArray(json?.items) ? json.items : []);
-    } catch {
+    }).catch(() => {
       setItems([]);
-    } finally {
+    }).finally(() => {
       setLoading(false);
-    }
+    });
   }, []);
 
   useEffect(() => {
@@ -70,6 +67,7 @@ export default function AdminUsersPage() {
       toast(
         status === "active" ? t("toastUserApproved") : t("toastUserRejected")
       );
+      setLoading(true);
       await load();
     } catch {
       toast(t("toastUserError"));

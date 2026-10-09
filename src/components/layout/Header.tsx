@@ -1,170 +1,67 @@
 "use client";
-
-import { useState, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { Menu, X, ChevronDown, ArrowUpRight } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import { Menu } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
-  desktopNavItems,
-  isNavGroupActive,
-  type NavGroup,
-  type NavLink,
-} from "@/lib/nav-config";
-import { MobileNav } from "./MobileNav";
-import { NavHoverMenu } from "./NavHoverMenu";
-import { AcademyLogo } from "./AcademyLogo";
+import { clubNav, commerce, words } from "@/lib/club";
+import type { Locale } from "@/types";
 
-const navLinkClass =
-  "group relative inline-flex items-center gap-0.5 whitespace-nowrap px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-text-muted transition-colors hover:text-navy lg:text-xs after:absolute after:bottom-0.5 after:left-2.5 after:right-2.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 hover:after:scale-x-100";
+function LanguageLinks({ path, locale, query = "" }: { path: string; locale: Locale; query?: string }) {
+  const href = query ? `${path}?${query}` : path;
+  return <div className="club-languages"><Link href={href} locale="fr" lang="fr" aria-label="Français" aria-current={locale === "fr" ? "page" : undefined}>FR</Link><Link href={href} locale="en" lang="en" aria-label="English" aria-current={locale === "en" ? "page" : undefined}>EN</Link></div>;
+}
+
+function CurrentLanguageLinks({ path, locale }: { path: string; locale: Locale }) {
+  const searchParams = useSearchParams();
+  return <LanguageLinks path={path} locale={locale} query={searchParams.toString()} />;
+}
 
 export function Header() {
-  const t = useTranslations("nav");
-  const tCommon = useTranslations("common");
-  const locale = useLocale();
-  const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
+  const locale = useLocale() as Locale;
+  const path = usePathname();
+  const [open,setOpen] = useState(false);
+  const [compact,setCompact] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const isDashboard = pathname.startsWith("/dashboard");
-
-  if (isDashboard) return null;
-
-  function linkClass(href: string, active?: boolean) {
-    const isActive =
-      active ??
-      (pathname === href || (href !== "/" && pathname.startsWith(href)));
-    return cn(
-      navLinkClass,
-      isActive && "text-royal after:scale-x-100"
-    );
-  }
-
-  function renderNavLink(item: NavLink) {
-    return (
-      <Link key={item.href} href={item.href} className={linkClass(item.href)}>
-        {t(item.key)}
-      </Link>
-    );
-  }
-
-  function renderNavGroup(item: NavGroup) {
-    const active = isNavGroupActive(pathname, item.children);
-
-    return (
-      <NavHoverMenu
-        key={item.key}
-        label={t(item.key)}
-        active={active}
-        items={item.children.map((child) => ({
-          href: child.href,
-          label: t(child.key),
-          isActive: pathname === child.href,
-        }))}
-      />
-    );
-  }
-
-  return (
-    <>
-      <header
-        className={cn(
-          "sticky top-0 z-50 w-full border-b border-black/[0.06] backdrop-blur-[10px] transition-all duration-300",
-          scrolled ? "bg-white/95 shadow-sm" : "bg-cream/90"
-        )}
-      >
-        <div
-          className={cn(
-            "mx-auto flex max-w-7xl items-center gap-3 px-4 transition-all duration-300 lg:px-6",
-            scrolled ? "h-[3.75rem]" : "h-[4.25rem]"
-          )}
-        >
-          <Link href="/" className="flex shrink-0 items-center">
-            <AcademyLogo variant="header" priority />
-          </Link>
-
-          <nav
-            className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 xl:flex"
-            aria-label={tCommon("mainNav")}
-          >
-            {desktopNavItems.map((item) =>
-              item.type === "link"
-                ? renderNavLink(item)
-                : renderNavGroup(item)
-            )}
-          </nav>
-
-          <div className="hidden shrink-0 items-center gap-2 xl:flex">
-            <div className="flex rounded-md border border-border text-[11px] font-semibold">
-              <Link
-                href={pathname}
-                locale="fr"
-                className={cn(
-                  "rounded-l-md px-2 py-1 transition-colors",
-                  locale === "fr" ? "bg-navy text-white" : "hover:bg-muted"
-                )}
-              >
-                FR
-              </Link>
-              <Link
-                href={pathname}
-                locale="en"
-                className={cn(
-                  "rounded-r-md px-2 py-1 transition-colors",
-                  locale === "en" ? "bg-navy text-white" : "hover:bg-muted"
-                )}
-              >
-                EN
-              </Link>
-            </div>
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "hidden border-navy px-2.5 text-navy xl:inline-flex"
-              )}
-            >
-              {t("privateSpace")}
-            </Link>
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "border-navy px-2.5 text-navy xl:hidden"
-              )}
-              title={t("privateSpace")}
-            >
-              {t("privateShort")}
-            </Link>
-            <Link
-              href="/rejoindre"
-              className={cn(
-                buttonVariants({ size: "sm" }),
-                "bg-gold px-2.5 text-navy hover:bg-gold/90"
-              )}
-            >
-              {t("joinShort")}
-            </Link>
-          </div>
-
-          <button
-            className="ml-auto flex min-h-11 min-w-11 items-center justify-center rounded-md text-navy xl:hidden"
-            onClick={() => setMobileOpen(true)}
-            aria-label={tCommon("openMenu")}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-        </div>
-      </header>
-
-      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} />
-    </>
-  );
+    const scroll = () => setCompact(window.scrollY > 100);
+    const close = (event: PointerEvent) => {
+      if (!(event.target instanceof Element) || !event.target.closest(".club-nav-details")) headerRef.current?.querySelectorAll("details[open]").forEach(el => el.removeAttribute("open"));
+    };
+    scroll(); window.addEventListener("scroll",scroll,{passive:true}); document.addEventListener("pointerdown",close);
+    return () => { window.removeEventListener("scroll",scroll); document.removeEventListener("pointerdown",close); };
+  },[]);
+  const active = (href: string) => path === href || (href !== "/" && path.startsWith(href + "/"));
+  const utility = <><Link href="/contact">Contact</Link><Link href="/login">{words(locale,"Espace privé","Member area")}</Link>{commerce.shopUrl && <a href={commerce.shopUrl}>{words(locale,"Boutique","Shop")}<ArrowUpRight size={14}/></a>}<Suspense fallback={<LanguageLinks path={path} locale={locale}/>}><CurrentLanguageLinks path={path} locale={locale}/></Suspense></>;
+  return <>
+    <a href="#contenu" className="club-skip">{words(locale,"Aller au contenu","Skip to content")}</a>
+    <header ref={headerRef} className={`club-header${compact ? " compact" : ""}`} onKeyDown={e => {
+      if (e.key === "Escape") { const details = (e.target as HTMLElement).closest("details"); if(details) { details.open=false; details.querySelector("summary")?.focus(); } }
+    }}>
+      <div className="club-container club-masthead">
+        <span className="club-masthead-caption">{words(locale,"DOUALA, CAMEROUN","DOUALA, CAMEROON")}<br/><strong>{words(locale,"Talent. Éducation. Performance.","Talent. Education. Performance.")}</strong></span>
+        <Link href="/" className="club-brand" aria-label="Ninety One Foot Academy"><Image src="/logo-crest.png" width={80} height={80} sizes="80px" alt="" preload /><span>NINETY ONE<small>FOOT ACADEMY</small></span></Link>
+        <div className="club-utilities">{utility}</div>
+        <Dialog.Root open={open} onOpenChange={setOpen}>
+          <Dialog.Trigger className="club-mobile-trigger" aria-label={words(locale,"Ouvrir le menu","Open menu")}><Menu aria-hidden/></Dialog.Trigger>
+          <Dialog.Portal><Dialog.Backdrop className="club-dialog-backdrop"/><Dialog.Popup className="club-mobile-menu" aria-describedby={undefined}>
+            <div className="mobile-menu-heading"><Dialog.Title>Ninety One</Dialog.Title><Dialog.Close className="club-icon-button" aria-label={words(locale,"Fermer le menu","Close menu")}><X/></Dialog.Close></div>
+            <nav aria-label={words(locale,"Navigation mobile","Mobile navigation")} onClick={e=>{if((e.target as Element).closest("a"))setOpen(false);}}>
+              <Link href="/" className="mobile-home">{words(locale,"Accueil","Home")}</Link>
+              {clubNav.map(item => item.children.length ? <details key={item.href}><summary>{item[locale]}<ChevronDown size={16}/></summary><div>{item.children.map(child=><Link key={child.href} href={child.href} aria-current={active(child.href)?"page":undefined}>{child[locale]}</Link>)}</div></details> : <Link className="mobile-home" key={item.href} href={item.href}>{item[locale]}</Link>)}
+              <Link href="/rejoindre" className="club-button">{words(locale,"Rejoindre l’académie","Join the academy")}</Link><div className="mobile-utilities">{utility}</div>
+            </nav>
+          </Dialog.Popup></Dialog.Portal>
+        </Dialog.Root>
+      </div>
+      <div className="club-nav-bar"><nav className="club-container club-desktop-nav" aria-label={words(locale,"Navigation principale","Main navigation")}>
+        {clubNav.map(item => item.children.length ? <details className="club-nav-details" key={item.href} onToggle={e=>{if(e.currentTarget.open) headerRef.current?.querySelectorAll("details[open]").forEach(el=>{if(el!==e.currentTarget)el.removeAttribute("open");});}}>
+          <summary className={active(item.href)?"active":""}>{item[locale]}<ChevronDown size={13}/></summary><div className="club-dropdown">{item.children.map(child=><Link key={child.href} href={child.href} onClick={e=>{e.currentTarget.closest("details")?.removeAttribute("open");}}>{child[locale]}</Link>)}</div>
+        </details> : <Link className={active(item.href)?"active":""} aria-current={active(item.href)?"page":undefined} key={item.href} href={item.href}>{item[locale]}</Link>)}
+        {commerce.ticketUrl ? <a className="nav-cta" href={commerce.ticketUrl}>{words(locale,"Billetterie","Tickets")}<ArrowUpRight size={16}/></a> : <Link className="nav-cta" href="/rejoindre">{words(locale,"Rejoindre","Join us")}<ArrowUpRight size={16}/></Link>}
+      </nav></div>
+    </header>
+  </>;
 }

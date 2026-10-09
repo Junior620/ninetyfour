@@ -7,7 +7,7 @@ type RecruitmentApplicationRow = {
   id: string;
   status: string;
   pdf_path: string | null;
-  form_data: any;
+  form_data: Record<string, unknown> | null;
   createdAt?: string;
 };
 

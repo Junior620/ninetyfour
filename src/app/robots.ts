@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
+import { indexingAllowed } from "@/lib/seo/indexing";
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = getSiteUrl();
+  if (!indexingAllowed()) return { rules: { userAgent: "*", disallow: "/" } };
 
   return {
     rules: {

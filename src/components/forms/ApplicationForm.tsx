@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useWatch, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,14 +32,14 @@ export function ApplicationForm() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationSchema),
     defaultValues: { consent: undefined },
   });
 
-  const consent = watch("consent");
+  const consent = useWatch({ control, name: "consent" });
 
   async function onSubmit(data: ApplicationFormData) {
     setError("");

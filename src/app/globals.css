@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./club.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -95,10 +96,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-cream text-foreground antialiased overflow-x-hidden;
+    @apply bg-cream text-foreground antialiased;
   }
   html {
-    @apply font-sans scroll-smooth overflow-x-hidden;
+    @apply font-sans scroll-smooth;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;

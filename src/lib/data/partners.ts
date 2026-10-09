@@ -17,7 +17,8 @@ export const partners: Partner[] = [
   {
     id: "voak",
     name: "Voak Sport",
-    logo: "/partner-voak.png",
+    // These two original asset filenames were inverted; preserve their URLs.
+    logo: "/partner-johny.png",
     role: {
       fr: "Équipementier officiel",
       en: "Official kit supplier",
@@ -31,7 +32,7 @@ export const partners: Partner[] = [
   {
     id: "johny",
     name: "Johny Sport Consulting",
-    logo: "/partner-johny.png",
+    logo: "/partner-voak.png",
     role: {
       fr: "Accompagnement sportif",
       en: "Sports consulting",

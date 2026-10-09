@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { routing } from "@/lib/i18n/routing";
 import { newsArticles } from "@/lib/data";
 import { buildLanguageAlternates, localizedUrl } from "@/lib/seo/metadata";
+import { teamCategories } from "@/lib/data/staff";
+import { matches, publicPlayers } from "@/lib/club";
 
 /** Public indexable paths only (no login, dashboards, API). */
 const staticPaths = [
@@ -20,6 +22,12 @@ const staticPaths = [
   "/galerie",
   "/rejoindre",
   "/contact",
+  "/saison",
+  "/informations-legales",
+  "/confidentialite",
+  ...teamCategories.map(team => `/equipes/${team.id}`),
+  ...matches.map(match => `/matchs/${match.id}`),
+  ...publicPlayers.map(player => `/joueurs/${player.slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

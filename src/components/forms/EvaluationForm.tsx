@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
+import { useWatch, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,7 +88,7 @@ export function EvaluationForm({
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { isSubmitting },
   } = useForm<EvaluationFormData>({
     resolver: zodResolver(evaluationSchema),
@@ -110,7 +110,7 @@ export function EvaluationForm({
     },
   });
 
-  const selectedId = watch("playerId");
+  const selectedId = useWatch({ control, name: "playerId" });
 
   useEffect(() => {
     setValue("playerId", playerId);

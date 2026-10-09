@@ -1,274 +1,32 @@
-import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { buildPageMetadata } from "@/lib/seo/metadata";
+import Image from "next/image";
+import { ArrowUpRight, Trophy } from "lucide-react";
+import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { SectionTitle } from "@/components/sections/SectionTitle";
-import { CTASection } from "@/components/sections/CTASection";
-import { QuoteSection } from "@/components/sections/QuoteSection";
-import { PillarCard } from "@/components/cards/StatCard";
-import { StatsSection } from "@/components/sections/StatsSection";
-import { NewsCard } from "@/components/cards/PartnerCard";
-import { ExploreCard } from "@/components/cards/ExploreCard";
-import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
-import { AmbassadorsSection } from "@/components/sections/AmbassadorsSection";
-import { buttonVariants } from "@/components/ui/button";
-import {
-  promisePillars,
-  dimensions,
-  keyStats,
-  images,
-  partners,
-  ambassadors,
-  newsArticles,
-} from "@/lib/data";
-import { localized, formatDate, cn } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo/metadata";
+import { words, latestNews, matches, matchSummary } from "@/lib/club";
+import { ActionLink, EmptyState, MatchCard, NewsCard, SectionHeading } from "@/components/club/ClubUI";
 import type { Locale } from "@/types";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "seo" });
-  return buildPageMetadata({
-    locale,
-    path: "",
-    title: t("home.title"),
-    description: t("home.description"),
-    absoluteTitle: true,
-  });
-}
-
-export default async function HomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const loc = locale as Locale;
-
-  const t = await getTranslations({ locale, namespace: "home" });
-  const tNav = await getTranslations({ locale, namespace: "nav" });
-  const tCommon = await getTranslations({ locale, namespace: "common" });
-  const tNews = await getTranslations({ locale, namespace: "news" });
-
-  const explorePages = [
-    {
-      key: "club",
-      href: "/academie",
-      title: tNav("clubGroup"),
-      description: t("explore.club"),
-      image: images.academy,
-    },
-    {
-      key: "program",
-      href: "/programme",
-      title: tNav("program"),
-      description: t("explore.program"),
-      image: images.training,
-    },
-    {
-      key: "teams",
-      href: "/equipes",
-      title: tNav("teams"),
-      description: t("explore.teams"),
-      image: images.team,
-    },
-    {
-      key: "coaching",
-      href: "/encadrement",
-      title: tNav("coaching"),
-      description: t("explore.coaching"),
-      image: images.performance,
-    },
-    {
-      key: "news",
-      href: "/actualites",
-      title: tNav("news"),
-      description: t("explore.news"),
-      image: images.education,
-    },
-    {
-      key: "partners",
-      href: "/partenaires",
-      title: tNav("partners"),
-      description: t("explore.partners"),
-      image: images.academy,
-    },
-  ];
-
-  const latestNews = [...newsArticles]
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, 3);
-
-  return (
-    <>
-      <HeroSection
-        title={t("heroTitle")}
-        subtitle={t("heroSubtitle")}
-        images={images.heroImages}
-        badges={[
-          t("badges.age"),
-          t("badges.sessions"),
-          t("badges.location"),
-          t("badges.tracking"),
-        ]}
-        primaryCta={{ label: tNav("join"), href: "/rejoindre" }}
-        secondaryCta={{ label: t("discoverProgram"), href: "/programme" }}
-      />
-
-      <PartnersMarquee
-        partners={partners}
-        title={t("partnersBand")}
-        subtitle={t("partnersBandSubtitle")}
-        ctaLabel={t("partnersCta")}
-      />
-
-      <section className="bg-cream px-4 py-12 sm:py-16 md:px-8 lg:px-16">
-        <div className="container-wide">
-          <SectionTitle
-            title={t("promiseTitle")}
-            subtitle={t("promiseSubtitle")}
-          />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-            {promisePillars.map((pillar, i) => (
-              <PillarCard
-                key={pillar.id}
-                title={localized(pillar.title, loc)}
-                description={localized(pillar.description, loc)}
-                icon={pillar.icon}
-                index={i}
-                tag={pillar.tag ? localized(pillar.tag, loc) : undefined}
-                href={pillar.href}
-                cta={tCommon("learnMore")}
-                image={pillar.image}
-                numbered
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <StatsSection
-        sectionTitle={t("statsTitle")}
-        title={t("statsHeadline")}
-        subtitle={t("statsSubtitle")}
-        image={images.stats}
-        stats={keyStats.map((stat) => ({
-          value: localized(stat.value, loc),
-          label: localized(stat.label, loc),
-          icon: stat.icon,
-          note: stat.note ? localized(stat.note, loc) : undefined,
-          tag: stat.tag ? localized(stat.tag, loc) : undefined,
-          featured: stat.featured,
-          image: stat.image,
-        }))}
-      />
-
-      <AmbassadorsSection
-        ambassadors={ambassadors}
-        title={t("ambassadorsTitle")}
-        subtitle={t("ambassadorsSubtitle")}
-        locale={loc}
-        limit={4}
-        showCta
-        ctaLabel={t("ambassadorsCta")}
-        background="cream"
-      />
-
-      <section className="section-padding bg-white">
-        <div className="container-wide">
-          <SectionTitle title={t("dimensionsTitle")} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {dimensions.map((dim, i) => (
-              <PillarCard
-                key={dim.id}
-                title={localized(dim.title, loc)}
-                description={localized(dim.description, loc)}
-                icon={dim.icon}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-padding bg-cream">
-        <div className="container-wide">
-          <SectionTitle
-            title={t("exploreTitle")}
-            subtitle={t("exploreSubtitle")}
-          />
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {explorePages.map((page, i) => (
-              <ExploreCard
-                key={page.key}
-                title={page.title}
-                description={page.description}
-                href={page.href}
-                image={page.image}
-                cta={tCommon("discover")}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <QuoteSection quote={t("quote")} />
-
-      <section className="section-padding bg-white">
-        <div className="container-wide">
-          <SectionTitle title={t("newsTitle")} subtitle={t("newsSubtitle")} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {latestNews.map((article, i) => (
-              <NewsCard
-                key={article.slug}
-                title={localized(article.title, loc)}
-                excerpt={localized(article.excerpt, loc)}
-                image={article.image}
-                date={formatDate(article.date, loc)}
-                category={tNews(`categories.${article.category}`)}
-                slug={article.slug}
-                index={i}
-              />
-            ))}
-          </div>
-          <div className="mt-8 text-center md:mt-10">
-            <Link
-              href="/actualites"
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "min-h-11 w-full border-navy text-navy hover:bg-navy hover:text-white sm:w-auto"
-              )}
-            >
-              {tCommon("viewAll")}
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-navy-light py-12 sm:py-16">
-        <div className="container-wide flex flex-col items-center gap-5 px-4 text-center sm:flex-row sm:justify-between sm:text-left md:px-8 lg:px-16">
-          <h2 className="text-xl font-bold uppercase tracking-wide text-white sm:text-2xl md:text-3xl">
-            {t("galleryCtaTitle")}
-          </h2>
-          <Link
-            href="/galerie"
-            className={cn(
-              buttonVariants({ size: "lg" }),
-              "min-h-11 w-full shrink-0 justify-center bg-gold text-navy hover:bg-gold/90 sm:w-auto"
-            )}
-          >
-            {t("galleryCtaButton")}
-          </Link>
-        </div>
-      </section>
-
-      <CTASection title={t("ctaTitle")} buttonLabel={tCommon("applyNow")} />
-    </>
-  );
+export async function generateMetadata({params}:{params:Promise<{locale:string}>}) { const {locale}=await params; return buildPageMetadata({locale,path:"/",title:"Ninety One Foot Academy — Douala",description:words(locale,"Talent, éducation et performance. La vie de l’académie, nos équipes et le programme 2026–2029.","Talent, education and performance. Academy news, teams and the 2026–2029 programme."),absoluteTitle:true}); }
+export default async function Home({params}:{params:Promise<{locale:string}>}) {
+ const {locale}=await params; setRequestLocale(locale); const loc=locale as Locale; const sport=matchSummary(matches);
+ const tiles=[
+ {label:words(loc,"Le club","Our club"),href:"/academie",image:"/hero-4.jpeg",size:""},
+ {label:words(loc,"Nos équipes","Our teams"),href:"/equipes",image:"/hero-3.jpeg",size:"wide"},
+ {label:words(loc,"Saison","Season"),href:"/saison",image:"/hero.png",size:""},
+ {label:words(loc,"Médias","Media"),href:"/galerie",image:"/hero-2.jpeg",size:""},
+ {label:words(loc,"Vie du club","Club life"),href:"/actualites?category=academy",image:"/promise-04.png",size:""},
+ {label:words(loc,"Partenaires","Partners"),href:"/partenaires",image:"/pub1.jpg",size:"half"},
+ {label:words(loc,"Formation","Academy"),href:"/programme",image:"/promise-01.png",size:"half"},
+ {label:words(loc,"Événements","Events"),href:"/actualites?category=events",image:"/hero-3.jpeg",size:"full"}
+ ];
+ return <>
+  <section className="club-hero"><Image src="/hero-3.jpeg" alt="" fill sizes="100vw" preload/><div className="club-container club-hero-copy"><div className="hero-edition"><span className="club-kicker">{words(loc,"Le projet Ninety One","The Ninety One project")}</span><span>2026 — 2029</span></div><h1>{words(loc,"La nouvelle génération commence ici.","The next generation starts here.")}</h1><p>{words(loc,"À Douala, le talent grandit sur le terrain, à l’école et dans la vie.","In Douala, talent grows on the pitch, in the classroom and in life.")}</p><ActionLink href="/actualites/lancement-programme-2026">{words(loc,"Découvrir notre projet","Discover our project")}</ActionLink></div><span className="hero-bottom-line">Ninety One Foot Academy · Douala</span></section>
+  <section className="club-portal-section" aria-label={words(loc,"Explorer le club","Explore the club")}><div className="club-container club-portal">
+    <aside className="portal-left"><div className="portal-sponsor"><p className="club-kicker">{words(loc,"Partenaire stratégique","Strategic partner")}</p><Link href="/partenaires#astra"><div className="portal-sponsor-image"><Image src="/partner-astra.png" alt="Astra Invest" fill sizes="250px"/></div></Link><p>{words(loc,"Aux côtés de notre académie.","Alongside our academy.")}</p></div><div className="portal-media"><div className="portal-media-image"><Image src="/hero-4.jpeg" alt="" fill sizes="(min-width:768px) 25vw, 45vw"/></div><div><h3>{words(loc,"Dans les coulisses","Inside the academy")}</h3><Link className="club-text-link" href="/galerie">{words(loc,"L’académie en images","Explore the gallery")}<ArrowUpRight size={16}/></Link></div></div></aside>
+    <div className="portal-mosaic">{tiles.map(tile=><Link className={`portal-tile ${tile.size}`} key={tile.href} href={tile.href}><Image src={tile.image} alt="" fill sizes="(min-width:1200px) 30vw, (min-width:768px) 40vw, 50vw"/><span>{tile.label}<ArrowUpRight aria-hidden/></span></Link>)}</div>
+    <aside className="portal-right"><div className="portal-football"><h2 className="portal-panel-heading"><Trophy size={18} aria-hidden/>{words(loc,"Les rendez-vous du club","Club fixtures")}</h2>{sport.next ? <MatchCard match={sport.next} locale={loc}/> : <EmptyState title={words(loc,"Le prochain rendez-vous","The next fixture")} href="/saison" label={words(loc,"Calendrier & résultats","Fixtures & results")}>{words(loc,"Les prochaines rencontres seront annoncées ici dès confirmation du calendrier.","Upcoming fixtures will appear here once the schedule is confirmed.")}</EmptyState>}{sport.last && <MatchCard match={sport.last} locale={loc}/>}</div><div className="portal-practical"><p className="club-kicker">{words(loc,"Grandir avec Ninety One","Grow with Ninety One")}</p><h3>{words(loc,"Talent. Éducation. Performance.","Talent. Education. Performance.")}</h3><p>{words(loc,"Un programme structuré et un accompagnement individuel pour les jeunes talents.","A structured programme and individual support for young talent.")}</p><Link className="club-text-link" href="/rejoindre">{words(loc,"Rejoindre l’académie","Join the academy")}<ArrowUpRight size={16}/></Link></div></aside>
+    <section className="home-news-block"><SectionHeading title={words(loc,"Au cœur de l’académie","At the heart of the academy")} eyebrow={words(loc,"Les dernières actualités","Latest news")} href="/actualites" linkLabel={words(loc,"Toutes les actualités","All news")}/><div className="home-news-grid"><NewsCard article={latestNews[0]} locale={loc} featured/><div className="home-news-secondary">{latestNews.slice(1,3).map(a=><NewsCard article={a} key={a.slug} locale={loc} horizontal/>)}</div></div></section>
+  </div></section>
+  <section className="club-container club-formation-banner"><div className="banner-image"><Image src="/hero-2.jpeg" alt="" fill sizes="(min-width:768px) 50vw, 100vw"/></div><div className="banner-copy"><p className="club-kicker">2026 — 2029</p><h2>{words(loc,"Former le joueur. Accompagner la personne.","Develop the player. Support the person.")}</h2><p>{words(loc,"Quatre dimensions, un même engagement : formation sportive, éducation, technologie et développement humain.","Four dimensions, one commitment: football, education, technology and personal development.")}</p><ActionLink href="/programme">{words(loc,"Notre programme","Our programme")}</ActionLink></div></section><div className="h-12"/>
+ </>;
 }

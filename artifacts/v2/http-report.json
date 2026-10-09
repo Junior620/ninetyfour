@@ -1,0 +1,1850 @@
+{
+  "generatedAt": "2026-10-08T11:33:51.029Z",
+  "base": "http://127.0.0.1:3000/",
+  "method": "Local GET only; blocking metadata user-agent; no external requests, form submissions or database writes.",
+  "pages": [
+    {
+      "route": "/fr",
+      "status": 200,
+      "title": "Ninety One Foot Academy — Douala",
+      "h1": [
+        "La nouvelle génération commence ici."
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr",
+      "description": "Talent, éducation et performance. La vie de l’académie, nos équipes et le programme 2026–2029.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/academie",
+      "status": 200,
+      "title": "Académie de football à Douala — Notre projet | Ninety One Foot Academy",
+      "h1": [
+        "Le club, notre académie"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/academie",
+      "description": "Découvrez Ninety One Foot Academy à Douala : histoire, approche et modèle de formation pour jeunes footballeurs africains.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/vision",
+      "status": 200,
+      "title": "Vision et valeurs — Académie football Cameroun | Ninety One Foot Academy",
+      "h1": [
+        "Une vision. Des valeurs."
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/vision",
+      "description": "Vision, mission et valeurs de Ninety One Foot Academy : former des leaders du football africain à Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/programme",
+      "status": 200,
+      "title": "Programme de formation football jeunes Douala | Ninety One Foot Academy",
+      "h1": [
+        "Le programme 2026–2029"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/programme",
+      "description": "Parcours structuré de formation football à Douala : recrutement, entraînement, éducation et accompagnement vers le haut niveau.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/formation-sportive",
+      "status": 200,
+      "title": "Formation sportive football jeunes Cameroun | Ninety One Foot Academy",
+      "h1": [
+        "La formation sportive"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/formation-sportive",
+      "description": "Formation sportive structurée à Douala : 4 séances par semaine, technique, tactique, physique et mental pour les 15–17 ans.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/education",
+      "status": 200,
+      "title": "Suivi scolaire joueurs de football — Douala | Ninety One Foot Academy",
+      "h1": [
+        "Grandir au-delà du terrain"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/education",
+      "description": "Suivi scolaire et développement personnel pour les jeunes footballeurs de Ninety One Foot Academy à Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/performance-lab",
+      "status": 200,
+      "title": "Centre de performance football Cameroun | Ninety One Foot Academy",
+      "h1": [
+        "Performance Lab"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/performance-lab",
+      "description": "Performance Lab : analyse vidéo, données et technologies au service de la progression des jeunes talents à Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/encadrement",
+      "status": 200,
+      "title": "Encadrement technique — Académie football Douala | Ninety One Foot Academy",
+      "h1": [
+        "L’encadrement"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/encadrement",
+      "description": "Découvrez le staff technique de Ninety One Foot Academy à Douala : direction sportive, entraîneurs, préparation physique et suivi médical.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/equipes",
+      "status": 200,
+      "title": "Nos équipes | Ninety One Foot Academy",
+      "h1": [
+        "Nos équipes"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/equipes",
+      "description": "Découvrez les catégories U14, U16 et U18 de Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/partenaires",
+      "status": 200,
+      "title": "Nos partenaires | Ninety One Foot Academy",
+      "h1": [
+        "Grandir ensemble."
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/partenaires",
+      "description": "Les partenaires qui accompagnent Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/parrains",
+      "status": 200,
+      "title": "Parrains et ambassadeurs internationaux | Ninety One Foot Academy",
+      "h1": [
+        "Nos parrains et ambassadeurs internationaux"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/parrains",
+      "description": "Parrains et ambassadeurs qui soutiennent Ninety One Foot Academy à Douala par leur réseau et leur engagement.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites",
+      "status": 200,
+      "title": "Actualités | Ninety One Foot Academy",
+      "h1": [
+        "Actualités"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites",
+      "description": "Toute la vie de Ninety One : formation, rencontres, partenaires et événements.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/galerie",
+      "status": 200,
+      "title": "Médias et albums | Ninety One Foot Academy",
+      "h1": [
+        "L’académie en images"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/galerie",
+      "description": "L’académie en images : photographies et archives.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/rejoindre",
+      "status": 200,
+      "title": "Candidature académie de football Cameroun | Ninety One Foot Academy",
+      "h1": [
+        "Rejoindre l'académie"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/rejoindre",
+      "description": "Rejoignez Ninety One Foot Academy à Douala : candidature, détections et formation pour jeunes footballeurs de 15 à 17 ans.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/contact",
+      "status": 200,
+      "title": "Contact et accès | Ninety One Foot Academy",
+      "h1": [
+        "Parlons de votre projet."
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/contact",
+      "description": "Contacter Ninety One Foot Academy à Douala : candidature, partenariat et informations.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/saison",
+      "status": 200,
+      "title": "Saison : calendrier et résultats | Ninety One Foot Academy",
+      "h1": [
+        "La saison du club"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/saison",
+      "description": "Retrouvez les rencontres et classements des équipes de Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/informations-legales",
+      "status": 200,
+      "title": "Informations légales | Ninety One Foot Academy",
+      "h1": [
+        "Informations légales"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/informations-legales",
+      "description": "Identification et contact du site Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/confidentialite",
+      "status": 200,
+      "title": "Confidentialité | Ninety One Foot Academy",
+      "h1": [
+        "Confidentialité"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/confidentialite",
+      "description": "Informations sur les formulaires et l’espace privé de l’académie.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/login",
+      "status": 200,
+      "title": "Espace privé | Ninety One Foot Academy",
+      "h1": [
+        "Espace privé"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/login",
+      "description": "Connexion à l’espace privé Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/lancement-programme-2026",
+      "status": 200,
+      "title": "Lancement officiel du programme 2026–2029 | Ninety One Foot Academy",
+      "h1": [
+        "Lancement officiel du programme 2026–2029"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/lancement-programme-2026",
+      "description": "Ninety One Foot Academy dévoile son ambitieux programme de formation pour les trois prochaines années.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/partenariat-voak-sport",
+      "status": 200,
+      "title": "Partenariat officiel avec Voak Sport | Ninety One Foot Academy",
+      "h1": [
+        "Partenariat officiel avec Voak Sport"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/partenariat-voak-sport",
+      "description": "Voak Sport devient l'équipementier officiel de Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/journee-detection-douala",
+      "status": 200,
+      "title": "Journée de détection à Douala | Ninety One Foot Academy",
+      "h1": [
+        "Journée de détection à Douala"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/journee-detection-douala",
+      "description": "Une journée portes ouvertes pour découvrir les talents de la région.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/integration-footbar-veo",
+      "status": 200,
+      "title": "Intégration des outils Footbar et Veo | Ninety One Foot Academy",
+      "h1": [
+        "Intégration des outils Footbar et Veo"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/integration-footbar-veo",
+      "description": "Le Performance Lab équipe l'académie de technologies de pointe.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/premier-match-amical",
+      "status": 200,
+      "title": "Premier match amical de la saison | Ninety One Foot Academy",
+      "h1": [
+        "Premier match amical de la saison"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/premier-match-amical",
+      "description": "Les jeunes de l'académie disputent leur premier match officiel.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/actualites/seminaire-education-leadership",
+      "status": 200,
+      "title": "Séminaire éducation et leadership | Ninety One Foot Academy",
+      "h1": [
+        "Séminaire éducation et leadership"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/actualites/seminaire-education-leadership",
+      "description": "Un atelier dédié au développement personnel des joueurs.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/equipes/u14",
+      "status": 200,
+      "title": "Catégorie U-14 | Ninety One Foot Academy",
+      "h1": [
+        "Catégorie U-14"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/equipes/u14",
+      "description": "Découverte et fondations : technique individuelle, coordination et esprit d'équipe pour les joueurs de moins de 14 ans. Staff dédié à cette catégorie.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/equipes/u16",
+      "status": 200,
+      "title": "Catégorie U-16 | Ninety One Foot Academy",
+      "h1": [
+        "Catégorie U-16"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/equipes/u16",
+      "description": "Progression structurée : tactique de base, physique adapté et compétition amicale pour les moins de 16 ans. Staff dédié à cette catégorie.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/equipes/u18",
+      "status": 200,
+      "title": "Catégorie U-18 | Ninety One Foot Academy",
+      "h1": [
+        "Catégorie U-18"
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/equipes/u18",
+      "description": "Vers le haut niveau : intensité d'entraînement, analyse de match et préparation mentale pour les moins de 18 ans. Staff dédié à cette catégorie.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en",
+      "status": 200,
+      "title": "Ninety One Foot Academy — Douala",
+      "h1": [
+        "The next generation starts here."
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en",
+      "description": "Talent, education and performance. Academy news, teams and the 2026–2029 programme.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/academie",
+      "status": 200,
+      "title": "Football Academy in Douala — Our Project | Ninety One Foot Academy",
+      "h1": [
+        "Our club, our academy"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/academie",
+      "description": "Discover Ninety One Foot Academy in Douala: history, approach and development model for young African footballers.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/vision",
+      "status": 200,
+      "title": "Vision and Values — Football Academy Cameroon | Ninety One Foot Academy",
+      "h1": [
+        "A vision. Shared values."
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/vision",
+      "description": "Vision, mission and values of Ninety One Foot Academy: developing African football leaders in Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/programme",
+      "status": 200,
+      "title": "Youth Football Development Program Douala | Ninety One Foot Academy",
+      "h1": [
+        "The 2026–2029 programme"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/programme",
+      "description": "Structured football pathway in Douala: recruitment, training, education and support toward elite level.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/formation-sportive",
+      "status": 200,
+      "title": "Youth Football Training Cameroon | Ninety One Foot Academy",
+      "h1": [
+        "Football development"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/formation-sportive",
+      "description": "Structured football training in Douala: 4 sessions per week covering technique, tactics, fitness and mindset for ages 15–17.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/education",
+      "status": 200,
+      "title": "Academic Support for Young Footballers — Douala | Ninety One Foot Academy",
+      "h1": [
+        "Growing beyond the pitch"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/education",
+      "description": "Academic follow-up and personal development for young footballers at Ninety One Foot Academy in Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/performance-lab",
+      "status": 200,
+      "title": "Football Performance Academy Africa | Ninety One Foot Academy",
+      "h1": [
+        "Performance Lab"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/performance-lab",
+      "description": "Performance Lab: video analysis, data and technology supporting youth talent development in Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/encadrement",
+      "status": 200,
+      "title": "Coaching Staff — Football Academy Douala | Ninety One Foot Academy",
+      "h1": [
+        "Coaching staff"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/encadrement",
+      "description": "Meet the technical staff of Ninety One Foot Academy in Douala: sporting direction, coaches, fitness and medical support.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/equipes",
+      "status": 200,
+      "title": "Our teams | Ninety One Foot Academy",
+      "h1": [
+        "Our teams"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/equipes",
+      "description": "Explore the U14, U16 and U18 categories at Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/partenaires",
+      "status": 200,
+      "title": "Our partners | Ninety One Foot Academy",
+      "h1": [
+        "Growing together."
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/partenaires",
+      "description": "The partners supporting Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/parrains",
+      "status": 200,
+      "title": "International Patrons and Ambassadors | Ninety One Foot Academy",
+      "h1": [
+        "Our international patrons and ambassadors"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/parrains",
+      "description": "Patrons and ambassadors supporting Ninety One Foot Academy in Douala through their network and commitment.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites",
+      "status": 200,
+      "title": "News | Ninety One Foot Academy",
+      "h1": [
+        "News"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites",
+      "description": "Ninety One news: academy life, football, partners and events.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/galerie",
+      "status": 200,
+      "title": "Media and albums | Ninety One Foot Academy",
+      "h1": [
+        "The academy in pictures"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/galerie",
+      "description": "The academy in pictures: photographs and archives.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/rejoindre",
+      "status": 200,
+      "title": "Join a Football Academy in Cameroon | Ninety One Foot Academy",
+      "h1": [
+        "Join the academy"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/rejoindre",
+      "description": "Apply to Ninety One Foot Academy in Douala: trials and training for young footballers aged 15 to 17.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/contact",
+      "status": 200,
+      "title": "Contact and visits | Ninety One Foot Academy",
+      "h1": [
+        "Let’s talk."
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/contact",
+      "description": "Contact Ninety One Foot Academy in Douala: admissions, partnerships and information.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/saison",
+      "status": 200,
+      "title": "Season: fixtures and results | Ninety One Foot Academy",
+      "h1": [
+        "The club season"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/saison",
+      "description": "Fixtures, results and standings for Ninety One Foot Academy teams.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/informations-legales",
+      "status": 200,
+      "title": "Legal information | Ninety One Foot Academy",
+      "h1": [
+        "Legal information"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/informations-legales",
+      "description": "Ninety One Foot Academy website identification and contact.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/confidentialite",
+      "status": 200,
+      "title": "Privacy | Ninety One Foot Academy",
+      "h1": [
+        "Privacy"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/confidentialite",
+      "description": "Information about academy forms and the member area.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/login",
+      "status": 200,
+      "title": "Private Area | Ninety One Foot Academy",
+      "h1": [
+        "Private space"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/login",
+      "description": "Sign in to the Ninety One Foot Academy private area.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/lancement-programme-2026",
+      "status": 200,
+      "title": "Official launch of the 2026–2029 program | Ninety One Foot Academy",
+      "h1": [
+        "Official launch of the 2026–2029 program"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/lancement-programme-2026",
+      "description": "Ninety One Foot Academy unveils its ambitious training program for the next three years.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/partenariat-voak-sport",
+      "status": 200,
+      "title": "Official partnership with Voak Sport | Ninety One Foot Academy",
+      "h1": [
+        "Official partnership with Voak Sport"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/partenariat-voak-sport",
+      "description": "Voak Sport becomes the official kit supplier of Ninety One Foot Academy.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/journee-detection-douala",
+      "status": 200,
+      "title": "Scouting day in Douala | Ninety One Foot Academy",
+      "h1": [
+        "Scouting day in Douala"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/journee-detection-douala",
+      "description": "An open day to discover regional talents.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/integration-footbar-veo",
+      "status": 200,
+      "title": "Integration of Footbar and Veo tools | Ninety One Foot Academy",
+      "h1": [
+        "Integration of Footbar and Veo tools"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/integration-footbar-veo",
+      "description": "The Performance Lab equips the academy with cutting-edge technology.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/premier-match-amical",
+      "status": 200,
+      "title": "First friendly match of the season | Ninety One Foot Academy",
+      "h1": [
+        "First friendly match of the season"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/premier-match-amical",
+      "description": "Academy youngsters play their first official match.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/actualites/seminaire-education-leadership",
+      "status": 200,
+      "title": "Education and leadership seminar | Ninety One Foot Academy",
+      "h1": [
+        "Education and leadership seminar"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/actualites/seminaire-education-leadership",
+      "description": "A workshop dedicated to players' personal development.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/equipes/u14",
+      "status": 200,
+      "title": "U-14 Category | Ninety One Foot Academy",
+      "h1": [
+        "U-14 Category"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/equipes/u14",
+      "description": "Discovery and foundations: individual technique, coordination and teamwork for players under 14. Dedicated staff for this category.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/equipes/u16",
+      "status": 200,
+      "title": "U-16 Category | Ninety One Foot Academy",
+      "h1": [
+        "U-16 Category"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/equipes/u16",
+      "description": "Structured progression: basic tactics, age-appropriate fitness and friendly competition for under-16s. Dedicated staff for this category.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/equipes/u18",
+      "status": 200,
+      "title": "U-18 Category | Ninety One Foot Academy",
+      "h1": [
+        "U-18 Category"
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/equipes/u18",
+      "description": "Toward elite level: training intensity, match analysis and mental preparation for under-18s. Dedicated staff for this category.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "route": "/fr",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/contact",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/login",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/en",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites?category=events",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites?category=academy",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/academie",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/vision",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/encadrement",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=results",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=standings",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u14",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u16",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u18",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/programme",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/formation-sportive",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/education",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/performance-lab",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/rejoindre",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/galerie",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/partenaires",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/parrains",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/contact?subject=partnership",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/informations-legales",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/confidentialite",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/lancement-programme-2026",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/seminaire-education-leadership",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/premier-match-amical",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/integration-footbar-veo",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/en/academie",
+      "from": "/fr/academie",
+      "status": 200
+    },
+    {
+      "route": "/en/vision",
+      "from": "/fr/vision",
+      "status": 200
+    },
+    {
+      "route": "/en/programme",
+      "from": "/fr/programme",
+      "status": 200
+    },
+    {
+      "route": "/en/formation-sportive",
+      "from": "/fr/formation-sportive",
+      "status": 200
+    },
+    {
+      "route": "/en/education",
+      "from": "/fr/education",
+      "status": 200
+    },
+    {
+      "route": "/en/performance-lab",
+      "from": "/fr/performance-lab",
+      "status": 200
+    },
+    {
+      "route": "/en/encadrement",
+      "from": "/fr/encadrement",
+      "status": 200
+    },
+    {
+      "route": "/en/equipes",
+      "from": "/fr/equipes",
+      "status": 200
+    },
+    {
+      "route": "/en/partenaires",
+      "from": "/fr/partenaires",
+      "status": 200
+    },
+    {
+      "route": "/en/parrains",
+      "from": "/fr/parrains",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites",
+      "from": "/fr/actualites",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/journee-detection-douala",
+      "from": "/fr/actualites",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/partenariat-voak-sport",
+      "from": "/fr/actualites",
+      "status": 200
+    },
+    {
+      "route": "/en/galerie",
+      "from": "/fr/galerie",
+      "status": 200
+    },
+    {
+      "route": "/fr/galerie?type=&album=",
+      "from": "/fr/galerie",
+      "status": 200
+    },
+    {
+      "route": "/fr/galerie?type=image&album=",
+      "from": "/fr/galerie",
+      "status": 200
+    },
+    {
+      "route": "/fr/galerie?type=video&album=",
+      "from": "/fr/galerie",
+      "status": 200
+    },
+    {
+      "route": "/en/rejoindre",
+      "from": "/fr/rejoindre",
+      "status": 200
+    },
+    {
+      "route": "/en/contact",
+      "from": "/fr/contact",
+      "status": 200
+    },
+    {
+      "route": "/en/saison",
+      "from": "/fr/saison",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=fixtures&team=&season=&competition=&venue=",
+      "from": "/fr/saison",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=results&team=&season=&competition=&venue=",
+      "from": "/fr/saison",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=standings&team=&season=&competition=&venue=",
+      "from": "/fr/saison",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites?category=matches",
+      "from": "/fr/saison",
+      "status": 200
+    },
+    {
+      "route": "/en/informations-legales",
+      "from": "/fr/informations-legales",
+      "status": 200
+    },
+    {
+      "route": "/en/confidentialite",
+      "from": "/fr/confidentialite",
+      "status": 200
+    },
+    {
+      "route": "/en/login",
+      "from": "/fr/login",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/lancement-programme-2026",
+      "from": "/fr/actualites/lancement-programme-2026",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/partenariat-voak-sport",
+      "from": "/fr/actualites/partenariat-voak-sport",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/journee-detection-douala",
+      "from": "/fr/actualites/journee-detection-douala",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/integration-footbar-veo",
+      "from": "/fr/actualites/integration-footbar-veo",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/premier-match-amical",
+      "from": "/fr/actualites/premier-match-amical",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites/seminaire-education-leadership",
+      "from": "/fr/actualites/seminaire-education-leadership",
+      "status": 200
+    },
+    {
+      "route": "/en/equipes/u14",
+      "from": "/fr/equipes/u14",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?team=u14",
+      "from": "/fr/equipes/u14",
+      "status": 200
+    },
+    {
+      "route": "/en/equipes/u16",
+      "from": "/fr/equipes/u16",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?team=u16",
+      "from": "/fr/equipes/u16",
+      "status": 200
+    },
+    {
+      "route": "/en/equipes/u18",
+      "from": "/fr/equipes/u18",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?team=u18",
+      "from": "/fr/equipes/u18",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites?category=events",
+      "from": "/en",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites?category=academy",
+      "from": "/en",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?view=results",
+      "from": "/en",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?view=standings",
+      "from": "/en",
+      "status": 200
+    },
+    {
+      "route": "/en/contact?subject=partnership",
+      "from": "/en",
+      "status": 200
+    },
+    {
+      "route": "/en/galerie?type=&album=",
+      "from": "/en/galerie",
+      "status": 200
+    },
+    {
+      "route": "/en/galerie?type=image&album=",
+      "from": "/en/galerie",
+      "status": 200
+    },
+    {
+      "route": "/en/galerie?type=video&album=",
+      "from": "/en/galerie",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?view=fixtures&team=&season=&competition=&venue=",
+      "from": "/en/saison",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?view=results&team=&season=&competition=&venue=",
+      "from": "/en/saison",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?view=standings&team=&season=&competition=&venue=",
+      "from": "/en/saison",
+      "status": 200
+    },
+    {
+      "route": "/en/actualites?category=matches",
+      "from": "/en/saison",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?team=u14",
+      "from": "/en/equipes/u14",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?team=u16",
+      "from": "/en/equipes/u16",
+      "status": 200
+    },
+    {
+      "route": "/en/saison?team=u18",
+      "from": "/en/equipes/u18",
+      "status": 200
+    }
+  ],
+  "anchors": [
+    {
+      "route": "/fr#contenu",
+      "from": "/fr",
+      "found": true
+    },
+    {
+      "route": "/fr/contact#venir",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/contact?subject=partnership#formulaire",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/partenaires#astra",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/partenaires#voak",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/partenaires#johny",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/academie#contenu",
+      "from": "/fr/academie",
+      "found": true
+    },
+    {
+      "route": "/fr/academie#histoire",
+      "from": "/fr/academie",
+      "found": true
+    },
+    {
+      "route": "/fr/academie#projet",
+      "from": "/fr/academie",
+      "found": true
+    },
+    {
+      "route": "/fr/academie#reperes",
+      "from": "/fr/academie",
+      "found": true
+    },
+    {
+      "route": "/fr/academie#engagements",
+      "from": "/fr/academie",
+      "found": true
+    },
+    {
+      "route": "/fr/vision#contenu",
+      "from": "/fr/vision",
+      "found": true
+    },
+    {
+      "route": "/fr/programme#contenu",
+      "from": "/fr/programme",
+      "found": true
+    },
+    {
+      "route": "/fr/formation-sportive#contenu",
+      "from": "/fr/formation-sportive",
+      "found": true
+    },
+    {
+      "route": "/fr/education#contenu",
+      "from": "/fr/education",
+      "found": true
+    },
+    {
+      "route": "/fr/performance-lab#contenu",
+      "from": "/fr/performance-lab",
+      "found": true
+    },
+    {
+      "route": "/fr/encadrement#contenu",
+      "from": "/fr/encadrement",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes#contenu",
+      "from": "/fr/equipes",
+      "found": true
+    },
+    {
+      "route": "/fr/partenaires#contenu",
+      "from": "/fr/partenaires",
+      "found": true
+    },
+    {
+      "route": "/fr/parrains#contenu",
+      "from": "/fr/parrains",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites#contenu",
+      "from": "/fr/actualites",
+      "found": true
+    },
+    {
+      "route": "/fr/galerie#contenu",
+      "from": "/fr/galerie",
+      "found": true
+    },
+    {
+      "route": "/fr/rejoindre#contenu",
+      "from": "/fr/rejoindre",
+      "found": true
+    },
+    {
+      "route": "/fr/contact#contenu",
+      "from": "/fr/contact",
+      "found": true
+    },
+    {
+      "route": "/fr/saison#contenu",
+      "from": "/fr/saison",
+      "found": true
+    },
+    {
+      "route": "/fr/informations-legales#contenu",
+      "from": "/fr/informations-legales",
+      "found": true
+    },
+    {
+      "route": "/fr/confidentialite#contenu",
+      "from": "/fr/confidentialite",
+      "found": true
+    },
+    {
+      "route": "/fr/login#contenu",
+      "from": "/fr/login",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/lancement-programme-2026#contenu",
+      "from": "/fr/actualites/lancement-programme-2026",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/partenariat-voak-sport#contenu",
+      "from": "/fr/actualites/partenariat-voak-sport",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/journee-detection-douala#contenu",
+      "from": "/fr/actualites/journee-detection-douala",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/integration-footbar-veo#contenu",
+      "from": "/fr/actualites/integration-footbar-veo",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/premier-match-amical#contenu",
+      "from": "/fr/actualites/premier-match-amical",
+      "found": true
+    },
+    {
+      "route": "/fr/actualites/seminaire-education-leadership#contenu",
+      "from": "/fr/actualites/seminaire-education-leadership",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u14#contenu",
+      "from": "/fr/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u14#effectif",
+      "from": "/fr/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u14#staff",
+      "from": "/fr/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u14#rencontres",
+      "from": "/fr/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u16#contenu",
+      "from": "/fr/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u16#effectif",
+      "from": "/fr/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u16#staff",
+      "from": "/fr/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u16#rencontres",
+      "from": "/fr/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u18#contenu",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u18#effectif",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u18#staff",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/equipes/u18#rencontres",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en#contenu",
+      "from": "/en",
+      "found": true
+    },
+    {
+      "route": "/en/contact#venir",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/contact?subject=partnership#formulaire",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/partenaires#astra",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/partenaires#voak",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/partenaires#johny",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/academie#contenu",
+      "from": "/en/academie",
+      "found": true
+    },
+    {
+      "route": "/en/academie#histoire",
+      "from": "/en/academie",
+      "found": true
+    },
+    {
+      "route": "/en/academie#projet",
+      "from": "/en/academie",
+      "found": true
+    },
+    {
+      "route": "/en/academie#reperes",
+      "from": "/en/academie",
+      "found": true
+    },
+    {
+      "route": "/en/academie#engagements",
+      "from": "/en/academie",
+      "found": true
+    },
+    {
+      "route": "/en/vision#contenu",
+      "from": "/en/vision",
+      "found": true
+    },
+    {
+      "route": "/en/programme#contenu",
+      "from": "/en/programme",
+      "found": true
+    },
+    {
+      "route": "/en/formation-sportive#contenu",
+      "from": "/en/formation-sportive",
+      "found": true
+    },
+    {
+      "route": "/en/education#contenu",
+      "from": "/en/education",
+      "found": true
+    },
+    {
+      "route": "/en/performance-lab#contenu",
+      "from": "/en/performance-lab",
+      "found": true
+    },
+    {
+      "route": "/en/encadrement#contenu",
+      "from": "/en/encadrement",
+      "found": true
+    },
+    {
+      "route": "/en/equipes#contenu",
+      "from": "/en/equipes",
+      "found": true
+    },
+    {
+      "route": "/en/partenaires#contenu",
+      "from": "/en/partenaires",
+      "found": true
+    },
+    {
+      "route": "/en/parrains#contenu",
+      "from": "/en/parrains",
+      "found": true
+    },
+    {
+      "route": "/en/actualites#contenu",
+      "from": "/en/actualites",
+      "found": true
+    },
+    {
+      "route": "/en/galerie#contenu",
+      "from": "/en/galerie",
+      "found": true
+    },
+    {
+      "route": "/en/rejoindre#contenu",
+      "from": "/en/rejoindre",
+      "found": true
+    },
+    {
+      "route": "/en/contact#contenu",
+      "from": "/en/contact",
+      "found": true
+    },
+    {
+      "route": "/en/saison#contenu",
+      "from": "/en/saison",
+      "found": true
+    },
+    {
+      "route": "/en/informations-legales#contenu",
+      "from": "/en/informations-legales",
+      "found": true
+    },
+    {
+      "route": "/en/confidentialite#contenu",
+      "from": "/en/confidentialite",
+      "found": true
+    },
+    {
+      "route": "/en/login#contenu",
+      "from": "/en/login",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/lancement-programme-2026#contenu",
+      "from": "/en/actualites/lancement-programme-2026",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/partenariat-voak-sport#contenu",
+      "from": "/en/actualites/partenariat-voak-sport",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/journee-detection-douala#contenu",
+      "from": "/en/actualites/journee-detection-douala",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/integration-footbar-veo#contenu",
+      "from": "/en/actualites/integration-footbar-veo",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/premier-match-amical#contenu",
+      "from": "/en/actualites/premier-match-amical",
+      "found": true
+    },
+    {
+      "route": "/en/actualites/seminaire-education-leadership#contenu",
+      "from": "/en/actualites/seminaire-education-leadership",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u14#contenu",
+      "from": "/en/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u14#effectif",
+      "from": "/en/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u14#staff",
+      "from": "/en/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u14#rencontres",
+      "from": "/en/equipes/u14",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u16#contenu",
+      "from": "/en/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u16#effectif",
+      "from": "/en/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u16#staff",
+      "from": "/en/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u16#rencontres",
+      "from": "/en/equipes/u16",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u18#contenu",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u18#effectif",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u18#staff",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/equipes/u18#rencontres",
+      "from": "/en/equipes/u18",
+      "found": true
+    }
+  ],
+  "images": [
+    {
+      "route": "/logo-crest.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/partner-astra.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/partner-johny.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/partner-voak.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/hero-3.jpeg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/hero-4.jpeg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/hero.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/hero-2.jpeg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/promise-04.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/pub1.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/promise-01.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/promise-02.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/promise-03.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/ambassador-01.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/ambassador-02.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/ambassador-03.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/ambassador-04.jpg",
+      "status": 200,
+      "type": "image/jpeg"
+    }
+  ],
+  "notFound": [
+    {
+      "route": "/fr/actualites/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/fr/equipes/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/fr/matchs/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/fr/joueurs/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/en/actualites/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/en/equipes/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/en/matchs/__v2-not-published__",
+      "status": 404
+    },
+    {
+      "route": "/en/joueurs/__v2-not-published__",
+      "status": 404
+    }
+  ],
+  "protected": [
+    {
+      "route": "/api/admin/users",
+      "status": 401
+    },
+    {
+      "route": "/api/admin/recruitments",
+      "status": 401
+    }
+  ],
+  "resources": [
+    {
+      "route": "/robots.txt",
+      "status": 200
+    },
+    {
+      "route": "/sitemap.xml",
+      "status": 200
+    }
+  ],
+  "skippedExternalImages": [
+    "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800&q=80",
+    "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80",
+    "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80",
+    "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+    "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&q=80",
+    "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=80",
+    "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&q=80",
+    "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80",
+    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&q=80",
+    "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80"
+  ],
+  "failures": [],
+  "summary": {
+    "pages": 56,
+    "internalLinks": 86,
+    "anchors": 92,
+    "localImages": 17,
+    "expected404": 8,
+    "protectedAPIs": 2,
+    "resources": 2,
+    "skippedExternalImages": 10,
+    "failures": 0
+  }
+}

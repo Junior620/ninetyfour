@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 type ToastItem = { id: number; message: string };
 
 let pushToastExternal: ((message: string) => void) | null = null;
+const subscribeHydration = () => () => {};
 
 export function toast(message: string) {
   pushToastExternal?.(message);
@@ -14,11 +15,7 @@ export function toast(message: string) {
 
 export function ToastHost() {
   const [items, setItems] = useState<ToastItem[]>([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribeHydration, () => true, () => false);
 
   const push = useCallback((message: string) => {
     const id = Date.now() + Math.random();

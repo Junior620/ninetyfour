@@ -43,7 +43,7 @@ export function isHoneypotTriggered(value: unknown): boolean {
 }
 
 export function getIdempotentResult<T>(key: string | undefined | null): T | null {
-  if (!key || key.length < 8) return null;
+  if (typeof key !== "string" || key.length < 8 || key.length > 400) return null;
   prune();
   const entry = idempotencyCache.get(key);
   if (!entry || entry.expiresAt <= Date.now()) return null;
@@ -51,7 +51,7 @@ export function getIdempotentResult<T>(key: string | undefined | null): T | null
 }
 
 export function setIdempotentResult(key: string | undefined | null, payload: unknown) {
-  if (!key || key.length < 8) return;
+  if (typeof key !== "string" || key.length < 8 || key.length > 400) return;
   prune();
   idempotencyCache.set(key, {
     expiresAt: Date.now() + IDEMPOTENCY_TTL_MS,

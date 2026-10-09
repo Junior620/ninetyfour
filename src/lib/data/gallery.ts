@@ -1,6 +1,9 @@
 import type { GalleryItem } from "@/types";
 
 export const galleryItems: GalleryItem[] = [
+  { id: "club-team", title: { fr: "Les couleurs de Ninety One", en: "Ninety One colours" }, category: "academy-life", image: "/hero-3.jpeg", type: "image" },
+  { id: "club-campaign", title: { fr: "La nouvelle génération", en: "The next generation" }, category: "academy-life", image: "/hero-4.jpeg", type: "image" },
+  { id: "club-project", title: { fr: "Ils arrivent", en: "They are coming" }, category: "academy-life", image: "/hero-2.jpeg", type: "image" },
   {
     id: "g1",
     title: { fr: "Séance technique", en: "Technical session" },
@@ -12,7 +15,7 @@ export const galleryItems: GalleryItem[] = [
     id: "g2",
     title: { fr: "Travail physique", en: "Physical training" },
     category: "training",
-    image: "https://images.unsplash.com/photo-1574629810360-7efbbe67508b?w=600&q=80",
+    image: "/promise-01.png",
     type: "image",
   },
   {
@@ -40,14 +43,14 @@ export const galleryItems: GalleryItem[] = [
     id: "g6",
     title: { fr: "Équipe U17", en: "U17 team" },
     category: "academy-life",
-    image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600&q=80",
+    image: "/hero-3.jpeg",
     type: "image",
   },
   {
     id: "g7",
     title: { fr: "Remise des maillots Voak", en: "Voak kit presentation" },
     category: "partners",
-    image: "https://images.unsplash.com/photo-1624886478548-1c2e3e4e5e5a?w=600&q=80",
+    image: "/hero-3.jpeg",
     type: "image",
   },
   {
@@ -61,7 +64,7 @@ export const galleryItems: GalleryItem[] = [
     id: "g9",
     title: { fr: "Cours de soutien", en: "Tutoring session" },
     category: "education",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=80",
+    image: "/promise-04.png",
     type: "image",
   },
   {
@@ -70,22 +73,6 @@ export const galleryItems: GalleryItem[] = [
     category: "education",
     image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80",
     type: "image",
-  },
-  {
-    id: "v1",
-    title: { fr: "Highlights match amical", en: "Friendly match highlights" },
-    category: "matches",
-    image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&q=80",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-  {
-    id: "v2",
-    title: { fr: "Analyse Veo — Séance technique", en: "Veo analysis — Technical session" },
-    category: "training",
-    image: "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&q=80",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
   },
 ];
 

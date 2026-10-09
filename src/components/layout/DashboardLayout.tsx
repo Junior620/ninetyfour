@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Bell, ChevronDown, LogOut, MessageCircle } from "lucide-react";
 import { Link, useRouter } from "@/lib/i18n/navigation";
@@ -28,6 +28,10 @@ const roleNames: Record<UserRole, string> = {
   coach: "Coach Martin",
   admin: "Admin NOFA",
 };
+function subscribeRole(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
 
 const roleLabels: Record<UserRole, { fr: string; en: string }> = {
   player: { fr: "Joueur", en: "Player" },
@@ -181,8 +185,8 @@ export function DashboardLayout({
   const router = useRouter();
   const locale = useLocale();
   const t = useTranslations("dashboard");
-  const [role, setRole] = useState<UserRole | null>(null);
-  const [notifs, setNotifs] = useState<NotifItem[]>([]);
+  const role = useSyncExternalStore(subscribeRole, getRoleClient, () => null);
+  const [notifs, setNotifs] = useState<NotifItem[]>(() => NOTIFS_BY_ROLE[requiredRole].map((n) => ({ ...n })));
 
   useEffect(() => {
     const stored = getRoleClient();
@@ -194,8 +198,6 @@ export function DashboardLayout({
       router.replace(ROLE_PATHS[stored]);
       return;
     }
-    setRole(stored);
-    setNotifs(NOTIFS_BY_ROLE[stored].map((n) => ({ ...n })));
   }, [requiredRole, router]);
 
   const dateLabel = useMemo(() => formatDashboardDate(locale), [locale]);

@@ -64,7 +64,7 @@ export function ScrollReveal({
   }
 
   const motionProps = {
-    initial: "hidden" as const,
+    initial: false as const,
     whileInView: "visible" as const,
     viewport: { once: true, amount: 0.2 },
     variants: preset,

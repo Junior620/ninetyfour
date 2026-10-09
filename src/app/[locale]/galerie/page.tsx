@@ -1,44 +1,11 @@
-import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
+import { Link } from "@/lib/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo/schema";
-import { GalleryPageClient } from "./GalleryPageClient";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "seo" });
-  return buildPageMetadata({
-    locale,
-    path: "/galerie",
-    title: t("gallery.title"),
-    description: t("gallery.description"),
-  });
-}
-
-export default async function GalleryPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "gallery" });
-  const tNav = await getTranslations({ locale, namespace: "nav" });
-
-  return (
-    <>
-      <JsonLd
-        data={breadcrumbJsonLd(locale, [
-          { name: tNav("home"), path: "/" },
-          { name: t("title"), path: "/galerie" },
-        ])}
-      />
-      <GalleryPageClient />
-    </>
-  );
-}
+import { galleryItems } from "@/lib/data/gallery";
+import { categoryLabels, words } from "@/lib/club";
+import { PageIntro, EmptyState } from "@/components/club/ClubUI";
+import { MediaGallery } from "@/components/club/MediaGallery";
+import type { Locale } from "@/types";
+type Props={params:Promise<{locale:string}>;searchParams:Promise<Record<string,string|undefined>>};
+export async function generateMetadata({params}:Props){const{locale}=await params;return buildPageMetadata({locale,path:"/galerie",title:words(locale,"Médias et albums","Media and albums"),description:words(locale,"L’académie en images : photographies et archives.","The academy in pictures: photographs and archives.")});}
+export default async function Media({params,searchParams}:Props){const{locale}=await params;setRequestLocale(locale);const loc=locale as Locale;const{album="",type=""}=await searchParams;const items=galleryItems.filter(i=>(!album||i.category===album)&&(!type||i.type===type));return <><PageIntro title={words(loc,"L’académie en images","The academy in pictures")} eyebrow={words(loc,"Médias & archives","Media & archives")} description={words(loc,"Sur le terrain et au quotidien, découvrez l’univers Ninety One.","On the pitch and every day: explore the Ninety One world.")}/><div className="club-container club-section"><nav className="club-tabs" aria-label={words(loc,"Type de média","Media type")}>{[["",words(loc,"Tous les médias","All media")],["image",words(loc,"Photos","Photos")],["video",words(loc,"Vidéos","Videos")]].map(([v,label])=><Link key={v} href={"/galerie?"+new URLSearchParams({type:v,album})} aria-current={type===v?"page":undefined}>{label}</Link>)}</nav><form method="get" className="club-filters"><input type="hidden" name="type" value={type}/><label>{words(loc,"Album thématique","Themed album")}<select name="album" defaultValue={album}><option value="">{words(loc,"Tous les albums","All albums")}</option>{[...new Set(galleryItems.map(i=>i.category))].map(c=><option value={c} key={c}>{categoryLabels[c][loc]}</option>)}</select></label><button className="club-button">{words(loc,"Afficher","View")}</button><Link href="/galerie" className="club-text-link">{words(loc,"Réinitialiser","Reset")}</Link></form>{items.length?<MediaGallery items={items} locale={loc} key={album+type}/>:<EmptyState title={words(loc,"Aucun média disponible","No media available")}>{words(loc,"Les prochaines vidéos officielles seront publiées dans cette rubrique.","Upcoming official videos will be published in this section.")}</EmptyState>}</div></>;}

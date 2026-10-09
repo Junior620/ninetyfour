@@ -17,7 +17,7 @@ export const newsArticles: NewsArticle[] = [
     },
     category: "academy",
     date: "2026-01-15",
-    image: "https://images.unsplash.com/photo-1574629810360-7efbbe67508b?w=800&q=80",
+    image: "/hero-3.jpeg",
   },
   {
     slug: "partenariat-voak-sport",
@@ -107,7 +107,7 @@ export const newsArticles: NewsArticle[] = [
     },
     category: "academy",
     date: "2026-04-02",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80",
+    image: "/promise-04.png",
   },
 ];
 

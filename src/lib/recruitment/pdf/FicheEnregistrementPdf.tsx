@@ -1,5 +1,5 @@
 import React from "react";
-import { Document, Page, Text, View, Image, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image as PdfImage, StyleSheet } from "@react-pdf/renderer";
 import type { RecruitmentFormData } from "@/lib/validations/schemas";
 
 export type RecruitmentPdfProps = {
@@ -320,7 +320,7 @@ export function FicheEnregistrementPdf({ photoDataUri, logoDataUri, data }: Recr
           <View style={styles.header}>
             {logoDataUri ? (
               <View style={styles.logoImgBox}>
-                <Image src={logoDataUri} style={styles.logoImg} />
+                <PdfImage src={logoDataUri} style={styles.logoImg} />
               </View>
             ) : (
               <View style={styles.logoBox}>
@@ -331,15 +331,15 @@ export function FicheEnregistrementPdf({ photoDataUri, logoDataUri, data }: Recr
               <Text style={styles.brandTop}>NINETY ONE</Text>
               <Text style={styles.brandSub}>FOOT ACADEMY</Text>
               <View style={styles.goldLine} />
-              <Text style={styles.ficheTitle}>FICHE D'ENREGISTREMENT</Text>
+              <Text style={styles.ficheTitle}>FICHE D’ENREGISTREMENT</Text>
               <Text style={styles.ficheSub}>DÉTECTION DES JEUNES TALENTS 2026</Text>
             </View>
             <View style={styles.photoBox}>
               {photoDataUri ? (
-                <Image src={photoDataUri} style={styles.photoImg} />
+                <PdfImage src={photoDataUri} style={styles.photoImg} />
               ) : (
                 <Text style={styles.photoPlaceholder}>
-                  PHOTO{"\n"}D'IDENTITÉ{"\n"}(RÉCENTE)
+                  PHOTO{"\n"}D’IDENTITÉ{"\n"}(RÉCENTE)
                 </Text>
               )}
             </View>
@@ -548,7 +548,7 @@ export function FicheEnregistrementPdf({ photoDataUri, logoDataUri, data }: Recr
           {/* 8 */}
           <SectionBar title="8. DÉCLARATION DU PARENT / TUTEUR" />
           <Text style={styles.italicNote}>
-            Je certifie que les informations fournies sont exactes et j'autorise mon enfant à
+            Je certifie que les informations fournies sont exactes et j’autorise mon enfant à
             participer à la journée de détection organisée par Ninety One Foot Academy.
           </Text>
           <View style={styles.twoCol}>

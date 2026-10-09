@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="club-container club-section min-h-64" role="status" aria-label="Chargement / Loading"><div className="h-1 w-20 bg-gold"/><p className="mt-5">Ninety One Foot Academy</p></div>;}

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { contactSchema } from "@/lib/validations/schemas";
 import { generateReference } from "@/lib/email/reference";
 import { extractFirstName, maskEmail } from "@/lib/email/mask";
@@ -24,14 +25,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     if (isHoneypotTriggered(body?.website)) {
-      return NextResponse.json({
-        success: true,
-        reference: "NOFA-CONTACT-IGNORED",
-        maskedEmail: maskEmail(
-          typeof body?.email === "string" ? body.email : "x@x.com"
-        ),
-        emailSent: false,
-      } satisfies SuccessPayload);
+      return NextResponse.json({ success: false, error: "invalid_request" }, { status: 400 });
     }
 
     const ip = getClientIp(request);
@@ -42,24 +36,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const cached = getIdempotentResult<SuccessPayload>(body?.idempotencyKey);
+    const data = contactSchema.parse(body);
+    const cacheKey = data.idempotencyKey ? `contact:${data.email}:${data.idempotencyKey}` : undefined;
+    const cached = getIdempotentResult<SuccessPayload>(cacheKey);
     if (cached) {
       return NextResponse.json(cached);
     }
 
-    const data = contactSchema.parse(body);
     const locale = (data.locale ?? "fr") as EmailLocale;
     const reference = generateReference("contact");
     const masked = maskEmail(data.email);
 
-    console.info("[Contact received]", {
-      reference,
-      subject: data.subject.slice(0, 80),
-      locale,
-      timestamp: new Date().toISOString(),
-    });
-
-    await sendAdminNotification({
+    const delivery = await sendAdminNotification({
       locale,
       kind: "contact",
       reference,
@@ -67,8 +55,13 @@ export async function POST(request: Request) {
       submitterEmail: data.email,
       summaryLines: [
         locale === "en" ? `Subject: ${data.subject}` : `Sujet : ${data.subject}`,
+        data.message,
       ],
     });
+
+    if (!delivery.sent) {
+      return NextResponse.json({ success: false, error: "service_unavailable" }, { status: 503 });
+    }
 
     const ack = await sendAcknowledgment({
       locale,
@@ -84,13 +77,13 @@ export async function POST(request: Request) {
       maskedEmail: masked,
       emailSent: ack.sent,
     };
-    setIdempotentResult(data.idempotencyKey, payload);
+    setIdempotentResult(cacheKey, payload);
     return NextResponse.json(payload);
   } catch (error) {
-    console.error("[Contact error]", error);
+    console.error("[Contact error]", error instanceof ZodError ? "validation" : "delivery");
     return NextResponse.json(
-      { success: false, error: "Validation failed" },
-      { status: 400 }
+      { success: false, error: error instanceof ZodError || error instanceof SyntaxError ? "validation_failed" : "service_unavailable" },
+      { status: error instanceof ZodError || error instanceof SyntaxError ? 400 : 503 }
     );
   }
 }
