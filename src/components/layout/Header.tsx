@@ -42,14 +42,14 @@ export function Header() {
     }}>
       <div className="club-container club-masthead">
         <span className="club-masthead-caption">{words(locale,"DOUALA, CAMEROUN","DOUALA, CAMEROON")}<br/><strong>{words(locale,"Talent. Éducation. Performance.","Talent. Education. Performance.")}</strong></span>
-        <Link href="/" className="club-brand" aria-label="Ninety One Foot Academy"><Image src="/logo-crest.png" width={80} height={80} sizes="80px" alt="" preload /><span>NINETY ONE<small>FOOT ACADEMY</small></span></Link>
+        <Link href="/accueil" className="club-brand" aria-label="Ninety One Foot Academy"><Image src="/logo-crest.png" width={80} height={80} sizes="80px" alt="" preload /><span>NINETY ONE<small>FOOT ACADEMY</small></span></Link>
         <div className="club-utilities">{utility}</div>
         <Dialog.Root open={open} onOpenChange={setOpen}>
           <Dialog.Trigger className="club-mobile-trigger" aria-label={words(locale,"Ouvrir le menu","Open menu")}><Menu aria-hidden/></Dialog.Trigger>
           <Dialog.Portal><Dialog.Backdrop className="club-dialog-backdrop"/><Dialog.Popup className="club-mobile-menu" aria-describedby={undefined}>
             <div className="mobile-menu-heading"><Dialog.Title>Ninety One</Dialog.Title><Dialog.Close className="club-icon-button" aria-label={words(locale,"Fermer le menu","Close menu")}><X/></Dialog.Close></div>
             <nav aria-label={words(locale,"Navigation mobile","Mobile navigation")} onClick={e=>{if((e.target as Element).closest("a"))setOpen(false);}}>
-              <Link href="/" className="mobile-home">{words(locale,"Accueil","Home")}</Link>
+              <Link href="/accueil" className="mobile-home">{words(locale,"Accueil","Home")}</Link>
               {clubNav.map(item => item.children.length ? <details key={item.href}><summary>{item[locale]}<ChevronDown size={16}/></summary><div>{item.children.map(child=><Link key={child.href} href={child.href} aria-current={active(child.href)?"page":undefined}>{child[locale]}</Link>)}</div></details> : <Link className="mobile-home" key={item.href} href={item.href}>{item[locale]}</Link>)}
               <Link href="/rejoindre" className="club-button">{words(locale,"Rejoindre l’académie","Join the academy")}</Link><div className="mobile-utilities">{utility}</div>
             </nav>

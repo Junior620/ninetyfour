@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-08T11:33:51.029Z",
+  "generatedAt": "2026-10-12T16:17:08.636Z",
   "base": "http://127.0.0.1:3000/",
   "method": "Local GET only; blocking metadata user-agent; no external requests, form submissions or database writes.",
   "pages": [
@@ -8,10 +8,24 @@
       "status": 200,
       "title": "Ninety One Foot Academy — Douala",
       "h1": [
-        "La nouvelle génération commence ici."
+        "Le talent nous rassemble."
       ],
       "lang": "fr",
       "canonical": "https://your-domain.vercel.app/fr",
+      "description": "Bienvenue dans l’univers Ninety One. Entrez sur le site officiel, découvrez nos médias ou rejoignez l’académie à Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/fr/accueil",
+      "status": 200,
+      "title": "Ninety One Foot Academy — Douala",
+      "h1": [
+        "La nouvelle génération commence ici."
+      ],
+      "lang": "fr",
+      "canonical": "https://your-domain.vercel.app/fr/accueil",
       "description": "Talent, éducation et performance. La vie de l’académie, nos équipes et le programme 2026–2029.",
       "robots": [
         "noindex, nofollow"
@@ -400,10 +414,24 @@
       "status": 200,
       "title": "Ninety One Foot Academy — Douala",
       "h1": [
-        "The next generation starts here."
+        "Talent brings us together."
       ],
       "lang": "en",
       "canonical": "https://your-domain.vercel.app/en",
+      "description": "Welcome to Ninety One. Enter the official website, explore our media or join the academy in Douala.",
+      "robots": [
+        "noindex, nofollow"
+      ]
+    },
+    {
+      "route": "/en/accueil",
+      "status": 200,
+      "title": "Ninety One Foot Academy — Douala",
+      "h1": [
+        "The next generation starts here."
+      ],
+      "lang": "en",
+      "canonical": "https://your-domain.vercel.app/en/accueil",
       "description": "Talent, education and performance. Academy news, teams and the 2026–2029 programme.",
       "robots": [
         "noindex, nofollow"
@@ -795,102 +823,7 @@
       "status": 200
     },
     {
-      "route": "/fr/contact",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/login",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/en",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/actualites",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/actualites?category=events",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/actualites?category=academy",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/academie",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/vision",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/encadrement",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/saison",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/saison?view=results",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/saison?view=standings",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/equipes/u14",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/equipes/u16",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/equipes/u18",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/programme",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/formation-sportive",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/education",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/performance-lab",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/rejoindre",
+      "route": "/fr/accueil",
       "from": "/fr",
       "status": 200
     },
@@ -900,22 +833,22 @@
       "status": 200
     },
     {
+      "route": "/en",
+      "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/fr/rejoindre",
+      "from": "/fr",
+      "status": 200
+    },
+    {
       "route": "/fr/partenaires",
       "from": "/fr",
       "status": 200
     },
     {
-      "route": "/fr/parrains",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/contact?subject=partnership",
-      "from": "/fr",
-      "status": 200
-    },
-    {
-      "route": "/fr/equipes",
+      "route": "/fr/contact",
       "from": "/fr",
       "status": 200
     },
@@ -930,23 +863,128 @@
       "status": 200
     },
     {
-      "route": "/fr/actualites/lancement-programme-2026",
+      "route": "/fr/login",
       "from": "/fr",
+      "status": 200
+    },
+    {
+      "route": "/en/accueil",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites?category=events",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites?category=academy",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/academie",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/vision",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/encadrement",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=results",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/saison?view=standings",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u14",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u16",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes/u18",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/programme",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/formation-sportive",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/education",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/performance-lab",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/parrains",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/contact?subject=partnership",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/equipes",
+      "from": "/fr/accueil",
+      "status": 200
+    },
+    {
+      "route": "/fr/actualites/lancement-programme-2026",
+      "from": "/fr/accueil",
       "status": 200
     },
     {
       "route": "/fr/actualites/seminaire-education-leadership",
-      "from": "/fr",
+      "from": "/fr/accueil",
       "status": 200
     },
     {
       "route": "/fr/actualites/premier-match-amical",
-      "from": "/fr",
+      "from": "/fr/accueil",
       "status": 200
     },
     {
       "route": "/fr/actualites/integration-footbar-veo",
-      "from": "/fr",
+      "from": "/fr/accueil",
       "status": 200
     },
     {
@@ -1146,27 +1184,27 @@
     },
     {
       "route": "/en/actualites?category=events",
-      "from": "/en",
+      "from": "/en/accueil",
       "status": 200
     },
     {
       "route": "/en/actualites?category=academy",
-      "from": "/en",
+      "from": "/en/accueil",
       "status": 200
     },
     {
       "route": "/en/saison?view=results",
-      "from": "/en",
+      "from": "/en/accueil",
       "status": 200
     },
     {
       "route": "/en/saison?view=standings",
-      "from": "/en",
+      "from": "/en/accueil",
       "status": 200
     },
     {
       "route": "/en/contact?subject=partnership",
-      "from": "/en",
+      "from": "/en/accueil",
       "status": 200
     },
     {
@@ -1227,13 +1265,8 @@
       "found": true
     },
     {
-      "route": "/fr/contact#venir",
-      "from": "/fr/equipes/u18",
-      "found": true
-    },
-    {
-      "route": "/fr/contact?subject=partnership#formulaire",
-      "from": "/fr/equipes/u18",
+      "route": "/fr#partenaires",
+      "from": "/fr",
       "found": true
     },
     {
@@ -1248,6 +1281,21 @@
     },
     {
       "route": "/fr/partenaires#johny",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/accueil#contenu",
+      "from": "/fr/accueil",
+      "found": true
+    },
+    {
+      "route": "/fr/contact#venir",
+      "from": "/fr/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/fr/contact?subject=partnership#formulaire",
       "from": "/fr/equipes/u18",
       "found": true
     },
@@ -1457,13 +1505,8 @@
       "found": true
     },
     {
-      "route": "/en/contact#venir",
-      "from": "/en/equipes/u18",
-      "found": true
-    },
-    {
-      "route": "/en/contact?subject=partnership#formulaire",
-      "from": "/en/equipes/u18",
+      "route": "/en#partenaires",
+      "from": "/en",
       "found": true
     },
     {
@@ -1478,6 +1521,21 @@
     },
     {
       "route": "/en/partenaires#johny",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/accueil#contenu",
+      "from": "/en/accueil",
+      "found": true
+    },
+    {
+      "route": "/en/contact#venir",
+      "from": "/en/equipes/u18",
+      "found": true
+    },
+    {
+      "route": "/en/contact?subject=partnership#formulaire",
       "from": "/en/equipes/u18",
       "found": true
     },
@@ -1689,6 +1747,26 @@
       "type": "image/png"
     },
     {
+      "route": "/n91-tv-logo.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "route": "/hero-3.jpeg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/hero-4.jpeg",
+      "status": 200,
+      "type": "image/jpeg"
+    },
+    {
+      "route": "/promise-01.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
       "route": "/partner-astra.png",
       "status": 200,
       "type": "image/png"
@@ -1702,16 +1780,6 @@
       "route": "/partner-voak.png",
       "status": 200,
       "type": "image/png"
-    },
-    {
-      "route": "/hero-3.jpeg",
-      "status": 200,
-      "type": "image/jpeg"
-    },
-    {
-      "route": "/hero-4.jpeg",
-      "status": 200,
-      "type": "image/jpeg"
     },
     {
       "route": "/hero.png",
@@ -1732,11 +1800,6 @@
       "route": "/pub1.jpg",
       "status": 200,
       "type": "image/jpeg"
-    },
-    {
-      "route": "/promise-01.png",
-      "status": 200,
-      "type": "image/png"
     },
     {
       "route": "/promise-02.png",
@@ -1837,10 +1900,10 @@
   ],
   "failures": [],
   "summary": {
-    "pages": 56,
-    "internalLinks": 86,
-    "anchors": 92,
-    "localImages": 17,
+    "pages": 58,
+    "internalLinks": 88,
+    "anchors": 96,
+    "localImages": 18,
     "expected404": 8,
     "protectedAPIs": 2,
     "resources": 2,

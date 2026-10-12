@@ -57,7 +57,7 @@ export default async function AmbassadorsPage({
     <>
       <JsonLd
         data={breadcrumbJsonLd(locale, [
-          { name: tNav("home"), path: "/" },
+          { name: tNav("home"), path: "/accueil" },
           { name: t("title"), path: "/parrains" },
         ])}
       />

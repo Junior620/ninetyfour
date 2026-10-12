@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-10-12",
+  "widths": [
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 375
+    },
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 430
+    },
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 1024
+    },
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 1440
+    },
+    {
+      "brokenImages": [],
+      "h1": 1,
+      "overflow": false,
+      "width": 1920
+    }
+  ],
+  "notes": "Portail FR : un H1, aucune image cassée et aucun débordement. Rendu desktop et mobile inspecté visuellement."
+}

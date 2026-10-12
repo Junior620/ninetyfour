@@ -13,7 +13,7 @@ npm install
 npm run dev -- --webpack --hostname 127.0.0.1
 ```
 
-Ouvrir [l’accueil français](http://127.0.0.1:3000/fr) ou [l’accueil anglais](http://127.0.0.1:3000/en).
+Ouvrir [le portail français](http://127.0.0.1:3000/fr) ou [le portail anglais](http://127.0.0.1:3000/en). L'accueil principal reste accessible directement à `/fr/accueil` et `/en/accueil`.
 
 Le mode Webpack est le repli vérifié sur ce poste : Turbopack y a rencontré une erreur interne de sous-processus CSS. Le script habituel `npm run dev` reste disponible.
 
@@ -57,7 +57,8 @@ Les actualités et les rubriques publiques sont alimentées par les modules de d
 
 | Rubrique | Route sans préfixe de langue |
 |---|---|
-| Accueil | `/` |
+| Portail d’entrée | `/` |
+| Accueil du site officiel | `/accueil` |
 | Académie et projet | `/academie`, `/vision`, `/programme` |
 | Formation et accompagnement | `/formation-sportive`, `/education`, `/performance-lab`, `/encadrement` |
 | Équipes et catégories | `/equipes`, `/equipes/u14`, `/equipes/u16`, `/equipes/u18` |

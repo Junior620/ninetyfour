@@ -1,32 +1,93 @@
 import Image from "next/image";
-import { ArrowUpRight, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { words, latestNews, matches, matchSummary } from "@/lib/club";
-import { ActionLink, EmptyState, MatchCard, NewsCard, SectionHeading } from "@/components/club/ClubUI";
+import { words } from "@/lib/club";
+import { partners } from "@/lib/data/partners";
+import { contactInfo } from "@/lib/data/academy";
 import type { Locale } from "@/types";
-export async function generateMetadata({params}:{params:Promise<{locale:string}>}) { const {locale}=await params; return buildPageMetadata({locale,path:"/",title:"Ninety One Foot Academy — Douala",description:words(locale,"Talent, éducation et performance. La vie de l’académie, nos équipes et le programme 2026–2029.","Talent, education and performance. Academy news, teams and the 2026–2029 programme."),absoluteTitle:true}); }
-export default async function Home({params}:{params:Promise<{locale:string}>}) {
- const {locale}=await params; setRequestLocale(locale); const loc=locale as Locale; const sport=matchSummary(matches);
- const tiles=[
- {label:words(loc,"Le club","Our club"),href:"/academie",image:"/hero-4.jpeg",size:""},
- {label:words(loc,"Nos équipes","Our teams"),href:"/equipes",image:"/hero-3.jpeg",size:"wide"},
- {label:words(loc,"Saison","Season"),href:"/saison",image:"/hero.png",size:""},
- {label:words(loc,"Médias","Media"),href:"/galerie",image:"/hero-2.jpeg",size:""},
- {label:words(loc,"Vie du club","Club life"),href:"/actualites?category=academy",image:"/promise-04.png",size:""},
- {label:words(loc,"Partenaires","Partners"),href:"/partenaires",image:"/pub1.jpg",size:"half"},
- {label:words(loc,"Formation","Academy"),href:"/programme",image:"/promise-01.png",size:"half"},
- {label:words(loc,"Événements","Events"),href:"/actualites?category=events",image:"/hero-3.jpeg",size:"full"}
- ];
- return <>
-  <section className="club-hero"><Image src="/hero-3.jpeg" alt="" fill sizes="100vw" preload/><div className="club-container club-hero-copy"><div className="hero-edition"><span className="club-kicker">{words(loc,"Le projet Ninety One","The Ninety One project")}</span><span>2026 — 2029</span></div><h1>{words(loc,"La nouvelle génération commence ici.","The next generation starts here.")}</h1><p>{words(loc,"À Douala, le talent grandit sur le terrain, à l’école et dans la vie.","In Douala, talent grows on the pitch, in the classroom and in life.")}</p><ActionLink href="/actualites/lancement-programme-2026">{words(loc,"Découvrir notre projet","Discover our project")}</ActionLink></div><span className="hero-bottom-line">Ninety One Foot Academy · Douala</span></section>
-  <section className="club-portal-section" aria-label={words(loc,"Explorer le club","Explore the club")}><div className="club-container club-portal">
-    <aside className="portal-left"><div className="portal-sponsor"><p className="club-kicker">{words(loc,"Partenaire stratégique","Strategic partner")}</p><Link href="/partenaires#astra"><div className="portal-sponsor-image"><Image src="/partner-astra.png" alt="Astra Invest" fill sizes="250px"/></div></Link><p>{words(loc,"Aux côtés de notre académie.","Alongside our academy.")}</p></div><div className="portal-media"><div className="portal-media-image"><Image src="/hero-4.jpeg" alt="" fill sizes="(min-width:768px) 25vw, 45vw"/></div><div><h3>{words(loc,"Dans les coulisses","Inside the academy")}</h3><Link className="club-text-link" href="/galerie">{words(loc,"L’académie en images","Explore the gallery")}<ArrowUpRight size={16}/></Link></div></div></aside>
-    <div className="portal-mosaic">{tiles.map(tile=><Link className={`portal-tile ${tile.size}`} key={tile.href} href={tile.href}><Image src={tile.image} alt="" fill sizes="(min-width:1200px) 30vw, (min-width:768px) 40vw, 50vw"/><span>{tile.label}<ArrowUpRight aria-hidden/></span></Link>)}</div>
-    <aside className="portal-right"><div className="portal-football"><h2 className="portal-panel-heading"><Trophy size={18} aria-hidden/>{words(loc,"Les rendez-vous du club","Club fixtures")}</h2>{sport.next ? <MatchCard match={sport.next} locale={loc}/> : <EmptyState title={words(loc,"Le prochain rendez-vous","The next fixture")} href="/saison" label={words(loc,"Calendrier & résultats","Fixtures & results")}>{words(loc,"Les prochaines rencontres seront annoncées ici dès confirmation du calendrier.","Upcoming fixtures will appear here once the schedule is confirmed.")}</EmptyState>}{sport.last && <MatchCard match={sport.last} locale={loc}/>}</div><div className="portal-practical"><p className="club-kicker">{words(loc,"Grandir avec Ninety One","Grow with Ninety One")}</p><h3>{words(loc,"Talent. Éducation. Performance.","Talent. Education. Performance.")}</h3><p>{words(loc,"Un programme structuré et un accompagnement individuel pour les jeunes talents.","A structured programme and individual support for young talent.")}</p><Link className="club-text-link" href="/rejoindre">{words(loc,"Rejoindre l’académie","Join the academy")}<ArrowUpRight size={16}/></Link></div></aside>
-    <section className="home-news-block"><SectionHeading title={words(loc,"Au cœur de l’académie","At the heart of the academy")} eyebrow={words(loc,"Les dernières actualités","Latest news")} href="/actualites" linkLabel={words(loc,"Toutes les actualités","All news")}/><div className="home-news-grid"><NewsCard article={latestNews[0]} locale={loc} featured/><div className="home-news-secondary">{latestNews.slice(1,3).map(a=><NewsCard article={a} key={a.slug} locale={loc} horizontal/>)}</div></div></section>
-  </div></section>
-  <section className="club-container club-formation-banner"><div className="banner-image"><Image src="/hero-2.jpeg" alt="" fill sizes="(min-width:768px) 50vw, 100vw"/></div><div className="banner-copy"><p className="club-kicker">2026 — 2029</p><h2>{words(loc,"Former le joueur. Accompagner la personne.","Develop the player. Support the person.")}</h2><p>{words(loc,"Quatre dimensions, un même engagement : formation sportive, éducation, technologie et développement humain.","Four dimensions, one commitment: football, education, technology and personal development.")}</p><ActionLink href="/programme">{words(loc,"Notre programme","Our programme")}</ActionLink></div></section><div className="h-12"/>
- </>;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return buildPageMetadata({
+    locale, path: "/", title: "Ninety One Foot Academy — Douala", absoluteTitle: true,
+    description: words(locale,
+      "Bienvenue dans l’univers Ninety One. Entrez sur le site officiel, découvrez nos médias ou rejoignez l’académie à Douala.",
+      "Welcome to Ninety One. Enter the official website, explore our media or join the academy in Douala."),
+  });
+}
+
+export default async function Welcome({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const loc = locale as Locale;
+  return (
+    <div className="welcome-page">
+      <a href="#contenu" className="club-skip">{words(loc, "Aller au contenu", "Skip to content")}</a>
+      <div className="welcome-shell">
+        <header className="welcome-header">
+          <p className="welcome-location"><span aria-hidden />{words(loc, "Douala, Cameroun", "Douala, Cameroon")}<small>Talent. {words(loc, "Éducation", "Education")}. Performance.</small></p>
+          <div className="welcome-brands">
+            <Link href="/accueil" aria-label={words(loc, "Ninety One Foot Academy — site officiel", "Ninety One Foot Academy — official website")}>
+              <Image src="/logo-crest.png" alt="Ninety One Foot Academy" width={88} height={88} preload />
+            </Link>
+            <span className="welcome-brand-divider" aria-hidden />
+            <Link href="/galerie" className="welcome-tv-mark" aria-label={words(loc, "N91 TV — découvrir nos médias", "N91 TV — explore our media")}>
+              <Image src="/n91-tv-logo.png" alt="Ninety One TV" width={220} height={256} preload />
+            </Link>
+          </div>
+          <nav className="welcome-languages" aria-label={words(loc, "Choisir la langue", "Choose language")}>
+            <Link href="/" locale="fr" lang="fr" aria-label="Français" aria-current={loc === "fr" ? "page" : undefined}>FR</Link><span aria-hidden>/</span>
+            <Link href="/" locale="en" lang="en" aria-label="English" aria-current={loc === "en" ? "page" : undefined}>EN</Link>
+          </nav>
+        </header>
+
+        <main id="contenu" tabIndex={-1} className="welcome-main">
+          <div className="welcome-intro">
+            <p className="welcome-eyebrow">{words(loc, "Bienvenue dans notre univers", "Welcome to our world")}</p>
+            <h1>{words(loc, "Le talent nous", "Talent brings us")} <em>{words(loc, "rassemble.", "together.")}</em></h1>
+            <p>{words(loc, "Un club. Des ambitions. Une génération à faire grandir.", "One club. Shared ambition. A generation to nurture.")}</p>
+          </div>
+          <nav className="welcome-destinations" aria-label={words(loc, "Explorer Ninety One", "Explore Ninety One")}>
+            <Link href="/accueil" className="welcome-card welcome-official">
+              <Image src="/hero-3.jpeg" alt="" fill sizes="(min-width: 1024px) 48vw, 100vw" preload />
+              <span className="welcome-card-top"><span>{words(loc, "Toute la vie du club", "The life of our club")}</span><span className="welcome-card-number">01</span></span>
+              <div className="welcome-card-copy"><p>NINETY ONE FOOT ACADEMY</p><h2>{words(loc, "Site officiel", "Official website")}</h2>
+                <span className="welcome-card-description">{words(loc, "Nos équipes, nos actualités, notre ambition.", "Our teams, our news, our ambition.")}</span>
+                <span className="welcome-enter">{words(loc, "Entrer dans le site", "Enter the website")}<ArrowUpRight size={20} aria-hidden /></span>
+              </div>
+            </Link>
+            <Link href="/galerie" className="welcome-card welcome-media">
+              <Image src="/hero-4.jpeg" alt="" fill sizes="(min-width: 1024px) 25vw, (min-width: 600px) 50vw, 100vw" />
+              <span className="welcome-card-top"><span>{words(loc, "Au plus près du club", "Closer to the club")}</span><span className="welcome-card-number">02</span></span>
+              <div className="welcome-card-copy"><p>{words(loc, "L’académie en images", "The academy in pictures")}</p><h2>N91 <span className="welcome-tv-label">TV</span></h2>
+                <span className="welcome-card-description">{words(loc, "Visages, instants et coulisses.", "Faces, moments and behind the scenes.")}</span>
+                <span className="welcome-card-link">{words(loc, "Explorer nos médias", "Explore our media")}<ArrowUpRight size={20} aria-hidden /></span>
+              </div>
+            </Link>
+            <Link href="/rejoindre" className="welcome-card welcome-join">
+              <Image src="/promise-01.png" alt="" fill sizes="(min-width: 1024px) 25vw, (min-width: 600px) 50vw, 100vw" />
+              <span className="welcome-card-top"><span>{words(loc, "L’avenir se prépare ici", "The future starts here")}</span><span className="welcome-card-number">03</span></span>
+              <div className="welcome-card-copy"><p>{words(loc, "Le prochain chapitre", "The next chapter")}</p><h2>{words(loc, "À toi de jouer.", "Your next move.")}</h2>
+                <span className="welcome-card-description">{words(loc, "Fais grandir ton talent avec nous.", "Develop your talent with us.")}</span>
+                <span className="welcome-card-link">{words(loc, "Rejoindre l’académie", "Join the academy")}<ArrowUpRight size={20} aria-hidden /></span>
+              </div>
+            </Link>
+          </nav>
+          <div className="welcome-follow">
+            <a href="#partenaires" className="welcome-partner-anchor">{words(loc, "Une ambition partagée", "A shared ambition")}<ArrowDown size={16} aria-hidden /></a>
+            <div><span>{words(loc, "Le club, au quotidien", "Everyday club life")}</span><a href={contactInfo.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></a><a href={contactInfo.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook"><span className="welcome-facebook" aria-hidden>f</span></a></div>
+          </div>
+          <section className="welcome-partners" id="partenaires" aria-labelledby="welcome-partners-title">
+            <div className="welcome-partners-heading"><div><p className="welcome-eyebrow">{words(loc, "À nos côtés", "By our side")}</p><h2 id="welcome-partners-title">{words(loc, "Nos partenaires", "Our partners")}</h2></div><Link href="/partenaires">{words(loc, "Découvrir nos partenaires", "Meet our partners")}<ArrowUpRight size={18} aria-hidden /></Link></div>
+            <div className="welcome-partner-grid">{partners.map(partner => <Link key={partner.id} href={`/partenaires#${partner.id}`}>
+              <div className="welcome-partner-logo">{partner.logo && <Image src={partner.logo} alt={partner.name} fill sizes="(min-width: 768px) 220px, 180px" />}</div><span>{partner.role[loc]}</span>
+            </Link>)}</div>
+          </section>
+        </main>
+        <footer className="welcome-footer"><p>© {new Date().getFullYear()} Ninety One Foot Academy</p><nav aria-label={words(loc, "Liens utiles", "Useful links")}><Link href="/contact">Contact</Link><Link href="/informations-legales">{words(loc, "Informations légales", "Legal information")}</Link><Link href="/confidentialite">{words(loc, "Confidentialité", "Privacy")}</Link><Link href="/login">{words(loc, "Espace privé", "Member area")}</Link></nav></footer>
+      </div>
+    </div>
+  );
 }

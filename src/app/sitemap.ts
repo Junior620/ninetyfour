@@ -8,6 +8,7 @@ import { matches, publicPlayers } from "@/lib/club";
 /** Public indexable paths only (no login, dashboards, API). */
 const staticPaths = [
   "",
+  "/accueil",
   "/academie",
   "/vision",
   "/programme",

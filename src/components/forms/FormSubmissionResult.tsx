@@ -290,7 +290,7 @@ export function FormSubmissionResult({
           className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center"
         >
           <Link
-            href="/"
+            href="/accueil"
             className={cn(
               buttonVariants({ variant: "outline" }),
               "min-h-11 border-navy/20 text-navy"

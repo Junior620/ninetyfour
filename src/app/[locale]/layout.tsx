@@ -35,6 +35,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
+      data-scroll-behavior="smooth"
       className={`${sora.variable} ${inter.variable} h-full`}
     >
       <body className="flex min-h-full flex-col font-sans antialiased">

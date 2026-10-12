@@ -2,6 +2,8 @@
 
 Captures du 8 octobre 2026. Desktop : fenêtre 1440 px. Mobile : fenêtre 375 px. Les barres de défilement et le cadre du navigateur peuvent réduire la taille du fichier image.
 
+Ajout du 12 octobre 2026 : portail d'entrée avec dégradé Ninety One et logo N91 TV. [Desktop](portail-desktop.jpg) · [Mobile](portail-mobile.jpg) · [Partenaires](portail-partenaires.jpg). L'accueil éditorial des captures ci-dessous se trouve désormais à `/fr/accueil`.
+
 | Gabarit | Desktop | Mobile |
 |---|---|---|
 | accueil | [Voir](accueil-desktop.jpg) | [Voir](accueil-mobile.jpg) |

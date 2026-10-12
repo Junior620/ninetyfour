@@ -1,0 +1,134 @@
+.welcome-page {
+  position: relative;
+  isolation: isolate;
+  color: #fff;
+  background: #071426;
+  min-height: 100svh;
+  border-top: 4px solid #c99a2e;
+  background-image:
+    radial-gradient(ellipse 100% 560px at 50% -160px, #f0d37f 0%, #c99a2e80 48%, transparent 80%),
+    radial-gradient(ellipse at 8% 40%, #1768bd80, transparent 58%),
+    linear-gradient(155deg, #153d68 0%, #0a4fa3 38%, #081a33 85%, #071426 100%);
+}
+.welcome-page::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background-image: radial-gradient(circle, #fff 1.2px, transparent 1.8px); background-size: 18px 18px; opacity: .07; mask-image: linear-gradient(90deg, #000, transparent 36%, transparent 64%, #000); }
+.welcome-shell { width: min(1440px, calc(100% - 80px)); margin-inline: auto; }
+.welcome-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 152px; border-bottom: 1px solid #ffffff26; gap: 24px; }
+.welcome-location { font-size: 11px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
+.welcome-location > span { display: inline-block; width: 6px; height: 6px; background: #f0d37f; border-radius: 50%; margin-right: 10px; vertical-align: middle; }
+.welcome-location small { display: block; margin-top: 10px; font-size: 10px; font-weight: 400; letter-spacing: .03em; text-transform: none; color: #e4eaf3; }
+.welcome-brands { display: flex; align-items: center; gap: 24px; background: #f7f5ef; padding: 0 24px; border-radius: 2px; box-shadow: 0 8px 30px #07142620; }
+.welcome-brands > a { display: block; }
+.welcome-brand-divider { height: 58px; width: 1px; background: #c99a2e; }
+/* Frame the supplied logo's transparent margins without changing the asset. */
+.welcome-tv-mark { position: relative; width: 144px; height: 104px; overflow: hidden; }
+.welcome-tv-mark img { position: absolute; width: 220px; height: 256px; max-width: none; left: -45px; top: -68px; }
+.welcome-languages { justify-self: end; display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.welcome-languages a { min-width: 44px; min-height: 44px; display: grid; place-items: center; color: #e4eaf3; }
+.welcome-languages a[aria-current] { color: #fff; font-weight: 750; text-decoration: underline; text-decoration-color: #f0d37f; text-underline-offset: 8px; text-decoration-thickness: 2px; }
+.welcome-main { outline: none; }
+.welcome-intro { padding-block: 36px 34px; text-align: center; }
+.welcome-eyebrow { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; font-weight: 650; color: #f0d37f; }
+.welcome-intro h1 { font-family: var(--font-sora), sans-serif; font-size: clamp(28px, 3.15vw, 48px); line-height: 1.18; font-weight: 750; letter-spacing: -.055em; margin: 12px 0; }
+.welcome-intro h1 em { font-style: normal; color: #f0d37f; }
+.welcome-intro > p:last-child { color: #e4eaf3; font-size: 13px; line-height: 1.7; }
+.welcome-destinations { display: grid; grid-template-columns: 1fr 1.65fr 1fr; grid-template-areas: "media official join"; gap: 18px; align-items: end; }
+.welcome-card { position: relative; isolation: isolate; overflow: hidden; color: white; background: #071426; min-width: 0; height: 420px; display: flex; flex-direction: column; justify-content: space-between; transition: transform .35s ease; box-shadow: 0 12px 30px #03101f40; }
+.welcome-card::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(180deg, #07142688 0%, #07142600 35%, #071426b8 63%, #071426f5 100%); }
+.welcome-card > img { object-fit: cover; z-index: -2; transition: transform .7s ease; }
+.welcome-card:hover > img { transform: scale(1.04); }
+.welcome-official { grid-area: official; height: 464px; border-bottom: 4px solid #c99a2e; }
+.welcome-official > img { object-position: 47% center; }
+.welcome-media { grid-area: media; }
+.welcome-media > img { object-position: 77% center; }
+.welcome-join { grid-area: join; }
+.welcome-join > img { object-position: 50% center; }
+.welcome-card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px; font-size: 9px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+.welcome-card-number { font-size: 11px; opacity: .8; font-variant-numeric: tabular-nums; }
+.welcome-card-copy { padding: 26px; }
+.welcome-card-copy > p { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .13em; color: #e4c879; margin-bottom: 10px; }
+.welcome-card h2 { font-family: var(--font-sora), sans-serif; font-size: clamp(23px, 2.25vw, 34px); font-weight: 650; line-height: 1.2; letter-spacing: -.04em; margin-bottom: 12px; }
+.welcome-official h2 { font-size: clamp(32px, 3.5vw, 52px); }
+.welcome-tv-label { font-size: .65em; vertical-align: .12em; border: 1px solid #e4c879; padding: 1px 5px; color: #e4c879; border-radius: 3px; }
+.welcome-card-description { display: block; font-size: 12px; color: #e0e4e8; line-height: 1.6; max-width: 30ch; }
+.welcome-card-link, .welcome-enter { display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 12px; font-weight: 650; margin-top: 22px; }
+.welcome-card-link { padding-top: 18px; border-top: 1px solid #ffffff40; }
+.welcome-enter { background: #e0b653; color: #071426; padding: 15px 19px; width: fit-content; gap: 32px; }
+.welcome-follow { display: flex; justify-content: space-between; align-items: center; padding: 18px 0 30px; gap: 16px; font-size: 11px; color: #e4eaf3; }
+.welcome-partner-anchor, .welcome-follow > div { display: flex; align-items: center; gap: 14px; }
+.welcome-follow > div > a { display: grid; place-items: center; border: 1px solid #ffffff60; width: 40px; height: 40px; border-radius: 50%; color: #fff; transition: background .2s; }
+.welcome-follow > div > a:hover { background: #ffffff20; }
+.welcome-facebook { font-family: Arial, sans-serif; font-size: 24px; font-weight: 700; line-height: 1; }
+.welcome-partners { scroll-margin-top: 24px; background: #fff; color: #071426; padding: 32px 40px 26px; border: 1px solid #e7e4dc; }
+.welcome-partners .welcome-eyebrow { color: #756023; }
+.welcome-partners-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-bottom: 26px; border-bottom: 1px solid #07142615; }
+.welcome-partners-heading h2 { font-family: var(--font-sora), sans-serif; font-size: 23px; font-weight: 650; letter-spacing: -.04em; margin-top: 6px; }
+.welcome-partners-heading > a { display: flex; align-items: center; gap: 15px; font-size: 12px; }
+.welcome-partner-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding-top: 22px; }
+.welcome-partner-grid > a { text-align: center; padding: 0 20px 6px; }
+.welcome-partner-grid > a + a { border-left: 1px solid #07142615; }
+.welcome-partner-logo { position: relative; height: 112px; max-width: 220px; margin: auto; }
+.welcome-partner-logo img { object-fit: contain; }
+.welcome-partner-grid > a > span { font-size: 10px; color: #5f6873; display: block; margin-top: 10px; }
+.welcome-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-block: 27px; font-size: 10px; color: #d5deeb; }
+.welcome-footer nav { display: flex; flex-wrap: wrap; gap: 22px; }
+.welcome-page a:focus-visible { outline: 3px solid #f0d37f; outline-offset: 5px; }
+.welcome-partners a:focus-visible, .welcome-brands a:focus-visible { outline-color: #0a4fa3; }
+@media (min-width: 1600px) { .welcome-card { height: 480px; } .welcome-official { height: 528px; } .welcome-intro { padding-block: 44px; } }
+@media (max-width: 1100px) {
+  .welcome-shell { width: calc(100% - 48px); }
+  .welcome-location small { max-width: 150px; line-height: 1.6; }
+  .welcome-card-copy { padding: 20px; }
+  .welcome-card-top { padding: 20px; letter-spacing: .04em; }
+  .welcome-card-link { font-size: 11px; }
+}
+@media (max-width: 900px) {
+  .welcome-header { min-height: 132px; }
+  .welcome-location { font-size: 9px; letter-spacing: .03em; }
+  .welcome-brands { gap: 16px; }
+  .welcome-destinations { grid-template-columns: 1fr 1fr; grid-template-areas: "official official" "media join"; gap: 16px; }
+  .welcome-official { height: 420px; }
+  .welcome-card:not(.welcome-official) { height: 320px; }
+  .welcome-card h2 { font-size: 28px; }
+  .welcome-official h2 { font-size: 40px; }
+  .welcome-partners { padding: 28px; }
+  .welcome-partners-heading h2 { font-size: 22px; }
+  .welcome-footer { align-items: start; }
+}
+@media (max-width: 599px) {
+  .welcome-shell { width: calc(100% - 32px); }
+  .welcome-header { grid-template-columns: 1fr auto; min-height: 116px; gap: 8px; }
+  .welcome-location { display: none; }
+  .welcome-brands { gap: 12px; padding-inline: 10px; }
+  .welcome-brands > a:first-child img { width: 66px; height: 66px; }
+  .welcome-brand-divider { height: 45px; }
+  .welcome-tv-mark { width: 105px; height: 78px; }
+  .welcome-tv-mark img { width: 165px; height: 192px; left: -34px; top: -51px; }
+  .welcome-languages { gap: 0; }
+  .welcome-languages a { min-width: 35px; }
+  .welcome-intro { text-align: left; padding-block: 28px; }
+  .welcome-intro h1 { font-size: 35px; max-width: 15ch; margin-block: 10px; }
+  .welcome-intro > p:last-child { font-size: 12px; max-width: 35ch; }
+  .welcome-eyebrow { font-size: 9px; }
+  .welcome-destinations { grid-template-columns: 1fr; grid-template-areas: "official" "media" "join"; gap: 16px; }
+  .welcome-official { height: 400px; }
+  .welcome-card:not(.welcome-official) { height: 310px; }
+  .welcome-card-copy { padding: 24px; }
+  .welcome-card h2 { font-size: 30px; }
+  .welcome-official h2 { font-size: 38px; }
+  .welcome-follow { align-items: start; gap: 10px; padding-block: 20px; }
+  .welcome-partner-anchor { max-width: 130px; gap: 8px; min-height: 40px; font-size: 10px; }
+  .welcome-partner-anchor svg { flex-shrink: 0; }
+  .welcome-follow > div { gap: 8px; }
+  .welcome-follow > div > span { display: none; }
+  .welcome-partners { padding: 26px 22px; }
+  .welcome-partners-heading { display: block; padding-bottom: 20px; }
+  .welcome-partners-heading > a { margin-top: 15px; font-size: 11px; }
+  .welcome-partner-grid { grid-template-columns: 1fr; padding-top: 0; }
+  .welcome-partner-grid > a { padding: 24px 0; }
+  .welcome-partner-grid > a + a { border-left: 0; border-top: 1px solid #07142615; }
+  .welcome-partner-grid > a:last-child { padding-bottom: 0; }
+  .welcome-partner-logo { height: 94px; }
+  .welcome-footer { flex-direction: column; gap: 16px; font-size: 10px; padding-block: 24px; }
+  .welcome-footer nav { gap: 10px 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .welcome-card, .welcome-card > img, .welcome-follow > div > a { transition: none; } }

@@ -37,7 +37,7 @@ async function get(urlPath) {
   return task;
 }
 
-const staticPaths = ["", "/academie", "/vision", "/programme", "/formation-sportive", "/education", "/performance-lab", "/encadrement", "/equipes", "/partenaires", "/parrains", "/actualites", "/galerie", "/rejoindre", "/contact", "/saison", "/informations-legales", "/confidentialite", "/login"];
+const staticPaths = ["", "/accueil", "/academie", "/vision", "/programme", "/formation-sportive", "/education", "/performance-lab", "/encadrement", "/equipes", "/partenaires", "/parrains", "/actualites", "/galerie", "/rejoindre", "/contact", "/saison", "/informations-legales", "/confidentialite", "/login"];
 const newsSource = await readFile("src/lib/data/news.ts", "utf8");
 const articlePaths = [...newsSource.matchAll(/slug:\s*"([^"]+)"/g)].map(match => `/actualites/${match[1]}`);
 const teamPaths = ["/equipes/u14", "/equipes/u16", "/equipes/u18"];

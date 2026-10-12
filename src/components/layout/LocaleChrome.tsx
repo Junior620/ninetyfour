@@ -14,6 +14,11 @@ export function LocaleChrome({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  // The public root is a standalone gateway; deep links keep the full site chrome.
+  if (pathname === "/") {
+    return <>{children}</>;
+  }
+
   return (
     <>
       <Header />

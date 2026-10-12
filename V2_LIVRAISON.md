@@ -2,6 +2,18 @@
 
 Document de recette locale, mis à jour le 8 octobre 2026. Cette livraison porte sur le site public bilingue et la fiabilité des formulaires existants.
 
+## Ajout du portail — 12 octobre 2026
+
+Les racines `/fr` et `/en` présentent désormais un portail autonome. L'accueil éditorial complet est conservé à `/fr/accueil` et `/en/accueil`. Les liens d'accueil internes et les fils d'Ariane pointent vers cet accueil ; le pied de page permet de revenir au portail. Aucun cookie, délai ou passage imposé sur les liens directs.
+
+Composition originale aux couleurs Ninety One : blason et logo fourni `public/n91-tv-logo.png`, accès principal au site officiel, accès N91 TV aux médias existants, candidature, Instagram/Facebook et partenaires Astra Invest, Voak Sport, Johny Sport Consulting. Le logo TV est cadré en CSS pour compenser ses marges transparentes ; son fichier reste intact. Aucune chaîne vidéo, boutique ni billetterie fictive n'est ajoutée.
+
+Le fond du portail utilise un dégradé or, bleu royal et bleu nuit, avec une trame de points discrète générée en CSS. Le cartouche ivoire protège la lisibilité des deux logos. Les partenaires conservent un panneau blanc. Le dégradé reste spécifique au portail d'entrée.
+
+Sur mobile, le site officiel précède les médias puis la candidature. Contrôles aux largeurs 375, 430, 768, 1024, 1440 et 1920 px : un H1, aucune image cassée et aucun débordement horizontal. Les captures du portail portent le préfixe `portail-` ; les anciennes captures `accueil-` montrent toujours l'accueil éditorial.
+
+Recette du portail : bascule FR/EN, entrée dans l'accueil principal, accès médias/candidature, ancre partenaires et lien Voak, retour au portail depuis le pied de page. Recette HTTP étendue : 58 pages, 88 liens internes, 96 ancres, 18 images locales, zéro échec. Les 28 tests de non-régression et le lint passent ; le build Webpack avec typage génère 115 pages.
+
 ## Décisions et références
 
 L’identité Ninety One est conservée : blason, photographies disponibles, Sora/Inter, bleu nuit, bleu royal, or et fond ivoire. Les six articles et leurs URL restent présents dans les deux langues. Les captures et wireframes du Mans FC servent de références de structure ; leurs marques, textes, résultats et offres commerciales ne sont pas repris comme données de l’académie.
@@ -26,7 +38,7 @@ Les chemins ci-dessous sont disponibles avec les préfixes `/fr` et `/en`. Les a
 
 | Ancien chemin | Chemin V2 | Traitement |
 |---|---|---|
-| `/` | `/` | Accueil éditorial complet |
+| `/` | `/` et `/accueil` | Portail d’entrée puis accueil éditorial complet |
 | `/academie`, `/vision` | Identiques | Présentation et valeurs |
 | `/programme`, `/formation-sportive` | Identiques | Programme et formation |
 | `/education`, `/performance-lab`, `/encadrement` | Identiques | Accompagnement et rôles |
