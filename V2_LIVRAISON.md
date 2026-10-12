@@ -8,7 +8,7 @@ Les racines `/fr` et `/en` présentent désormais un portail autonome. L'accueil
 
 Composition originale aux couleurs Ninety One : blason et logo fourni `public/n91-tv-logo.png`, accès principal au site officiel, accès N91 TV aux médias existants, candidature, Instagram/Facebook et partenaires Astra Invest, Voak Sport, Johny Sport Consulting. Le logo TV est cadré en CSS pour compenser ses marges transparentes ; son fichier reste intact. Aucune chaîne vidéo, boutique ni billetterie fictive n'est ajoutée.
 
-Le fond du portail utilise un dégradé or, bleu royal et bleu nuit, avec une trame de points discrète générée en CSS. Le cartouche ivoire protège la lisibilité des deux logos. Les partenaires conservent un panneau blanc. Le dégradé reste spécifique au portail d'entrée.
+Le fond du portail utilise un dégradé or, bleu royal et bleu nuit, avec une trame de points discrète générée en CSS. Les deux logos s'affichent directement sur le dégradé, sans cartouche blanc ni ombre. Les partenaires conservent un panneau blanc. Le dégradé reste spécifique au portail d'entrée.
 
 Sur mobile, le site officiel précède les médias puis la candidature. Contrôles aux largeurs 375, 430, 768, 1024, 1440 et 1920 px : un H1, aucune image cassée et aucun débordement horizontal. Les captures du portail portent le préfixe `portail-` ; les anciennes captures `accueil-` montrent toujours l'accueil éditorial.
 

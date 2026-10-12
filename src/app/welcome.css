@@ -16,7 +16,7 @@
 .welcome-location { font-size: 11px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; }
 .welcome-location > span { display: inline-block; width: 6px; height: 6px; background: #f0d37f; border-radius: 50%; margin-right: 10px; vertical-align: middle; }
 .welcome-location small { display: block; margin-top: 10px; font-size: 10px; font-weight: 400; letter-spacing: .03em; text-transform: none; color: #e4eaf3; }
-.welcome-brands { display: flex; align-items: center; gap: 24px; background: #f7f5ef; padding: 0 24px; border-radius: 2px; box-shadow: 0 8px 30px #07142620; }
+.welcome-brands { display: flex; align-items: center; gap: 24px; padding: 0 24px; }
 .welcome-brands > a { display: block; }
 .welcome-brand-divider { height: 58px; width: 1px; background: #c99a2e; }
 /* Frame the supplied logo's transparent margins without changing the asset. */
@@ -72,7 +72,7 @@
 .welcome-footer { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-block: 27px; font-size: 10px; color: #d5deeb; }
 .welcome-footer nav { display: flex; flex-wrap: wrap; gap: 22px; }
 .welcome-page a:focus-visible { outline: 3px solid #f0d37f; outline-offset: 5px; }
-.welcome-partners a:focus-visible, .welcome-brands a:focus-visible { outline-color: #0a4fa3; }
+.welcome-partners a:focus-visible { outline-color: #0a4fa3; }
 @media (min-width: 1600px) { .welcome-card { height: 480px; } .welcome-official { height: 528px; } .welcome-intro { padding-block: 44px; } }
 @media (max-width: 1100px) {
   .welcome-shell { width: calc(100% - 48px); }
