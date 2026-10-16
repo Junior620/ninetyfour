@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { routing } from "@/lib/i18n/routing";
-import { newsArticles } from "@/lib/data";
+import { getPublicArticles } from "@/lib/content/articles";
 import { localizedUrl } from "@/lib/seo/metadata";
 
 const staticPaths = [
@@ -19,7 +19,8 @@ const staticPaths = [
   "/contact",
 ];
 
-function publicUrls(): string[] {
+async function publicUrls(): Promise<string[]> {
+  const newsArticles=await getPublicArticles();
   const urls = routing.locales.flatMap((locale) =>
     staticPaths.map((path) => localizedUrl(locale, path))
   );
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
     bodyUrls = undefined;
   }
 
-  const allowed = new Set(publicUrls());
+  const allowed = new Set(await publicUrls());
   const urlList = (bodyUrls?.length ? bodyUrls : [...allowed]).filter((u) =>
     allowed.has(u)
   );

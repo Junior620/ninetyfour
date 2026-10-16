@@ -7,6 +7,7 @@ import {
   verifySessionToken,
 } from "@/lib/auth/session-token";
 import type { UserRole } from "@/types";
+import { matchlabProxy } from "@/lib/matchlab/proxy";
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -32,6 +33,7 @@ function requiredRoleForPath(pathname: string): UserRole | null {
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname.startsWith("/matchlab") || pathname.startsWith("/api/matchlab")) return matchlabProxy(request);
 
   if (isDashboardPath(pathname)) {
     const session = await verifySessionToken(
@@ -56,5 +58,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/(fr|en)/:path*"],
+  matcher: ["/", "/(fr|en)/:path*", "/matchlab/:path*", "/api/matchlab/:path*"],
 };

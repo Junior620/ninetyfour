@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/lib/i18n/routing";
-import { newsArticles } from "@/lib/data";
+import { getPublicArticles } from "@/lib/content/articles";
 import { buildLanguageAlternates, localizedUrl } from "@/lib/seo/metadata";
 import { teamCategories } from "@/lib/data/staff";
 import { matches, publicPlayers } from "@/lib/club";
@@ -31,7 +31,8 @@ const staticPaths = [
   ...publicPlayers.map(player => `/joueurs/${player.slug}`),
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const newsArticles=await getPublicArticles();
   const staticEntries = routing.locales.flatMap((locale) =>
     staticPaths.map((path) => ({
       url: localizedUrl(locale, path),

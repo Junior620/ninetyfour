@@ -1,0 +1,201 @@
+"use client";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Flag,
+  Users,
+  Video,
+  FileText,
+  ChartNoAxesCombined,
+  Film,
+  FlaskConical,
+  Download,
+  Newspaper,
+  Settings,
+  Menu,
+  X,
+  LockKeyhole,
+  Bell,
+  LogOut,
+  ChevronRight,
+} from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import { fr as t } from "@/lib/matchlab/messages";
+import type { Member } from "@/lib/matchlab/schema";
+
+export const navigation = [
+  { id: "overview", Icon: LayoutDashboard },
+  { id: "matches", Icon: Flag },
+  { id: "players", Icon: Users },
+  { id: "analyze", Icon: Video },
+  { id: "reports", Icon: FileText },
+  { id: "analytics", Icon: ChartNoAxesCombined },
+  { id: "video", Icon: Film },
+  { id: "ai", Icon: FlaskConical },
+  { id: "exports", Icon: Download },
+  { id: "site", Icon: Newspaper },
+  { id: "admin", Icon: Settings },
+] as const;
+export function Shell({
+  children,
+  member,
+  email,
+  logo,
+  localOnly,
+}: {
+  children: React.ReactNode;
+  member: Member;
+  email: string;
+  logo: boolean;
+  localOnly: boolean;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const active = pathname.split("/")[2] as keyof typeof t.nav;
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const close = () => {
+      if (media.matches) setOpen(false);
+    };
+    media.addEventListener("change", close);
+    return () => media.removeEventListener("change", close);
+  }, []);
+  const content = (
+    <>
+      <Link
+        className="ml-brand"
+        href="/matchlab/overview"
+        aria-label="N91 MatchLab"
+      >
+        {logo && (
+          <Image
+            src="/n91-lab-logo.png"
+            alt=""
+            width={175}
+            height={72}
+            loading="eager"
+          />
+        )}
+        {!logo && (
+          <strong>
+            N91<span>MatchLab</span>
+          </strong>
+        )}
+        <small>{t.subtitle}</small>
+      </Link>
+      <nav aria-label={t.brand}>
+        {navigation
+          .filter(
+            (n) =>
+              (n.id !== "admin" || member.role === "direction") &&
+              (n.id !== "site" ||
+                member.permissions.some(
+                  (p) => p === "site_editor" || p === "site_publisher",
+                )) &&
+              (n.id !== "exports" || member.permissions.includes("export")),
+          )
+          .map((n, i) => (
+            <div key={n.id}>
+              {i === 5 && <p className="ml-nav-label">{t.extensions}</p>}
+              <Link
+                onClick={() => setOpen(false)}
+                href={`/matchlab/${n.id}`}
+                aria-current={active === n.id ? "page" : undefined}
+              >
+                <n.Icon size={18} />
+                <span>{t.nav[n.id]}</span>
+              </Link>
+            </div>
+          ))}
+      </nav>
+      <div className="ml-sidebar-bottom">
+        <span className="ml-avatar">N91</span>
+        <div>
+          <strong>{t.staff}</strong>
+          <small>{email}</small>
+        </div>
+        <button
+          aria-label={t.logout}
+          onClick={async () => {
+            const response = await fetch("/api/matchlab/auth/logout", {
+              method: "POST",
+            });
+            if (response.ok) {
+              router.replace("/matchlab/login");
+              router.refresh();
+            }
+          }}
+        >
+          <LogOut size={18} />
+        </button>
+      </div>
+    </>
+  );
+  return (
+    <div className="ml-app">
+      <a className="ml-skip" href="#ml-main">
+        {t.skip}
+      </a>
+      <aside className="ml-sidebar">{content}</aside>
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Trigger
+          ref={trigger}
+          className="ml-menu-trigger"
+          aria-label={t.openMenu}
+        >
+          <Menu size={22} />
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="ml-backdrop" />
+          <Dialog.Popup className="ml-drawer" finalFocus={trigger}>
+            <Dialog.Title className="sr-only">{t.brand}</Dialog.Title>
+            <Dialog.Close className="ml-drawer-close" aria-label={t.closeMenu}>
+              <X size={20} />
+            </Dialog.Close>
+            {content}
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
+      <div className="ml-workspace">
+        <header className="ml-topbar">
+          <div>
+            <span>{t.academy}</span>
+            <ChevronRight size={13} />
+            <strong>{t.nav[active] || t.brand}</strong>
+          </div>
+          <div>
+            <span className="ml-private">
+              <LockKeyhole size={13} />
+              {t.private}
+            </span>
+            <Link
+              className="ml-icon"
+              href="/matchlab/alerts"
+              aria-label={t.alerts.title}
+            >
+              <Bell size={19} />
+            </Link>
+            <span className="ml-avatar">{email.slice(0, 2).toUpperCase()}</span>
+          </div>
+        </header>
+        <main id="ml-main" tabIndex={-1} className="ml-main">
+          {localOnly && (
+            <p className="ml-local-banner">
+              Environnement local de recette · données fictives uniquement
+            </p>
+          )}
+          {children}
+        </main>
+        <footer className="ml-footer">
+          <span>{t.footer}</span>
+          <span>{t.decision}</span>
+        </footer>
+      </div>
+    </div>
+  );
+}

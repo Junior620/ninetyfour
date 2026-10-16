@@ -1,13 +1,14 @@
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import { newsArticles } from "@/lib/data/news";
+import { getPublicArticles } from "@/lib/content/articles";
 import { categoryLabels, filterNews, words } from "@/lib/club";
 import { PageIntro, NewsCard, EmptyState } from "@/components/club/ClubUI";
 import type { Locale } from "@/types";
 type Props={params:Promise<{locale:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>};
 export async function generateMetadata({params}:Props){const{locale}=await params;return buildPageMetadata({locale,path:"/actualites",title:words(locale,"Actualités","News"),description:words(locale,"Toute la vie de Ninety One : formation, rencontres, partenaires et événements.","Ninety One news: academy life, football, partners and events.")});}
 export default async function News({params,searchParams}:Props){
+ const newsArticles=await getPublicArticles();
  const{locale}=await params;setRequestLocale(locale);const loc=locale as Locale;const query=await searchParams;const val=(key:string)=>typeof query[key]==="string"?query[key] as string:"";const q=val("q");const category=val("category");const year=val("year");
  const articles=filterNews(newsArticles,loc,q,category,year);const pageSize=6;const totalPages=Math.ceil(articles.length/pageSize);const page=Math.min(Math.max(1,Number.parseInt(val("page"))||1),Math.max(1,totalPages));const shown=articles.slice((page-1)*pageSize,page*pageSize);
  const pageHref=(n:number)=>"/actualites?"+new URLSearchParams({q,category,year,page:String(n)}).toString();

@@ -132,3 +132,4 @@
   .welcome-footer nav { gap: 10px 20px; }
 }
 @media (prefers-reduced-motion: reduce) { .welcome-card, .welcome-card > img, .welcome-follow > div > a { transition: none; } }
+.welcome-matchlab{display:flex;align-items:center;gap:18px;margin:24px 0 8px;padding:20px 24px;border:1px solid #ffffff38;background:#052a604d;border-radius:6px;color:white}.welcome-matchlab>span{display:grid;gap:4px;flex:1}.welcome-matchlab small{font-size:10px;letter-spacing:.12em;opacity:.75}.welcome-matchlab strong{font-size:20px}.welcome-matchlab span span{font-size:13px;opacity:.8}.welcome-matchlab b{display:flex;align-items:center;gap:8px;font-size:13px}.welcome-matchlab:focus-visible{outline:3px solid #dfc384;outline-offset:4px}@media(max-width:650px){.welcome-matchlab{flex-wrap:wrap;padding:18px}.welcome-matchlab b{margin-left:38px}}

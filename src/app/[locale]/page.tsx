@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import StaffLink from "next/link";
+import { ArrowDown, ArrowUpRight, LockKeyhole } from "lucide-react";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -75,6 +76,7 @@ export default async function Welcome({ params }: { params: Promise<{ locale: st
               </div>
             </Link>
           </nav>
+          <StaffLink className="welcome-matchlab" href="/matchlab"><LockKeyhole size={20} aria-hidden/><span><small>{words(loc,"ESPACE STAFF · ACCÈS PRIVÉ","STAFF AREA · PRIVATE ACCESS")}</small><strong>N91 MatchLab</strong><span>{words(loc,"Analyse des matchs et aide à la décision du staff.","Match analysis and staff decision support.")}</span></span><b>{words(loc,"Accéder à l’espace staff","Enter the staff area")} <ArrowUpRight size={18} aria-hidden/></b></StaffLink>
           <div className="welcome-follow">
             <a href="#partenaires" className="welcome-partner-anchor">{words(loc, "Une ambition partagée", "A shared ambition")}<ArrowDown size={16} aria-hidden /></a>
             <div><span>{words(loc, "Le club, au quotidien", "Everyday club life")}</span><a href={contactInfo.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></a><a href={contactInfo.social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook"><span className="welcome-facebook" aria-hidden>f</span></a></div>
