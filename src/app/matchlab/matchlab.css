@@ -973,6 +973,7 @@
 }
 .ml-auth-story {
   padding: clamp(35px, 6vw, 100px);
+  padding-top: max(120px, 6vw);
   background: #12345b;
   color: white;
   display: flex;
@@ -1010,7 +1011,7 @@
 .ml-auth-signature {
   font-size: 9px;
   letter-spacing: 0.13em;
-  margin-top: 55px;
+  margin-top: 24px;
   color: #8fa9c9;
 }
 .ml-auth-form {

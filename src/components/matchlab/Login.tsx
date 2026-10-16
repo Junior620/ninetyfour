@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, LockKeyhole } from "lucide-react";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
+import { LoginFootballAnimation } from "./LoginFootballAnimation";
 export function Login({
   mode = "login",
   next,
@@ -22,6 +23,7 @@ export function Login({
         <p className="ml-eyebrow">{t.subtitle}</p>
         <h1>{t.auth.title}</h1>
         <p>{t.auth.intro}</p>
+        <LoginFootballAnimation />
         <span className="ml-auth-signature">{t.footer}</span>
       </div>
       <section className="ml-auth-form">

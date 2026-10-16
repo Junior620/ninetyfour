@@ -38,3 +38,5 @@ Les tests HTTP et base refusent toute autre instance que `127.0.0.1:55321`. Ils 
 - **Non implémenté volontairement** : moteur IA, décision automatique de recrutement, formule de compatibilité, traitement GPS, envoi Push réel, suppression automatique sur durée arbitraire. Les abonnements Push sont préparés mais restent désactivés.
 
 Voir [recette](RECETTE.md), [couverture du PDF](COUVERTURE.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITE.md), [données](DONNEES.md), [CMS](CMS.md), [déploiement](DEPLOIEMENT.md), [restauration](RESTAURATION.md), [décisions](DECISIONS.md), [audit et comparaison](AUDIT.md), [IA](ai/README.md).
+
+L’[illustration animée de connexion](LOGIN_ANIMATION.md) est documentée séparément : intégration, chronologie CSS, pause et mode statique accessible.
