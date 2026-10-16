@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Isolated MatchLab development infrastructure / credentials
+supabase/.temp/
+supabase/.branches/
+.matchlab-local/
