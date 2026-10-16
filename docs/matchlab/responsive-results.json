@@ -1,0 +1,212 @@
+[
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 360,
+    "title": "Le match,lu dans le détail.",
+    "width": 375
+  },
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 415,
+    "title": "Le match,lu dans le détail.",
+    "width": 430
+  },
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 753,
+    "title": "Le match,lu dans le détail.",
+    "width": 768
+  },
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 1009,
+    "title": "Le match,lu dans le détail.",
+    "width": 1024
+  },
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 1425,
+    "title": "Le match,lu dans le détail.",
+    "width": 1440
+  },
+  {
+    "page": "overview",
+    "brokenImages": [],
+    "scrollWidth": 1905,
+    "title": "Le match,lu dans le détail.",
+    "width": 1920
+  },
+  {
+    "page": "matches",
+    "width": 375,
+    "brokenImages": 0,
+    "clientWidth": 360,
+    "scrollWidth": 360
+  },
+  {
+    "page": "matches",
+    "width": 430,
+    "brokenImages": 0,
+    "clientWidth": 415,
+    "scrollWidth": 415
+  },
+  {
+    "page": "matches",
+    "width": 768,
+    "brokenImages": 0,
+    "clientWidth": 768,
+    "scrollWidth": 768
+  },
+  {
+    "page": "matches",
+    "width": 1024,
+    "brokenImages": 0,
+    "clientWidth": 1024,
+    "scrollWidth": 1024
+  },
+  {
+    "page": "matches",
+    "width": 1440,
+    "brokenImages": 0,
+    "clientWidth": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "page": "matches",
+    "width": 1920,
+    "brokenImages": 0,
+    "clientWidth": 1920,
+    "scrollWidth": 1920
+  },
+  {
+    "page": "players",
+    "width": 375,
+    "brokenImages": 0,
+    "clientWidth": 360,
+    "scrollWidth": 360
+  },
+  {
+    "page": "players",
+    "width": 430,
+    "brokenImages": 0,
+    "clientWidth": 415,
+    "scrollWidth": 415
+  },
+  {
+    "page": "players",
+    "width": 768,
+    "brokenImages": 0,
+    "clientWidth": 753,
+    "scrollWidth": 753
+  },
+  {
+    "page": "players",
+    "width": 1024,
+    "brokenImages": 0,
+    "clientWidth": 1009,
+    "scrollWidth": 1009
+  },
+  {
+    "page": "players",
+    "width": 1440,
+    "brokenImages": 0,
+    "clientWidth": 1425,
+    "scrollWidth": 1425
+  },
+  {
+    "page": "players",
+    "width": 1920,
+    "brokenImages": 0,
+    "clientWidth": 1905,
+    "scrollWidth": 1905
+  },
+  {
+    "page": "analyze",
+    "width": 375,
+    "brokenImages": 0,
+    "clientWidth": 360,
+    "scrollWidth": 360
+  },
+  {
+    "page": "analyze",
+    "width": 430,
+    "brokenImages": 0,
+    "clientWidth": 415,
+    "scrollWidth": 415
+  },
+  {
+    "page": "analyze",
+    "width": 768,
+    "brokenImages": 0,
+    "clientWidth": 753,
+    "scrollWidth": 753
+  },
+  {
+    "page": "analyze",
+    "width": 1024,
+    "brokenImages": 0,
+    "clientWidth": 1009,
+    "scrollWidth": 1009
+  },
+  {
+    "page": "analyze",
+    "width": 1440,
+    "brokenImages": 0,
+    "clientWidth": 1425,
+    "scrollWidth": 1425
+  },
+  {
+    "page": "analyze",
+    "width": 1920,
+    "brokenImages": 0,
+    "clientWidth": 1905,
+    "scrollWidth": 1905
+  },
+  {
+    "page": "reports",
+    "width": 375,
+    "brokenImages": 0,
+    "clientWidth": 360,
+    "scrollWidth": 360
+  },
+  {
+    "page": "reports",
+    "width": 430,
+    "brokenImages": 0,
+    "clientWidth": 415,
+    "scrollWidth": 415
+  },
+  {
+    "page": "reports",
+    "width": 768,
+    "brokenImages": 0,
+    "clientWidth": 753,
+    "scrollWidth": 753
+  },
+  {
+    "page": "reports",
+    "width": 1024,
+    "brokenImages": 0,
+    "clientWidth": 1009,
+    "scrollWidth": 1009
+  },
+  {
+    "page": "reports",
+    "width": 1440,
+    "brokenImages": 0,
+    "clientWidth": 1425,
+    "scrollWidth": 1425
+  },
+  {
+    "page": "reports",
+    "width": 1920,
+    "brokenImages": 0,
+    "clientWidth": 1905,
+    "scrollWidth": 1905
+  }
+]

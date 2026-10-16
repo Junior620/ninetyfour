@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "match",
+    "pages": 1,
+    "a4": true,
+    "score68": true
+  },
+  {
+    "kind": "player",
+    "pages": 1,
+    "a4": true,
+    "score68": true
+  },
+  {
+    "kind": "period",
+    "pages": 1,
+    "a4": true,
+    "score68": true
+  }
+]

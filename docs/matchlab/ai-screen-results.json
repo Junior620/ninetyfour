@@ -1,0 +1,42 @@
+[
+  {
+    "label": "01 · Non configuré Analyse vidéo  Repères candidats, couverture et revue humaine des séquences.",
+    "disabled": true
+  },
+  {
+    "label": "02 · Non configuré Préparer le prochain match  Questions à examiner à partir des observations autorisées.",
+    "disabled": true
+  },
+  {
+    "label": "03 · Non configuré Synthèse de rapport  Proposition de synthèse, reliée aux preuves et révisable.",
+    "disabled": true
+  },
+  {
+    "label": "04 · Non configuré Assistant du staff  Réponses documentées dans le périmètre habilité.",
+    "disabled": true
+  },
+  {
+    "label": "05 · Non configuré Tendances  Évolutions avec période, méthode, échantillon et limites.",
+    "disabled": true
+  },
+  {
+    "label": "06 · Non configuré Charge & minutes  Lecture descriptive des minutes ; aucun diagnostic médical.",
+    "disabled": true
+  },
+  {
+    "label": "07 · Non configuré Étudier l’adversaire  Hypothèses tactiques à vérifier collectivement.",
+    "disabled": true
+  },
+  {
+    "label": "08 · Non configuré Préparer l’entraînement  Pistes de séance à valider par l’encadrement.",
+    "disabled": true
+  },
+  {
+    "label": "09 · Non configuré Notes vocales  Contrat de transcription. Microphone et envoi désactivés.",
+    "disabled": true
+  },
+  {
+    "label": "10 · Non configuré Profils recherchés  Comparaison explicable, sans sélection automatique.",
+    "disabled": true
+  }
+]

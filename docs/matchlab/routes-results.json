@@ -1,0 +1,220 @@
+{
+  "date": "2026-10-16T14:55:03.451Z",
+  "environment": "Next 16.4.2 compiled Webpack, local Windows Chromium/HTTP, no network throttling",
+  "checks": [
+    {
+      "url": "/fr",
+      "status": 200,
+      "ms": 41,
+      "title": "Ninety One Foot Academy — Douala"
+    },
+    {
+      "url": "/fr/accueil",
+      "status": 200,
+      "ms": 108,
+      "title": "Ninety One Foot Academy — Douala"
+    },
+    {
+      "url": "/fr/actualites",
+      "status": 200,
+      "ms": 85,
+      "title": "Actualités | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/actualites/lancement-programme-2026",
+      "status": 200,
+      "ms": 98,
+      "title": "Lancement officiel du programme 2026–2029 | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/equipes",
+      "status": 200,
+      "ms": 24,
+      "title": "Nos équipes | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/saison",
+      "status": 200,
+      "ms": 60,
+      "title": "Saison : calendrier et résultats | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/galerie",
+      "status": 200,
+      "ms": 75,
+      "title": "Médias et albums | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/partenaires",
+      "status": 200,
+      "ms": 25,
+      "title": "Nos partenaires | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/contact",
+      "status": 200,
+      "ms": 102,
+      "title": "Contact et accès | Ninety One Foot Academy"
+    },
+    {
+      "url": "/fr/rejoindre",
+      "status": 200,
+      "ms": 25,
+      "title": "Candidature académie de football Cameroun | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en",
+      "status": 200,
+      "ms": 23,
+      "title": "Ninety One Foot Academy — Douala"
+    },
+    {
+      "url": "/en/accueil",
+      "status": 200,
+      "ms": 89,
+      "title": "Ninety One Foot Academy — Douala"
+    },
+    {
+      "url": "/en/actualites",
+      "status": 200,
+      "ms": 84,
+      "title": "News | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/actualites/lancement-programme-2026",
+      "status": 200,
+      "ms": 82,
+      "title": "Official launch of the 2026–2029 program | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/equipes",
+      "status": 200,
+      "ms": 19,
+      "title": "Our teams | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/saison",
+      "status": 200,
+      "ms": 58,
+      "title": "Season: fixtures and results | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/galerie",
+      "status": 200,
+      "ms": 62,
+      "title": "Media and albums | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/partenaires",
+      "status": 200,
+      "ms": 19,
+      "title": "Our partners | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/contact",
+      "status": 200,
+      "ms": 56,
+      "title": "Contact and visits | Ninety One Foot Academy"
+    },
+    {
+      "url": "/en/rejoindre",
+      "status": 200,
+      "ms": 23,
+      "title": "Join a Football Academy in Cameroon | Ninety One Foot Academy"
+    },
+    {
+      "url": "/matchlab/overview",
+      "status": 200,
+      "ms": 103,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/matches",
+      "status": 200,
+      "ms": 71,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/players",
+      "status": 200,
+      "ms": 84,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/analyze",
+      "status": 200,
+      "ms": 65,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/reports",
+      "status": 200,
+      "ms": 68,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/analytics",
+      "status": 200,
+      "ms": 69,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/video",
+      "status": 200,
+      "ms": 70,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/alerts",
+      "status": 200,
+      "ms": 64,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/exports",
+      "status": 200,
+      "ms": 63,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/site",
+      "status": 200,
+      "ms": 81,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/admin",
+      "status": 200,
+      "ms": 63,
+      "noindex": true
+    },
+    {
+      "url": "/matchlab/ai",
+      "status": 200,
+      "ms": 70,
+      "noindex": true
+    },
+    {
+      "url": "/api/matchlab/data",
+      "rows": {
+        "seasons": 24,
+        "players": 25,
+        "memberships": 25,
+        "matches": 26,
+        "evaluations": 24,
+        "markers": 1,
+        "consents": 28,
+        "media": 8,
+        "reports": 22,
+        "targets": 0
+      }
+    }
+  ],
+  "dataTimes": [
+    588,
+    642,
+    567,
+    554,
+    559
+  ]
+}
