@@ -1,6 +1,8 @@
 # Illustration de la connexion
 
-`src/components/matchlab/LoginFootballAnimation.tsx` est intégré dans `Login.tsx`, sous le texte du panneau bleu et avant sa signature. Le composant de connexion étant partagé, les écrans de récupération et de réinitialisation utilisent la même illustration. Les champs, validations et appels d’authentification sont inchangés.
+L’illustration est temporairement masquée à la demande du propriétaire depuis le 17 octobre 2026. `Login.tsx` ne l’importe plus et ne la rend plus : aucun SVG animé ni bouton Pause/Reprendre n’apparaît sur les écrans de connexion, récupération et réinitialisation. Les champs, validations et appels d’authentification sont inchangés.
+
+Le composant `src/components/matchlab/LoginFootballAnimation.tsx` et son CSS sont conservés pour une réactivation ultérieure. Pour la réactiver, importer `LoginFootballAnimation` dans `Login.tsx` et placer `<LoginFootballAnimation />` sous le paragraphe `{t.auth.intro}`, avant la signature. Les descriptions et captures ci-dessous documentent la version animée antérieure à ce masquage.
 
 ## Choix technique
 

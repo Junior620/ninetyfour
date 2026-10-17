@@ -39,4 +39,4 @@ Les tests HTTP et base refusent toute autre instance que `127.0.0.1:55321`. Ils 
 
 Voir [recette](RECETTE.md), [couverture du PDF](COUVERTURE.md), [architecture](ARCHITECTURE.md), [sécurité](SECURITE.md), [données](DONNEES.md), [CMS](CMS.md), [déploiement](DEPLOIEMENT.md), [restauration](RESTAURATION.md), [décisions](DECISIONS.md), [audit et comparaison](AUDIT.md), [IA](ai/README.md).
 
-L’[illustration animée de connexion](LOGIN_ANIMATION.md) est documentée séparément : intégration, chronologie CSS, pause et mode statique accessible.
+L’[illustration animée de connexion](LOGIN_ANIMATION.md), temporairement masquée, est conservée et documentée séparément pour une éventuelle réactivation.
