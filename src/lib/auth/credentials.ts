@@ -12,17 +12,14 @@ export function isPublicRole(
   return PUBLIC_ROLES.includes(role as "player" | "parent" | "coach");
 }
 
+// Access is read from app_metadata only: any user can rewrite their own
+// user_metadata with the public anon key, so it must never grant a role or status.
 export function readAccountStatus(user: {
   app_metadata?: Record<string, unknown>;
-  user_metadata?: Record<string, unknown>;
 }): AccountStatus {
-  const fromApp = user.app_metadata?.status;
-  const fromUser = user.user_metadata?.status;
-  if (fromApp === "pending" || fromApp === "active" || fromApp === "rejected" || fromApp === "disabled") {
-    return fromApp;
-  }
-  if (fromUser === "pending" || fromUser === "active" || fromUser === "rejected" || fromUser === "disabled") {
-    return fromUser;
+  const status = user.app_metadata?.status;
+  if (status === "pending" || status === "active" || status === "rejected" || status === "disabled") {
+    return status;
   }
   // Legacy users without status: treat as active
   return "active";
@@ -30,22 +27,14 @@ export function readAccountStatus(user: {
 
 export function readRoleFromUser(user: {
   app_metadata?: Record<string, unknown>;
-  user_metadata?: Record<string, unknown>;
 }): UserRole | null {
-  const fromApp = user.app_metadata?.role;
-  const fromUser = user.user_metadata?.role;
-  const candidates = [fromApp, fromUser];
-  for (const value of candidates) {
-    if (
-      value === "player" ||
-      value === "parent" ||
-      value === "coach" ||
-      value === "admin"
-    ) {
-      return value;
-    }
-  }
-  return null;
+  const role = user.app_metadata?.role;
+  return role === "player" ||
+    role === "parent" ||
+    role === "coach" ||
+    role === "admin"
+    ? role
+    : null;
 }
 
 export function readNameFromUser(user: {

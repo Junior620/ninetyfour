@@ -19,11 +19,28 @@ function isSessionRole(value: unknown): value is UserRole {
   return typeof value === "string" && VALID_ROLES.has(value);
 }
 
+const DEV_AUTH_SECRET = "dev-only-auth-secret-change-me";
+// Published in this repository: anyone could forge a session signed with them.
+const KNOWN_AUTH_SECRETS = new Set([
+  DEV_AUTH_SECRET,
+  "change-me-to-a-long-random-string",
+]);
+const MIN_AUTH_SECRET_LENGTH = 32;
+
 function getAuthSecret(): Uint8Array {
-  const secret =
-    process.env.AUTH_SECRET?.trim() ||
-    process.env.PRIVATE_SPACE_PASSWORD?.trim() ||
-    "dev-only-auth-secret-change-me";
+  const secret = process.env.AUTH_SECRET?.trim();
+  if (process.env.NODE_ENV !== "production") {
+    return new TextEncoder().encode(secret || DEV_AUTH_SECRET);
+  }
+  if (
+    !secret ||
+    secret.length < MIN_AUTH_SECRET_LENGTH ||
+    KNOWN_AUTH_SECRETS.has(secret)
+  ) {
+    throw new Error(
+      `AUTH_SECRET must be a random value of at least ${MIN_AUTH_SECRET_LENGTH} characters in production`
+    );
+  }
   return new TextEncoder().encode(secret);
 }
 
