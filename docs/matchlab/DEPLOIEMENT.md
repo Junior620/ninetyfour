@@ -2,7 +2,11 @@
 
 La recette utilise Supabase local sur API55321, PostgreSQL55322, Studio55323, Mailpit55324, projet Docker n91-matchlab-local. `npm run matchlab:setup` crée seulement un compte fictif aléatoire ; les migrations locales ne doivent jamais être dirigées vers le projet du club.
 
-Pour une future preview autorisée : choisir un environnement Supabase de preview, sauvegarder son état, examiner/appliquer les migrations additives dans l’ordre, renseigner les variables serveur MATCHLAB_SUPABASE_URL/ANON_KEY/SERVICE_ROLE_KEY et MATCHLAB_APP_ORIGIN à l’origine HTTPS exacte. Configurer l’URL de callback `/api/matchlab/auth/callback` dans Supabase Auth et SMTP. Ne pas exposer service_role avec NEXT_PUBLIC. La branche de développement est codex/matchlab.
+MatchLab réutilise par défaut le projet Supabase déjà configuré pour le site : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` et `SUPABASE_SERVICE_ROLE_KEY`. Il n’est pas nécessaire de dupliquer ces valeurs sur Vercel. La clé de service reste exclusivement côté serveur. Ce partage de projet conserve les cookies, habilitations et politiques RLS propres à MatchLab ; un compte de la vitrine ne devient pas automatiquement membre du staff.
+
+Pour un environnement distinct (notamment la recette locale), renseigner ensemble `MATCHLAB_SUPABASE_URL`, `MATCHLAB_SUPABASE_ANON_KEY` et `MATCHLAB_SUPABASE_SERVICE_ROLE_KEY`. Dès qu’une de ces valeurs est présente, cette famille devient prioritaire : une configuration partielle est refusée par les opérations qui ont besoin des valeurs manquantes, sans mélange entre projets. La sélection est commune aux sessions, au proxy, au CMS et au bootstrap. Les tests locaux continuent à imposer `127.0.0.1:55321`.
+
+Avant l’activation dans un environnement hébergé autorisé : sauvegarder son état, examiner/appliquer les migrations additives dans l’ordre et configurer `MATCHLAB_APP_ORIGIN` à l’origine HTTPS exacte (par exemple `https://ninetyfour.vercel.app` si c’est le domaine utilisé). Configurer l’URL de callback `/api/matchlab/auth/callback` dans Supabase Auth et SMTP. La présence des variables ne crée ni les tables MatchLab ni les habilitations ; ces étapes restent explicites. La branche de développement est codex/matchlab.
 
 Build Vercel prévu : `next build --webpack`, Node24 conseillé (recette24.14.1), lockfile versionné, `npm ci`. Le build normal lit .env.local en local ; le lanceur MatchLab fournit ses variables dédiées sans modifier les secrets existants. Éviter deux processus Next écrivant dans le même .next.
 
@@ -13,3 +17,9 @@ Créer ou choisir explicitement une identité Supabase existante dans l’enviro
 Configurer la gouvernance avant des médias réels. Importer et vérifier les six articles puis activer MATCHLAB_CMS_ENABLED. Conserver MATCHLAB_PUSH_ENABLED=false tant que l’adaptateur d’envoi Push n’est pas développé et validé ; le worker ne cache aucun contenu privé. Aucun endpoint IA à configurer : moteur volontairement absent.
 
 Prévoir sauvegarde PostgreSQL + bucket privé, stockage chiffré des archives, durée/effacement approuvés et revue des dépendances résiduelles. Les migrations distantes et le déploiement constituent une phase séparée, non exécutée ici.
+
+## Vérification de la configuration partagée — 17 octobre 2026
+
+41 tests unitaires réussis, dont cinq couvrant la sélection des variables, la priorité de l’environnement dédié et l’absence de mélange de clés. Lint ciblé, typage et build Webpack réussis. Les 21 contrôles HTTP ont été exécutés sur la version compilée avec les variables du site pointant exclusivement vers Supabase local et les trois variables dédiées vides : connexion, sessions, droits, sauvegarde, médias, exports, restauration, CMS et récupération d’accès validés. Le serveur local a ensuite été relancé avec sa configuration dédiée habituelle.
+
+Le contrôle en lecture seule de la présence des tables via la configuration Supabase existante du fichier local n’a obtenu aucune réponse HTTP du service distant. Il ne permet donc pas d’affirmer que les migrations ou habilitations sont installées sur le projet utilisé par Vercel. Aucune migration distante ni modification de compte distant n’a été effectuée.

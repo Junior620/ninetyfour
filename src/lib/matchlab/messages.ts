@@ -96,7 +96,7 @@ export const fr = {
     FORBIDDEN:
       "Votre compte n’est pas habilité à accéder à cette ressource. Contactez la direction.",
     INFRASTRUCTURE_NOT_CONFIGURED:
-      "Le service MatchLab n’est pas encore configuré. Consultez la procédure de lancement local.",
+      "La connexion de MatchLab à Supabase n’est pas configurée. Contactez l’administrateur du site.",
     DATABASE_UNAVAILABLE:
       "La base MatchLab est momentanément indisponible. Votre saisie est conservée.",
     INVALID_CREDENTIALS: "Identifiants incorrects ou compte indisponible.",

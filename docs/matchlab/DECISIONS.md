@@ -1,6 +1,7 @@
 # Décisions
 
 - Identité Supabase réutilisée, habilitation MatchLab explicite et cookie distinct. Sécurité en base prioritaire sur métadonnées utilisateur.
+- Configuration Supabase du site réutilisée par défaut. La famille dédiée MATCHLAB_SUPABASE_* reste prioritaire et indivisible pour isoler les tests locaux et les environnements distincts ; aucune clé n’est empruntée à l’autre famille en cas de configuration partielle.
 - Migrations additives versionnées sans db push Prisma ; développement sur Supabase local séparé. Rien en production.
 - Français livré ; textes principaux regroupés dans messages.ts, modèle de traduction préparé. Traduction anglaise MatchLab non livrée ; vitrine FR/EN conservée. Questionnaire officiel figé en français pour fidélité au PDF.
 - Sidebar/topbar et cinq entrées du modèle conservées ; tiroir sous1024px pour supprimer le chevauchement tablette. Logo N91 Lab fourni pendant le développement intégré.

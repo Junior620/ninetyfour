@@ -1,10 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
+import { resolveLabConfig } from "./config.mjs";
 
 export async function matchlabProxy(request: NextRequest) {
   let response = NextResponse.next({ request });
-  const url = process.env.MATCHLAB_SUPABASE_URL;
-  const key = process.env.MATCHLAB_SUPABASE_ANON_KEY;
+  const { url, key } = resolveLabConfig(process.env);
   if (
     url &&
     key &&

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { Shell } from "@/components/matchlab/Shell";
-import { requireLab, LabError } from "@/lib/matchlab/server";
+import { requireLab, LabError, labConfig } from "@/lib/matchlab/server";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
 export default async function Layout({
   children,
@@ -32,7 +32,7 @@ export default async function Layout({
       member={session.member}
       email={session.user.email || "N91"}
       logo={existsSync(join(process.cwd(), "public/n91-lab-logo.png"))}
-      localOnly={process.env.MATCHLAB_SUPABASE_URL === "http://127.0.0.1:55321"}
+      localOnly={labConfig().url === "http://127.0.0.1:55321"}
     >
       {children}
     </Shell>

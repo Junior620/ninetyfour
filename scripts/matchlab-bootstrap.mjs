@@ -1,13 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
+import { resolveLabConfig } from "../src/lib/matchlab/config.mjs";
 const id = process.argv[2];
 if (!/^[a-f0-9-]{36}$/.test(id || ""))
   throw new Error(
     "Usage: node --env-file=<dedicated environment> scripts/matchlab-bootstrap.mjs <existing Supabase user UUID>",
   );
-const { MATCHLAB_SUPABASE_URL: url, MATCHLAB_SUPABASE_SERVICE_ROLE_KEY: key } =
-  process.env;
+const { url, serviceKey: key } = resolveLabConfig(process.env);
 if (!url || !key)
-  throw new Error("Dedicated MatchLab configuration is required.");
+  throw new Error("Supabase URL and server service key are required.");
 const db = createClient(url, key, { auth: { persistSession: false } });
 const existing = await db
   .from("ml_members")

@@ -5,6 +5,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import type { Member } from "./schema";
+import { resolveLabConfig } from "./config.mjs";
 
 export class LabError extends Error {
   constructor(
@@ -16,14 +17,13 @@ export class LabError extends Error {
   }
 }
 export function labConfig() {
-  const url = process.env.MATCHLAB_SUPABASE_URL;
-  const key = process.env.MATCHLAB_SUPABASE_ANON_KEY;
+  const { url, key } = resolveLabConfig(process.env);
   if (!url || !key) throw new LabError("INFRASTRUCTURE_NOT_CONFIGURED", 503);
   return { url, key };
 }
 export function adminClient() {
   const { url } = labConfig();
-  const key = process.env.MATCHLAB_SUPABASE_SERVICE_ROLE_KEY;
+  const { serviceKey: key } = resolveLabConfig(process.env);
   if (!key) throw new LabError("INFRASTRUCTURE_NOT_CONFIGURED", 503);
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },

@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { newsArticles } from "@/lib/data/news";
 import type { NewsArticle } from "@/types";
+import { resolveLabConfig } from "@/lib/matchlab/config.mjs";
 /** One public read adapter. Never falls back to old content after CMS activation. */
 export const getPublicArticles = cache(async (): Promise<NewsArticle[]> => {
   if (process.env.MATCHLAB_CMS_ENABLED !== "true")
@@ -11,8 +12,7 @@ export const getPublicArticles = cache(async (): Promise<NewsArticle[]> => {
   // Stop prerendering before Supabase wraps fetch's dynamic-render signal.
   // Published CMS content must be read at request time, never frozen in a build.
   await connection();
-  const url = process.env.MATCHLAB_SUPABASE_URL;
-  const key = process.env.MATCHLAB_SUPABASE_ANON_KEY;
+  const { url, key } = resolveLabConfig(process.env);
   if (!url || !key)
     throw new Error("Public article repository is not configured");
   const db = createClient(url, key, {
