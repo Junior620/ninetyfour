@@ -1,35 +1,35 @@
 {
-  "date": "2026-10-17T05:41:03.086Z",
+  "date": "2026-10-17T08:59:03.839Z",
   "environment": "Next 16.4.2 compiled Webpack, local Windows Chromium/HTTP, no network throttling",
   "checks": [
     {
       "url": "/fr",
       "status": 200,
-      "ms": 22,
+      "ms": 13,
       "title": "Ninety One Foot Academy — Douala"
     },
     {
       "url": "/fr/accueil",
       "status": 200,
-      "ms": 24,
+      "ms": 58,
       "title": "Ninety One Foot Academy — Douala"
     },
     {
       "url": "/fr/actualites",
       "status": 200,
-      "ms": 21,
+      "ms": 38,
       "title": "Actualités | Ninety One Foot Academy"
     },
     {
       "url": "/fr/actualites/lancement-programme-2026",
       "status": 200,
-      "ms": 18,
+      "ms": 32,
       "title": "Lancement officiel du programme 2026–2029 | Ninety One Foot Academy"
     },
     {
       "url": "/fr/equipes",
       "status": 200,
-      "ms": 13,
+      "ms": 16,
       "title": "Nos équipes | Ninety One Foot Academy"
     },
     {
@@ -41,157 +41,157 @@
     {
       "url": "/fr/galerie",
       "status": 200,
-      "ms": 16,
+      "ms": 20,
       "title": "Médias et albums | Ninety One Foot Academy"
     },
     {
       "url": "/fr/partenaires",
       "status": 200,
-      "ms": 13,
+      "ms": 14,
       "title": "Nos partenaires | Ninety One Foot Academy"
     },
     {
       "url": "/fr/contact",
       "status": 200,
-      "ms": 41,
+      "ms": 50,
       "title": "Contact et accès | Ninety One Foot Academy"
     },
     {
       "url": "/fr/rejoindre",
       "status": 200,
-      "ms": 14,
+      "ms": 24,
       "title": "Candidature académie de football Cameroun | Ninety One Foot Academy"
     },
     {
       "url": "/en",
       "status": 200,
-      "ms": 10,
+      "ms": 11,
       "title": "Ninety One Foot Academy — Douala"
     },
     {
       "url": "/en/accueil",
       "status": 200,
-      "ms": 20,
+      "ms": 33,
       "title": "Ninety One Foot Academy — Douala"
     },
     {
       "url": "/en/actualites",
       "status": 200,
-      "ms": 18,
+      "ms": 27,
       "title": "News | Ninety One Foot Academy"
     },
     {
       "url": "/en/actualites/lancement-programme-2026",
       "status": 200,
-      "ms": 14,
+      "ms": 29,
       "title": "Official launch of the 2026–2029 program | Ninety One Foot Academy"
     },
     {
       "url": "/en/equipes",
       "status": 200,
-      "ms": 10,
+      "ms": 11,
       "title": "Our teams | Ninety One Foot Academy"
     },
     {
       "url": "/en/saison",
       "status": 200,
-      "ms": 10,
+      "ms": 14,
       "title": "Season: fixtures and results | Ninety One Foot Academy"
     },
     {
       "url": "/en/galerie",
       "status": 200,
-      "ms": 11,
+      "ms": 14,
       "title": "Media and albums | Ninety One Foot Academy"
     },
     {
       "url": "/en/partenaires",
       "status": 200,
-      "ms": 10,
+      "ms": 11,
       "title": "Our partners | Ninety One Foot Academy"
     },
     {
       "url": "/en/contact",
       "status": 200,
-      "ms": 11,
+      "ms": 17,
       "title": "Contact and visits | Ninety One Foot Academy"
     },
     {
       "url": "/en/rejoindre",
       "status": 200,
-      "ms": 10,
+      "ms": 11,
       "title": "Join a Football Academy in Cameroon | Ninety One Foot Academy"
     },
     {
       "url": "/matchlab/overview",
       "status": 200,
-      "ms": 74,
+      "ms": 110,
       "noindex": true
     },
     {
       "url": "/matchlab/matches",
       "status": 200,
-      "ms": 46,
+      "ms": 57,
       "noindex": true
     },
     {
       "url": "/matchlab/players",
       "status": 200,
-      "ms": 50,
+      "ms": 55,
       "noindex": true
     },
     {
       "url": "/matchlab/analyze",
       "status": 200,
-      "ms": 45,
+      "ms": 54,
       "noindex": true
     },
     {
       "url": "/matchlab/reports",
       "status": 200,
-      "ms": 46,
+      "ms": 53,
       "noindex": true
     },
     {
       "url": "/matchlab/analytics",
       "status": 200,
-      "ms": 46,
+      "ms": 52,
       "noindex": true
     },
     {
       "url": "/matchlab/video",
       "status": 200,
-      "ms": 47,
+      "ms": 49,
       "noindex": true
     },
     {
       "url": "/matchlab/alerts",
       "status": 200,
-      "ms": 45,
+      "ms": 58,
       "noindex": true
     },
     {
       "url": "/matchlab/exports",
       "status": 200,
-      "ms": 46,
+      "ms": 58,
       "noindex": true
     },
     {
       "url": "/matchlab/site",
       "status": 200,
-      "ms": 46,
+      "ms": 54,
       "noindex": true
     },
     {
       "url": "/matchlab/admin",
       "status": 200,
-      "ms": 46,
+      "ms": 54,
       "noindex": true
     },
     {
       "url": "/matchlab/ai",
       "status": 200,
-      "ms": 46,
+      "ms": 49,
       "noindex": true
     },
     {
@@ -211,10 +211,10 @@
     }
   ],
   "dataTimes": [
-    341,
-    359,
-    374,
-    377,
-    353
+    423,
+    412,
+    403,
+    422,
+    403
   ]
 }

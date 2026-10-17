@@ -1218,16 +1218,26 @@
   position: relative;
   background-image: radial-gradient(at 0 0, #2e5b89, transparent 65%);
 }
+/* Official logo in white on the blue panel. The PNG holds transparent margins
+   (visible mark 574 × 66 at 68, 138 in 707 × 353): the box keeps only the mark. */
 .ml-auth-brand {
+  --logo-width: 220px;
   position: absolute;
   top: 45px;
   left: clamp(35px, 6vw, 100px);
-  font-size: 26px;
-  font-weight: 800;
-  color: white;
+  display: block;
+  width: var(--logo-width);
+  height: calc(var(--logo-width) * 66 / 574);
+  overflow: hidden;
 }
-.ml-auth-brand span {
-  font-weight: 400;
+.ml-auth-brand img {
+  display: block;
+  width: calc(var(--logo-width) * 707 / 574);
+  max-width: none;
+  height: auto;
+  margin: calc(var(--logo-width) * -138 / 574) 0 0
+    calc(var(--logo-width) * -68 / 574);
+  filter: brightness(0) invert(1);
 }
 .ml-auth-story .ml-eyebrow {
   color: #b9cde5;
@@ -2014,9 +2024,9 @@
     padding: 100px 28px 38px;
   }
   .ml-auth-brand {
+    --logo-width: 180px;
     left: 28px;
-    top: 28px;
-    font-size: 23px;
+    top: 32px;
   }
   .ml-auth-story h1 {
     font-size: 36px;

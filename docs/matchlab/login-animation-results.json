@@ -1,339 +1,829 @@
 {
+  "date": "2026-10-17T09:05:05.863Z",
+  "environment": "Next 16.4.2, Edge headless (Chromium), local",
+  "component": "LoginShotMotion",
   "checks": [
     {
       "width": 375,
-      "height": 850,
-      "art": {
-        "bottom": 494.8875122070313,
-        "height": 157.9375,
-        "right": 332,
-        "width": 304,
-        "x": 28,
-        "y": 336.95001220703125
+      "height": 812,
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 28,
+          "y": 32,
+          "width": 180,
+          "height": 21,
+          "bottom": 53,
+          "right": 208
+        },
+        "heading": {
+          "x": 28,
+          "y": 141,
+          "width": 319,
+          "height": 79,
+          "bottom": 220,
+          "right": 347
+        },
+        "intro": {
+          "x": 28,
+          "y": 245,
+          "width": 319,
+          "height": 53,
+          "bottom": 298,
+          "right": 347
+        },
+        "art": {
+          "x": 28,
+          "y": 324,
+          "width": 319,
+          "height": 106,
+          "bottom": 431,
+          "right": 347
+        },
+        "signature": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "form": {
+          "x": 28,
+          "y": 614,
+          "width": 319,
+          "height": 221,
+          "bottom": 836,
+          "right": 347
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 375,
+          "height": 469,
+          "bottom": 469,
+          "right": 375
+        }
       },
-      "brand": {
-        "bottom": 63.650001525878906,
-        "height": 35.650001525878906,
-        "right": 183.75,
-        "width": 155.75,
-        "x": 28,
-        "y": 28
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
       "decorative": "true",
-      "form": {
-        "bottom": 1010.4875183105468,
-        "height": 477.6000061035156,
-        "right": 360,
-        "width": 360,
-        "x": 0,
-        "y": 532.8875122070312
-      },
-      "heading": {
-        "bottom": 220.1500015258789,
-        "height": 79.20000457763672,
-        "right": 332,
-        "width": 304,
-        "x": 28,
-        "y": 140.9499969482422
-      },
-      "scroll": 360,
-      "story": {
-        "bottom": 532.8875122070312,
-        "height": 532.8875122070312,
-        "right": 360,
-        "width": 360,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 360
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 323,
+          "y": 417,
+          "width": 28,
+          "height": 28,
+          "bottom": 445,
+          "right": 351
+        },
+        "pressed": "false"
+      }
     },
     {
       "width": 430,
-      "height": 900,
-      "art": {
-        "bottom": 479.06251525878906,
-        "height": 168.71250915527344,
-        "right": 372.6000022888184,
-        "width": 330,
-        "x": 42.60000228881836,
-        "y": 310.3500061035156
+      "height": 932,
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 28,
+          "y": 32,
+          "width": 180,
+          "height": 21,
+          "bottom": 53,
+          "right": 208
+        },
+        "heading": {
+          "x": 28,
+          "y": 141,
+          "width": 374,
+          "height": 79,
+          "bottom": 220,
+          "right": 402
+        },
+        "intro": {
+          "x": 28,
+          "y": 245,
+          "width": 374,
+          "height": 53,
+          "bottom": 298,
+          "right": 402
+        },
+        "art": {
+          "x": 28,
+          "y": 324,
+          "width": 374,
+          "height": 125,
+          "bottom": 449,
+          "right": 402
+        },
+        "signature": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "form": {
+          "x": 28,
+          "y": 633,
+          "width": 374,
+          "height": 221,
+          "bottom": 854,
+          "right": 402
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 430,
+          "height": 487,
+          "bottom": 487,
+          "right": 430
+        }
       },
-      "brand": {
-        "bottom": 63.650001525878906,
-        "height": 35.650001525878906,
-        "right": 183.75,
-        "width": 155.75,
-        "x": 28,
-        "y": 28
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
       "decorative": "true",
-      "form": {
-        "bottom": 994.6625061035156,
-        "height": 477.6000061035156,
-        "right": 415.2000122070313,
-        "width": 415.2000122070313,
-        "x": 0,
-        "y": 517.0625
-      },
-      "heading": {
-        "bottom": 220.1500015258789,
-        "height": 79.20000457763672,
-        "right": 387.2000122070313,
-        "width": 359.20001220703125,
-        "x": 28,
-        "y": 140.9499969482422
-      },
-      "scroll": 415,
-      "story": {
-        "bottom": 517.0625,
-        "height": 517.0625,
-        "right": 415.2000122070313,
-        "width": 415.2000122070313,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 415
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 378,
+          "y": 435,
+          "width": 28,
+          "height": 28,
+          "bottom": 463,
+          "right": 406
+        },
+        "pressed": "false"
+      }
     },
     {
       "width": 768,
       "height": 1024,
-      "art": {
-        "bottom": 728.7125091552734,
-        "height": 152.90000915527344,
-        "right": 337.9250068664551,
-        "width": 291.8500061035156,
-        "x": 46.07500076293945,
-        "y": 575.8125
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 46,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 266
+        },
+        "heading": {
+          "x": 46,
+          "y": 392,
+          "width": 292,
+          "height": 75,
+          "bottom": 467,
+          "right": 338
+        },
+        "intro": {
+          "x": 46,
+          "y": 492,
+          "width": 292,
+          "height": 80,
+          "bottom": 572,
+          "right": 338
+        },
+        "art": {
+          "x": 46,
+          "y": 612,
+          "width": 292,
+          "height": 97,
+          "bottom": 709,
+          "right": 338
+        },
+        "signature": {
+          "x": 46,
+          "y": 733,
+          "width": 292,
+          "height": 14,
+          "bottom": 747,
+          "right": 338
+        },
+        "form": {
+          "x": 424,
+          "y": 420,
+          "width": 304,
+          "height": 219,
+          "bottom": 639,
+          "right": 728
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 384,
+          "height": 1024,
+          "bottom": 1024,
+          "right": 384
+        }
       },
-      "brand": {
-        "bottom": 85.29999923706055,
-        "height": 40.29999923706055,
-        "right": 222.13750076293945,
-        "width": 176.0625,
-        "x": 46.07500076293945,
-        "y": 45
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
       "decorative": "true",
-      "form": {
-        "bottom": 754.8000183105469,
-        "height": 485.6000061035156,
-        "right": 768,
-        "width": 384,
-        "x": 384,
-        "y": 269.20001220703125
-      },
-      "heading": {
-        "bottom": 447.0124969482422,
-        "height": 74.80000305175781,
-        "right": 337.9250068664551,
-        "width": 291.8500061035156,
-        "x": 46.07500076293945,
-        "y": 372.2124938964844
-      },
-      "scroll": 768,
-      "story": {
-        "bottom": 1024,
-        "height": 1024,
-        "right": 384,
-        "width": 384,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 768
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 314,
+          "y": 695,
+          "width": 28,
+          "height": 28,
+          "bottom": 723,
+          "right": 342
+        },
+        "pressed": "false"
+      }
     },
     {
       "width": 1024,
       "height": 768,
-      "art": {
-        "bottom": 607.5250091552734,
-        "height": 193.1999969482422,
-        "right": 450.5625,
-        "width": 389.125,
-        "x": 61.4375,
-        "y": 414.3250122070313
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 61,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 281
+        },
+        "heading": {
+          "x": 61,
+          "y": 246,
+          "width": 389,
+          "height": 90,
+          "bottom": 336,
+          "right": 451
+        },
+        "intro": {
+          "x": 61,
+          "y": 361,
+          "width": 389,
+          "height": 53,
+          "bottom": 414,
+          "right": 451
+        },
+        "art": {
+          "x": 61,
+          "y": 454,
+          "width": 389,
+          "height": 130,
+          "bottom": 584,
+          "right": 451
+        },
+        "signature": {
+          "x": 61,
+          "y": 608,
+          "width": 389,
+          "height": 14,
+          "bottom": 622,
+          "right": 451
+        },
+        "form": {
+          "x": 598,
+          "y": 292,
+          "width": 340,
+          "height": 219,
+          "bottom": 511,
+          "right": 938
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 512,
+          "height": 768,
+          "bottom": 768,
+          "right": 512
+        }
       },
-      "brand": {
-        "bottom": 85.29999923706055,
-        "height": 40.29999923706055,
-        "right": 237.5,
-        "width": 176.0625,
-        "x": 61.4375,
-        "y": 45
-      },
-      "decorative": "true",
-      "form": {
-        "bottom": 626.8000030517578,
-        "height": 485.6000061035156,
-        "right": 978,
-        "width": 420,
-        "x": 558,
-        "y": 141.1999969482422
-      },
-      "heading": {
-        "bottom": 312.12500762939453,
-        "height": 90.0999984741211,
-        "right": 450.5625,
-        "width": 389.125,
-        "x": 61.4375,
-        "y": 222.02500915527344
-      },
-      "scroll": 1024,
-      "story": {
-        "bottom": 768,
-        "height": 768,
-        "right": 512,
-        "width": 512,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 1024
-    },
-    {
-      "width": 1440,
-      "height": 900,
-      "art": {
-        "bottom": 710.6000213623047,
-        "height": 255.71250915527344,
-        "right": 626.4000015258789,
-        "width": 540,
-        "x": 86.4000015258789,
-        "y": 454.8875122070313
-      },
-      "brand": {
-        "bottom": 85.29999923706055,
-        "height": 40.29999923706055,
-        "right": 262.4625015258789,
-        "width": 176.0625,
-        "x": 86.4000015258789,
-        "y": 45
-      },
-      "decorative": "true",
-      "form": {
-        "bottom": 692.8000030517578,
-        "height": 485.6000061035156,
-        "right": 1290,
-        "width": 420,
-        "x": 870,
-        "y": 207.1999969482422
-      },
-      "heading": {
-        "bottom": 352.68750762939453,
-        "height": 126.70000457763672,
-        "right": 633.6000137329102,
-        "width": 547.2000122070312,
-        "x": 86.4000015258789,
-        "y": 225.9875030517578
-      },
-      "scroll": 1440,
-      "story": {
-        "bottom": 900,
-        "height": 900,
-        "right": 720,
-        "width": 720,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 1440
-    },
-    {
-      "width": 1920,
-      "height": 1080,
-      "art": {
-        "bottom": 763.4500274658203,
-        "height": 255.71250915527344,
-        "right": 640,
-        "width": 540,
-        "x": 100,
-        "y": 507.7375183105469
-      },
-      "brand": {
-        "bottom": 85.29999923706055,
-        "height": 40.29999923706055,
-        "right": 276.0625,
-        "width": 176.0625,
-        "x": 100,
-        "y": 45
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
       "decorative": "true",
-      "form": {
-        "bottom": 782.8000183105469,
-        "height": 485.6000061035156,
-        "right": 1650,
-        "width": 420,
-        "x": 1230,
-        "y": 297.20001220703125
-      },
-      "heading": {
-        "bottom": 405.5375061035156,
-        "height": 66,
-        "right": 860,
-        "width": 760,
-        "x": 100,
-        "y": 339.5375061035156
-      },
-      "scroll": 1920,
-      "story": {
-        "bottom": 1080,
-        "height": 1080,
-        "right": 960,
-        "width": 960,
-        "x": 0,
-        "y": 0
-      },
-      "viewport": 1920
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 427,
+          "y": 570,
+          "width": 28,
+          "height": 28,
+          "bottom": 598,
+          "right": 455
+        },
+        "pressed": "false"
+      }
     },
     {
       "width": 1024,
       "height": 600,
-      "art": {
-        "bottom": 543.3000030517578,
-        "height": 190.0500030517578,
-        "right": 442.9624938964844,
-        "width": 381.5249938964844,
-        "x": 61.4375,
-        "y": 353.25
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 61,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 281
+        },
+        "heading": {
+          "x": 61,
+          "y": 162,
+          "width": 389,
+          "height": 90,
+          "bottom": 252,
+          "right": 451
+        },
+        "intro": {
+          "x": 61,
+          "y": 277,
+          "width": 389,
+          "height": 53,
+          "bottom": 330,
+          "right": 451
+        },
+        "art": {
+          "x": 61,
+          "y": 370,
+          "width": 389,
+          "height": 130,
+          "bottom": 500,
+          "right": 451
+        },
+        "signature": {
+          "x": 61,
+          "y": 524,
+          "width": 389,
+          "height": 14,
+          "bottom": 538,
+          "right": 451
+        },
+        "form": {
+          "x": 598,
+          "y": 208,
+          "width": 340,
+          "height": 219,
+          "bottom": 427,
+          "right": 938
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 512,
+          "height": 600,
+          "bottom": 600,
+          "right": 512
+        }
       },
-      "brand": {
-        "bottom": 85.29999923706055,
-        "height": 40.29999923706055,
-        "right": 237.5,
-        "width": 176.0625,
-        "x": 61.4375,
-        "y": 45
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
       "decorative": "true",
-      "form": {
-        "bottom": 564.1375045776367,
-        "height": 485.6000061035156,
-        "right": 966.6000366210938,
-        "width": 420,
-        "x": 546.6000366210938,
-        "y": 78.5374984741211
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 427,
+          "y": 486,
+          "width": 28,
+          "height": 28,
+          "bottom": 514,
+          "right": 455
+        },
+        "pressed": "false"
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 86,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 306
+        },
+        "heading": {
+          "x": 86,
+          "y": 259,
+          "width": 547,
+          "height": 127,
+          "bottom": 386,
+          "right": 634
+        },
+        "intro": {
+          "x": 86,
+          "y": 411,
+          "width": 410,
+          "height": 53,
+          "bottom": 464,
+          "right": 496
+        },
+        "art": {
+          "x": 86,
+          "y": 504,
+          "width": 520,
+          "height": 173,
+          "bottom": 677,
+          "right": 606
+        },
+        "signature": {
+          "x": 86,
+          "y": 701,
+          "width": 547,
+          "height": 14,
+          "bottom": 715,
+          "right": 634
+        },
+        "form": {
+          "x": 910,
+          "y": 358,
+          "width": 340,
+          "height": 219,
+          "bottom": 577,
+          "right": 1250
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 720,
+          "height": 900,
+          "bottom": 900,
+          "right": 720
+        }
       },
-      "heading": {
-        "bottom": 251.04999542236328,
-        "height": 90.0999984741211,
-        "right": 442.9624938964844,
-        "width": 381.5249938964844,
-        "x": 61.4375,
-        "y": 160.9499969482422
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
       },
-      "scroll": 1009,
-      "story": {
-        "bottom": 642.6875,
-        "height": 642.6875,
-        "right": 504.3999938964844,
-        "width": 504.3999938964844,
-        "x": 0,
-        "y": 0
+      "decorative": "true",
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 582,
+          "y": 663,
+          "width": 28,
+          "height": 28,
+          "bottom": 691,
+          "right": 610
+        },
+        "pressed": "false"
+      }
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "reducedMotion": false,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 100,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 320
+        },
+        "heading": {
+          "x": 100,
+          "y": 373,
+          "width": 760,
+          "height": 66,
+          "bottom": 439,
+          "right": 860
+        },
+        "intro": {
+          "x": 100,
+          "y": 464,
+          "width": 410,
+          "height": 53,
+          "bottom": 517,
+          "right": 510
+        },
+        "art": {
+          "x": 100,
+          "y": 557,
+          "width": 520,
+          "height": 173,
+          "bottom": 730,
+          "right": 620
+        },
+        "signature": {
+          "x": 100,
+          "y": 754,
+          "width": 760,
+          "height": 14,
+          "bottom": 768,
+          "right": 860
+        },
+        "form": {
+          "x": 1270,
+          "y": 448,
+          "width": 340,
+          "height": 219,
+          "bottom": 667,
+          "right": 1610
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 960,
+          "height": 1080,
+          "bottom": 1080,
+          "right": 960
+        }
       },
-      "viewport": 1009
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
+      },
+      "decorative": "true",
+      "animations": 16,
+      "durations": [
+        7200
+      ],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": true,
+        "size": {
+          "x": 596,
+          "y": 716,
+          "width": 28,
+          "height": 28,
+          "bottom": 744,
+          "right": 624
+        },
+        "pressed": "false"
+      }
+    },
+    {
+      "pauseToggle": {
+        "paused": true,
+        "resumed": true
+      },
+      "ok": true
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "reducedMotion": true,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 86,
+          "y": 45,
+          "width": 220,
+          "height": 25,
+          "bottom": 70,
+          "right": 306
+        },
+        "heading": {
+          "x": 86,
+          "y": 259,
+          "width": 547,
+          "height": 127,
+          "bottom": 386,
+          "right": 634
+        },
+        "intro": {
+          "x": 86,
+          "y": 411,
+          "width": 410,
+          "height": 53,
+          "bottom": 464,
+          "right": 496
+        },
+        "art": {
+          "x": 86,
+          "y": 504,
+          "width": 520,
+          "height": 173,
+          "bottom": 677,
+          "right": 606
+        },
+        "signature": {
+          "x": 86,
+          "y": 701,
+          "width": 547,
+          "height": 14,
+          "bottom": 715,
+          "right": 634
+        },
+        "form": {
+          "x": 910,
+          "y": 358,
+          "width": 340,
+          "height": 219,
+          "bottom": 577,
+          "right": 1250
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 720,
+          "height": 900,
+          "bottom": 900,
+          "right": 720
+        }
+      },
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
+      },
+      "decorative": "true",
+      "animations": 0,
+      "durations": [],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": false,
+        "size": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "pressed": "false"
+      }
+    },
+    {
+      "width": 375,
+      "height": 812,
+      "reducedMotion": true,
+      "ok": true,
+      "parts": {
+        "brand": {
+          "x": 28,
+          "y": 32,
+          "width": 180,
+          "height": 21,
+          "bottom": 53,
+          "right": 208
+        },
+        "heading": {
+          "x": 28,
+          "y": 141,
+          "width": 319,
+          "height": 79,
+          "bottom": 220,
+          "right": 347
+        },
+        "intro": {
+          "x": 28,
+          "y": 245,
+          "width": 319,
+          "height": 53,
+          "bottom": 298,
+          "right": 347
+        },
+        "art": {
+          "x": 28,
+          "y": 324,
+          "width": 319,
+          "height": 106,
+          "bottom": 431,
+          "right": 347
+        },
+        "signature": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "form": {
+          "x": 28,
+          "y": 614,
+          "width": 319,
+          "height": 221,
+          "bottom": 836,
+          "right": 347
+        },
+        "story": {
+          "x": 0,
+          "y": 0,
+          "width": 375,
+          "height": 469,
+          "bottom": 469,
+          "right": 375
+        }
+      },
+      "horizontalOverflow": false,
+      "artInsideStory": true,
+      "overlaps": {
+        "heading": false,
+        "intro": false,
+        "form": false,
+        "signature": false,
+        "brand": false
+      },
+      "decorative": "true",
+      "animations": 0,
+      "durations": [],
+      "sharedStart": true,
+      "pauseControl": {
+        "visible": false,
+        "size": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "bottom": 0,
+          "right": 0
+        },
+        "pressed": "false"
+      }
     }
-  ],
-  "sharedDurationSeconds": 6.8,
-  "pauseStopsAllSevenAnimations": true,
-  "keyboardAfterPause": "email",
-  "svgDecorative": true,
-  "reducedMotion": "CSS reviewed; operating-system preference unchanged",
-  "productionBuild": "passed"
+  ]
 }

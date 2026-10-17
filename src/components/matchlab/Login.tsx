@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, LockKeyhole } from "lucide-react";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
+import { LoginShotMotion } from "./LoginShotMotion";
 export function Login({
   mode = "login",
   next,
@@ -17,11 +19,18 @@ export function Login({
     <main className="ml-auth">
       <div className="ml-auth-story">
         <Link href="/fr" className="ml-auth-brand">
-          N91 <span>MatchLab</span>
+          <Image
+            src="/n91-lab-logo.png"
+            alt={t.brand}
+            width={272}
+            height={136}
+            priority
+          />
         </Link>
         <p className="ml-eyebrow">{t.subtitle}</p>
         <h1>{t.auth.title}</h1>
         <p>{t.auth.intro}</p>
+        <LoginShotMotion />
         <span className="ml-auth-signature">{t.footer}</span>
       </div>
       <section className="ml-auth-form">

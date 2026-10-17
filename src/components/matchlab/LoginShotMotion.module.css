@@ -1,0 +1,135 @@
+.scene {
+  position: relative;
+  width: min(100%, 520px);
+  margin-top: 40px;
+  flex: none;
+}
+
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Default (and reduced-motion) frame: ball on the spot, predicted path, still net. */
+.guide {
+  stroke: #cfe0f3;
+  stroke-width: 1;
+  stroke-dasharray: 0.004 0.014;
+  stroke-linecap: round;
+  opacity: 0.32;
+}
+.reveal {
+  stroke: #fff;
+  stroke-width: 1;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.comet,
+.cometGlow {
+  stroke: #e2c47c;
+  stroke-linecap: round;
+  stroke-dasharray: 0.13 2;
+  stroke-dashoffset: 0.13;
+  opacity: 0;
+}
+.comet {
+  stroke-width: 1.7;
+}
+.cometGlow {
+  stroke-width: 6;
+  stroke: #e2c47c55;
+}
+.strike path {
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.dot {
+  fill: #fff;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.shadow {
+  fill: #04152b;
+  opacity: 0.42;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.halo {
+  opacity: 0.25;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.spin {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.mesh {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.burst,
+.ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ring {
+  stroke: #e2c47c;
+  stroke-width: 0.9;
+}
+
+/* Discreet control (WCAG 2.2.2): icon only, revealed on hover and focus. */
+.scene .pause {
+  position: absolute;
+  right: -4px;
+  bottom: -14px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #b9cbe0;
+  opacity: 0.35;
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
+}
+.scene .pause:hover,
+.scene .pause:focus-visible {
+  opacity: 1;
+  background: #ffffff14;
+}
+.scene .pause:focus-visible {
+  outline: 2px solid #d6ad53;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+  .dot {
+    opacity: 0.7;
+  }
+  .scene .pause {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .scene {
+    width: 100%;
+    margin-top: 26px;
+  }
+}
