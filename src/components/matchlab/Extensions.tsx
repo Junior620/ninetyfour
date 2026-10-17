@@ -95,7 +95,7 @@ export function Extensions({ section }: { section: string }) {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={timeline}>
                       <CartesianGrid stroke="#e6edf5" strokeDasharray="3 3" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                      <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                       <YAxis domain={[0, 10]} />
                       <Tooltip />
                       <Line
@@ -128,7 +128,7 @@ export function Extensions({ section }: { section: string }) {
                       }))}
                     >
                       <CartesianGrid stroke="#e6edf5" />
-                      <XAxis dataKey="label" tick={{ fontSize: 9 }} />
+                      <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                       <YAxis domain={[0, 10]} />
                       <Tooltip />
                       <Bar

@@ -1,0 +1,656 @@
+{
+  "date": "2026-10-17",
+  "method": "Edge headless (CDP), version compilée, compte fictif local ; audit DOM : taille de police calculée, contraste texte/fond effectif (couches translucides et opacité), cibles a/button/summary/select/input/textarea (case à cocher via son label), écart entre cibles hors cibles imbriquées, page inerte derrière une modale exclue.",
+  "before": {
+    "screens": [
+      {
+        "page": "connexion",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 3,
+        "contrastUnder45": 2,
+        "targetsUnder44": 5,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "connexion",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 3,
+        "contrastUnder45": 2,
+        "targetsUnder44": 4,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "vue-ensemble",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 57,
+        "contrastUnder45": 50,
+        "targetsUnder44": 14,
+        "gapsUnder8": 12
+      },
+      {
+        "page": "vue-ensemble",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 51,
+        "contrastUnder45": 35,
+        "targetsUnder44": 6,
+        "gapsUnder8": 2
+      },
+      {
+        "page": "joueurs",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 31,
+        "contrastUnder45": 33,
+        "targetsUnder44": 29,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "joueurs",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 26,
+        "contrastUnder45": 18,
+        "targetsUnder44": 24,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "analyse",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 36,
+        "contrastUnder45": 30,
+        "targetsUnder44": 18,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "analyse",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 32,
+        "contrastUnder45": 15,
+        "targetsUnder44": 9,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "rapports",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 29,
+        "contrastUnder45": 38,
+        "targetsUnder44": 9,
+        "gapsUnder8": 12
+      },
+      {
+        "page": "rapports",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 24,
+        "contrastUnder45": 23,
+        "targetsUnder44": 5,
+        "gapsUnder8": 2
+      }
+    ],
+    "other": [
+      {
+        "page": "matches",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 24,
+        "contrastUnder45": 24,
+        "targetsUnder44": 28,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "matches",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 19,
+        "contrastUnder45": 9,
+        "targetsUnder44": 4,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "alerts",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 15,
+        "contrastUnder45": 18,
+        "targetsUnder44": 79,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "alerts",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 10,
+        "contrastUnder45": 2,
+        "targetsUnder44": 39,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "analytics",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 20,
+        "contrastUnder45": 21,
+        "targetsUnder44": 5,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "analytics",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 12,
+        "contrastUnder45": 6,
+        "targetsUnder44": 4,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "video",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 17,
+        "contrastUnder45": 20,
+        "targetsUnder44": 5,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "video",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 9,
+        "contrastUnder45": 5,
+        "targetsUnder44": 4,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "ai",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 23,
+        "contrastUnder45": 37,
+        "targetsUnder44": 7,
+        "gapsUnder8": 12
+      },
+      {
+        "page": "ai",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 18,
+        "contrastUnder45": 22,
+        "targetsUnder44": 3,
+        "gapsUnder8": 1
+      },
+      {
+        "page": "exports",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 17,
+        "contrastUnder45": 19,
+        "targetsUnder44": 7,
+        "gapsUnder8": 11
+      },
+      {
+        "page": "exports",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 11,
+        "contrastUnder45": 4,
+        "targetsUnder44": 4,
+        "gapsUnder8": 1
+      },
+      {
+        "page": "site",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 15,
+        "contrastUnder45": 33,
+        "targetsUnder44": 20,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "site",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 10,
+        "contrastUnder45": 18,
+        "targetsUnder44": 2,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "admin",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 39,
+        "contrastUnder45": 21,
+        "targetsUnder44": 246,
+        "gapsUnder8": 13
+      },
+      {
+        "page": "admin",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 107,
+        "contrastUnder45": 6,
+        "targetsUnder44": 147,
+        "gapsUnder8": 3
+      }
+    ],
+    "states": [
+      {
+        "page": "analyse-evaluation",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 48,
+        "contrastUnder45": 41,
+        "targetsUnder44": 19,
+        "gapsUnder8": 11
+      },
+      {
+        "page": "analyse-evaluation",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 45,
+        "contrastUnder45": 26,
+        "targetsUnder44": 9,
+        "gapsUnder8": 1
+      },
+      {
+        "page": "menu-mobile",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 57,
+        "contrastUnder45": 50,
+        "targetsUnder44": 3,
+        "gapsUnder8": 10
+      },
+      {
+        "page": "menu-mobile",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 57,
+        "contrastUnder45": 48,
+        "targetsUnder44": 3,
+        "gapsUnder8": 9
+      },
+      {
+        "page": "modale-joueur",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 31,
+        "contrastUnder45": 33,
+        "targetsUnder44": 3,
+        "gapsUnder8": 0
+      },
+      {
+        "page": "modale-joueur",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 28,
+        "contrastUnder45": 18,
+        "targetsUnder44": 1,
+        "gapsUnder8": 0
+      }
+    ]
+  },
+  "after": {
+    "screens": [
+      {
+        "page": "connexion",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "connexion",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "vue-ensemble",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 1,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": [
+          {
+            "kind": "contrast",
+            "el": ".ml-dossier-score > span",
+            "text": "—",
+            "ratio": 1.81
+          }
+        ]
+      },
+      {
+        "page": "vue-ensemble",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 1,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": [
+          {
+            "kind": "contrast",
+            "el": ".ml-dossier-score > span",
+            "text": "—",
+            "ratio": 1.81
+          }
+        ]
+      },
+      {
+        "page": "joueurs",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "joueurs",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "analyse",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "analyse",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "rapports",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "rapports",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      }
+    ],
+    "other": [
+      {
+        "page": "matches",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "matches",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "alerts",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "alerts",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "analytics",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "analytics",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "video",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "video",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "ai",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "ai",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "exports",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "exports",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "site",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "site",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "admin",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "admin",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      }
+    ],
+    "states": [
+      {
+        "page": "analyse-evaluation",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "analyse-evaluation",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "menu-mobile",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 1,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": [
+          {
+            "kind": "contrast",
+            "el": ".ml-dossier-score > span",
+            "text": "—",
+            "ratio": 1.81
+          }
+        ]
+      },
+      {
+        "page": "menu-mobile",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 1,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": [
+          {
+            "kind": "contrast",
+            "el": ".ml-dossier-score > span",
+            "text": "—",
+            "ratio": 1.81
+          }
+        ]
+      },
+      {
+        "page": "modale-joueur",
+        "width": 1440,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      },
+      {
+        "page": "modale-joueur",
+        "width": 375,
+        "overflow": false,
+        "fontsUnder12": 0,
+        "contrastUnder45": 0,
+        "targetsUnder44": 0,
+        "gapsUnder8": 0,
+        "remaining": []
+      }
+    ]
+  }
+}

@@ -84,13 +84,14 @@
   stroke-width: 0.9;
 }
 
-/* Discreet control (WCAG 2.2.2): icon only, revealed on hover and focus. */
+/* Discreet control (WCAG 2.2.2): icon only, revealed on hover and focus.
+   44 px hit area around the same visual centre. */
 .scene .pause {
   position: absolute;
-  right: -4px;
-  bottom: -14px;
-  width: 28px;
-  height: 28px;
+  right: -12px;
+  bottom: -22px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   padding: 0;

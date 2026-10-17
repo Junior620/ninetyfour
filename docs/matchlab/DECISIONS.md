@@ -17,3 +17,36 @@
 - Rapport : points d’appui = critères notés 4–5, points à travailler = critères notés 1–2, directement issus des réponses ; « Non observé » et 3 n’apparaissent pas. Aucun texte généré.
 - Profil cible dans la salle d’analyse : comparaison factuelle des fondamentaux aux notes cibles, sans pourcentage tant que la formule de compatibilité n’est pas validée par la direction.
 - « Profils à revoir » de la vue d’ensemble : joueurs au statut « À revoir » uniquement ; la référence affichait des pourcentages de démonstration, non repris.
+
+## Tokens et accessibilité
+
+Lisibilité au bord du terrain, sans changer la structure ni l’identité. Tout passe par `src/app/matchlab/matchlab.css`.
+
+- **Tokens** déclarés sur `.ml-body` (donc aussi dans les modales et le tiroir, rendus dans `body`) : surfaces (`--ml-bg`, `--ml-surface`, `--ml-surface-raised`, `-muted`, `-hover`, `-accent`, `-sunken`, ombres), textes (`--ml-text`, `-strong`, `-secondary`, `-tertiary`, `-inverse`, `-inverse-muted`), bordures, bleu N91 (`--ml-accent` et ses variantes texte), bleu nuit (`--ml-navy`, `--ml-navy-panel`), or, succès, alerte, erreur. Les 145 couleurs codées en dur (151 avec les variantes à transparence) sont ramenées à 46 valeurs, toutes dans ce bloc ; les nuances quasi identiques sont fusionnées. Les graphiques Recharts gardent leurs couleurs SVG.
+- **Échelle typographique** : `--ml-font-xs` 12 px (plancher : sur-titres en capitales, badges, en-têtes de tableau, notes), `-sm` 13 px (texte secondaire), `-md` 14 px (corps, boutons, menu, tableaux), `-lg` 16 px, `-xl` 20 px. Les capitales passent de 8–9 px à 12 px avec un interlettrage réduit (0,14 em → 0,06–0,1 em). Champs à 16 px sous 640 px (`--ml-font-field`), sauf le sélecteur de fichier qui n’ouvre pas de clavier. Axes des graphiques à 12 px. Chiffres à chasse fixe (`tabular-nums`) pour scores, notes, KPI, tableaux, minutes, repères vidéo et horodatage de sauvegarde.
+- **Contraste** : le gris tertiaire unique `#5d6e84` remplace une quarantaine de gris entre 2,4:1 et 4,4:1 (`#94a0b0` 2,47:1 sur `#f5f7fa`, `#8495a8` 2,86:1, `#8090a5` 3,03:1, `#69788e` 4,18:1, sur-titre `#5378a4` 4,26:1, état « non enregistré » `#9a6b12` 4,36:1). Paires vérifiées par calcul (WCAG 2.x, luminance relative) :
+
+  | Token | Couleur | Blanc | `#f5f7fa` | Fond teinté le plus sombre où il apparaît |
+  | --- | --- | --- | --- | --- |
+  | `--ml-text` | `#172c48` | 14,09 | 13,13 | `#edf3fa` 12,62 |
+  | `--ml-text-strong` | `#0f2745` | 15,04 | 14,01 | — |
+  | `--ml-text-secondary` | `#4c607c` | 6,42 | 5,98 | `#edf3fa` 5,75 |
+  | `--ml-text-tertiary` | `#5d6e84` | 5,21 | 4,86 | badge `#eef2f7` 4,64 |
+  | `--ml-accent` | `#123d70` | 10,90 | 10,15 | `#edf3fa` 9,76 |
+  | `--ml-accent-text` (liens) | `#1b5291` | 7,89 | 7,35 | menu actif `#edf3fa` 7,06 |
+  | `--ml-accent-soft` | `#2e639e` | 6,19 | 5,76 | badge `#edf3fa` 5,54 |
+  | `--ml-accent-muted` (sur-titres, notices) | `#44688f` | 5,80 | 5,40 | notice `#edf3fa` 5,19 |
+  | `--ml-accent-heading` | `#2b4c74` | 8,79 | 8,19 | `#edf3fa` 7,87 |
+  | `--ml-success` | `#256c53` | 6,27 | 5,84 | `#ebf6f0` 5,67 |
+  | `--ml-success-strong` | `#245b40` | 7,94 | 7,40 | `#ebf6f0` 7,17 |
+  | `--ml-warning` | `#8a5f10` | 5,64 | 5,25 | — |
+  | `--ml-danger` | `#993b40` | 6,88 | 6,41 | `#fff2f1` 6,29 |
+  | `--ml-gold-text` | `#5d4a1f` | 8,52 | 7,94 | `#fbf8f1` 8,03 |
+  | Blanc sur `--ml-accent` (boutons) | `#ffffff` | — | — | `#123d70` 10,90 |
+  | `--ml-text-inverse-muted` | `#c5dbf1` | — | — | panneau `#12345b` 8,86, point le plus clair du dégradé `#2e5b89` 4,97, vidéo `#0f2745` 10,58 |
+
+- **Exceptions assumées** : le tiret entre les deux scores du dossier match (`aria-hidden`, purement décoratif, 1,81:1) ; les commandes désactivées (opacité 0,5, exemptées par WCAG 1.4.3) ; le texte blanc sur la photo de bannière, posé sur un voile `#061a33` à 90 %. L’icône de pause de la connexion garde son repos discret documenté dans `LOGIN_ANIMATION.md`, mais sa zone passe à 44 × 44 px au même centre visuel.
+- **Zones tactiles** : `--ml-target` 44 px et `--ml-target-gap` 8 px. Boutons, liens du menu (espacés par `gap`), sélecteurs de filtre et de saison, résumés repliables, déconnexion, alertes, menu mobile, fermetures de modale et de tiroir, cases à cocher via leur libellé, liens « Ouvrir l’analyse », bouton joueur, logo de connexion. Dans les tableaux, lien et bouton atteignent 44 px par une marge négative, sans grandir la ligne. Les trois lectures et les profils à revoir sont séparés de 8 px. Les boutons posés sous des champs prennent 16 px d’écart.
+- **Ajustements de mise en page induits** : numéros KPI alignés en bas de carte (libellé sur deux lignes en mobile), sélecteurs du rapport empilés sous 640 px (`ml-report-picker`), logo du tiroir sous le bouton de fermeture, marges du menu latéral resserrées : il tient sans défilement à 1 440 × 900 et défile en dessous (93 px masqués à 1 440 × 800).
+- **Vérification** (17 octobre 2026, version compilée, Edge headless, compte fictif local) : audit DOM des tailles calculées, du contraste texte/fond effectif, des cibles et de leurs écarts, sur 32 vues (5 écrans demandés, 8 autres pages et 3 états ouverts — évaluation, tiroir, modale — à 1 440 et 375 px). Avant, selon la vue des cinq écrans demandés : 3 à 57 textes sous 12 px, 2 à 50 sous 4,5:1 et 4 à 29 cibles sous 44 px. Après : 0 texte sous 12 px, 0 cible sous 44 px, 0 écart sous 8 px, 0 débordement horizontal ; seul le tiret décoratif reste signalé. Détail dans `accessibility-results.json`, captures avant/après dans `screenshots/lisibilite/`.
+- **Hors périmètre, à traiter ensuite** : l’anneau de focus or `#d6ad53` (2,0:1 sur blanc) et les bordures de champ `#d8e1ec` restent sous le 3:1 du contraste non textuel (WCAG 1.4.11) ; les corriger touche à l’identité et demande un arbitrage.

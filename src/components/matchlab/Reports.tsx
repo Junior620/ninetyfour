@@ -74,7 +74,7 @@ export function Reports() {
         <Empty text={t.reports.empty} />
       ) : (
         <>
-          <div className="ml-form-grid ml-no-print">
+          <div className="ml-form-grid ml-report-picker ml-no-print">
             <label>
               {t.nav.matches}
               <select
