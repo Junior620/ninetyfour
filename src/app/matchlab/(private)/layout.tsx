@@ -27,10 +27,16 @@ export default async function Layout({
       </main>
     );
   }
+  // Season names only (RLS: any active member); the data graph stays loaded client-side.
+  const seasons = await session.db
+    .from("ml_seasons")
+    .select("id,name")
+    .order("starts_on", { ascending: false });
   return (
     <Shell
       member={session.member}
       email={session.user.email || "N91"}
+      seasons={seasons.data ?? []}
       logo={existsSync(join(process.cwd(), "public/n91-lab-logo.png"))}
       localOnly={labConfig().url === "http://127.0.0.1:55321"}
     >

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { POSITIONS } from "./questionnaire";
+import { GROUNDS, EVENTS } from "./circumstances";
 
 const id = z.uuid();
 const text = (max = 5000) => z.string().trim().max(max);
@@ -65,14 +66,23 @@ export const matchSchema = z
     context: text().default(""),
     circumstances: z
       .object({
+        match_type: text(100).optional(),
+        ground: z.enum(GROUNDS).optional(),
+        surface: text(100).optional(),
         opposition: text(100).optional(),
         pitch: text(100).optional(),
         weather: text(100).optional(),
+        system: text(100).optional(),
+        scenario: text(160).optional(),
+        events: z
+          .array(z.enum(EVENTS))
+          .max(EVENTS.length)
+          .refine((e) => new Set(e).size === e.length, "Événement en double")
+          .optional(),
         travel: text(300).optional(),
         absences: text(1000).optional(),
         incidents: text(2000).optional(),
         duration: z.number().int().min(1).max(150).optional(),
-        system: text(100).optional(),
       })
       .strict()
       .default({}),

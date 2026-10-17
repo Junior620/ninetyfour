@@ -144,6 +144,22 @@ export const collectiveQuestions = questions([
   ["Finition", "A-t-elle créé et bien conclu ses occasions ?"],
   ["Solidité défensive", "A-t-elle limité les occasions dangereuses ?"],
 ]);
+/** Report wording (PDF §5.4): criteria answered 4–5 support, 1–2 to work on. "Non observé" and 3 are left out. */
+export function answerHighlights(
+  position: Position,
+  common: Record<string, number | null>,
+  specific: Record<string, number | null>,
+) {
+  const rows = [
+    ...commonQuestions.map((q) => [q.label, common[q.id]] as const),
+    ...specificQuestions[position].map((q) => [q.label, specific[q.id]] as const),
+  ];
+  const pick = (keep: (v: number) => boolean) =>
+    rows
+      .filter(([, v]) => typeof v === "number" && keep(v))
+      .map(([label]) => label);
+  return { support: pick((v) => v >= 4), work: pick((v) => v <= 2) };
+}
 // The immutable French source is authoritative. English can be added by version without changing question IDs.
 export const questionnaires = {
   "pdf-1.1": {

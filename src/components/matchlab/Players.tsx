@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useState } from "react";
 import { MediaManager } from "./MediaManager";
 import { Plus } from "lucide-react";
@@ -16,13 +15,9 @@ import {
   ScopeFields,
   Feedback,
   Pagination,
+  PlayerAvatar,
+  fundamentalKeys,
 } from "./shared";
-const fundamentalKeys = [
-  "technique",
-  "tactical",
-  "physical",
-  "mental",
-] as const;
 export function Players() {
   const { data } = useLab();
   const [open, setOpen] = useState(false);
@@ -320,9 +315,6 @@ export function Players() {
                     const memberships = data.graph.memberships.filter(
                       (m) => m.player_id === p.id,
                     );
-                    const photo = data.graph.media.find(
-                      (m) => m.player_id === p.id && m.purpose === "photo",
-                    );
                     return (
                       <tr key={p.id}>
                         <td>
@@ -334,23 +326,7 @@ export function Players() {
                               setOpen(true);
                             }}
                           >
-                            <span className="ml-player-avatar">
-                              {photo ? (
-                                <Image
-                                  src={`/api/matchlab/media?id=${photo.id}`}
-                                  width={40}
-                                  height={40}
-                                  unoptimized
-                                  alt=""
-                                />
-                              ) : (
-                                p.full_name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .slice(0, 2)
-                                  .join("")
-                              )}
-                            </span>
+                            <PlayerAvatar playerId={p.id} name={p.full_name} />
                             <strong>{p.full_name}</strong>
                           </button>
                           <small>

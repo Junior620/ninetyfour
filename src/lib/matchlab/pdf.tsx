@@ -19,7 +19,9 @@ import {
   positionNames,
   commonQuestions,
   specificQuestions,
+  collectiveQuestions,
 } from "./questionnaire";
+import { describeCircumstances } from "./circumstances";
 import { fr as t } from "./messages";
 const styles = StyleSheet.create({
   page: { padding: 38, fontFamily: "Helvetica", fontSize: 9, color: "#17334f" },
@@ -110,15 +112,24 @@ export async function reportPdf(
               {t.reports.collective} :{" "}
               {displayScore(collectiveScore(m.collective))} /10
             </Text>
+            <Text style={styles.note}>
+              {collectiveQuestions
+                .map(
+                  (q) =>
+                    `${q.label} : ${
+                      q.id in m.collective
+                        ? m.collective[q.id] === null
+                          ? t.analysis.unobserved
+                          : `${m.collective[q.id]}/5`
+                        : "—"
+                    }`,
+                )
+                .join(" · ")}
+            </Text>
             {m.context && <Text style={styles.note}>{m.context}</Text>}
-            {Object.entries(m.circumstances).map(([key, value]) => (
-              <Text style={styles.note} key={key}>
-                {
-                  t.match.circumstanceKeys[
-                    key as keyof typeof t.match.circumstanceKeys
-                  ]
-                }{" "}
-                : {value}
+            {describeCircumstances(m.circumstances).map((c) => (
+              <Text style={styles.note} key={c.key}>
+                {c.label} : {c.value}
               </Text>
             ))}
             {g.evaluations
@@ -146,7 +157,15 @@ export async function reportPdf(
                   <View style={styles.row} wrap={false}>
                     <Text style={styles.cell}>
                       {g.players.find((p) => p.id === e.player_id)?.full_name} ·{" "}
-                      {positionNames[e.position as keyof typeof positionNames]}
+                      #
+                      {g.memberships.find(
+                        (ms) =>
+                          ms.player_id === e.player_id &&
+                          ms.season_id === m.season_id &&
+                          ms.category_id === m.category_id,
+                      )?.jersey ?? "—"}{" "}
+                      · {positionNames[e.position as keyof typeof positionNames]}{" "}
+                      · {t.reports.minutes} {e.minutes ?? "—"} min
                     </Text>
                     <Text style={styles.score}>
                       {displayScore(individualScore(e.common, e.specific))} /10
@@ -181,7 +200,8 @@ export async function reportPdf(
                   {Math.floor(marker.seconds % 60)
                     .toString()
                     .padStart(2, "0")}{" "}
-                  · {t.analysis.markerTypes[marker.kind]} · {marker.observation}
+                  · {t.analysis.markerTypes[marker.kind]}
+                  {marker.theme && ` · ${marker.theme}`} · {marker.observation}
                 </Text>
               ))}
           </View>
@@ -196,13 +216,14 @@ export async function reportPdf(
           </Text>
         ))}
         <Text style={styles.note}>{t.decision}</Text>
-        <Text style={styles.section}>Postes les mieux évalués</Text>
+        <Text style={styles.section}>{t.reports.bestPositions}</Text>
         {rank.bestPositions.map((p) => (
           <Text key={p.position} style={styles.note}>
             {positionNames[p.position as keyof typeof positionNames]} ·{" "}
             {displayScore(p.mean)} /10 · {p.n} joueur(s) distinct(s)
           </Text>
         ))}
+        <Text style={styles.note}>{t.reports.review}</Text>
         <View style={styles.footer} fixed>
           <Text>N91 MatchLab · Confidentiel · {metadata.scoring}</Text>
           <Text

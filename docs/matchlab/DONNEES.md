@@ -5,7 +5,7 @@ Migrations additives `supabase/migrations/202610150001…` : tables préfixées 
 - ml_members / scopes / shares / sessions : rôles direction, staff, reader, permissions distinctes, affectations et révocation.
 - seasons / categories : saisons éditables ; U-14, U-16, U-17, U-18 initialisées.
 - players / memberships : profil, poste habituel, pied, statut ; dossard 1–99 par appartenance. Un doublon de dossard est un avertissement, pas une unicité mondiale.
-- matches : circonstances descriptives, score nullable, collectif séparé, brouillon/évalué/revu, nom vidéo local sans fichier transféré.
+- matches : circonstances descriptives, score nullable, collectif séparé, brouillon/évalué/revu, nom vidéo local sans fichier transféré. `circumstances` (jsonb validé par Zod) : `match_type`, `ground` (`home`/`away`/`neutral`), `surface`, `pitch`, `weather`, `opposition`, `system`, `scenario`, `events` (`absences`, `injury`, `red_card`, `tactical_change`, `interruption`, `delay`), `absences`, `incidents`, `travel`, `duration`. Les listes proposées reprennent la référence ; une valeur libre antérieure reste valide. `updated_at` est tenu par le trigger `ml_matches_touch_updated_at` (migration 202610170012).
 - questionnaires / evaluations : questionnaire PDF 1.1 immuable, six questions communes et cinq pour chacun des huit postes ; une évaluation par match/joueur/poste. Le JSON omis représente absence ; null signifie Non observé.
 - markers : positif, correction, occasion, transition ; minute/seconde, joueur optionnel, poste, thème et observation.
 - reports : instantané immuable, révision, auteur, validateur, motif de correction ; audit avant/après des entités modifiables.

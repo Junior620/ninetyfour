@@ -1,8 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Play, Plus, Save } from "lucide-react";
+import { Lightbulb, Play, Plus, Save } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
+import {
+  CIRCUMSTANCE_KEYS,
+  EVENTS,
+  GROUNDS,
+} from "@/lib/matchlab/circumstances";
 import {
   commonQuestions,
   specificQuestions,
@@ -18,7 +24,7 @@ import {
   displayScore,
   type Answers,
 } from "@/lib/matchlab/scoring";
-import type { Evaluation, Match } from "@/lib/matchlab/schema";
+import type { Evaluation, Match, Player } from "@/lib/matchlab/schema";
 import {
   useLab,
   useMutation,
@@ -28,6 +34,7 @@ import {
   Feedback,
   Empty,
   Status,
+  fundamentalKeys,
 } from "./shared";
 
 export function Analysis({ id }: { id?: string }) {
@@ -83,6 +90,210 @@ function Questions({
         </label>
       ))}
     </div>
+  );
+}
+/** Reference choices; a free value saved before these lists stays selectable. */
+function Choice({
+  name,
+  label,
+  options,
+  value,
+}: {
+  name: string;
+  label: string;
+  options: string[];
+  value?: string;
+}) {
+  const previous = value && !options.includes(value) ? value : "";
+  return (
+    <label>
+      {label}
+      <select name={name} defaultValue={value || ""}>
+        <option value="">—</option>
+        {options.map((o) => (
+          <option key={o}>{o}</option>
+        ))}
+        {previous && (
+          <option value={previous}>
+            {previous} · {t.match.previousValue}
+          </option>
+        )}
+      </select>
+    </label>
+  );
+}
+function CircumstanceFields({
+  value = {},
+}: {
+  value?: Match["circumstances"];
+}) {
+  const choice = (key: keyof typeof t.match.choices) => (
+    <Choice
+      key={key}
+      name={`c_${key}`}
+      label={t.match.circumstanceKeys[key]}
+      options={t.match.choices[key]}
+      value={value[key]}
+    />
+  );
+  return (
+    <div className="ml-form-grid ml-circumstance-grid">
+      {choice("match_type")}
+      <label>
+        {t.match.circumstanceKeys.ground}
+        <select name="c_ground" defaultValue={value.ground || ""}>
+          <option value="">—</option>
+          {GROUNDS.map((g) => (
+            <option key={g} value={g}>
+              {t.match.grounds[g]}
+            </option>
+          ))}
+        </select>
+      </label>
+      {(
+        [
+          "surface",
+          "pitch",
+          "weather",
+          "opposition",
+          "system",
+          "scenario",
+        ] as const
+      ).map(choice)}
+      <fieldset className="wide ml-events">
+        <legend>{t.match.circumstanceKeys.events}</legend>
+        {EVENTS.map((e) => (
+          <label key={e} className="ml-check">
+            <input
+              type="checkbox"
+              name="c_events"
+              value={e}
+              defaultChecked={value.events?.includes(e)}
+            />
+            {t.match.events[e]}
+          </label>
+        ))}
+      </fieldset>
+      <label>
+        {t.match.circumstanceKeys.absences}
+        <textarea
+          name="c_absences"
+          maxLength={1000}
+          defaultValue={value.absences}
+        />
+      </label>
+      <label>
+        {t.match.circumstanceKeys.incidents}
+        <textarea
+          name="c_incidents"
+          maxLength={2000}
+          defaultValue={value.incidents}
+        />
+      </label>
+      <label>
+        {t.match.circumstanceKeys.travel}
+        <input name="c_travel" maxLength={300} defaultValue={value.travel} />
+      </label>
+      <label>
+        {t.match.circumstanceKeys.duration}
+        <input
+          name="c_duration"
+          type="number"
+          min={1}
+          max={150}
+          defaultValue={value.duration ?? ""}
+        />
+      </label>
+    </div>
+  );
+}
+function TargetProfile({
+  match,
+  players,
+}: {
+  match?: Match;
+  players: Player[];
+}) {
+  const { data } = useLab();
+  const targets = data.graph.targets.filter(
+    (target) =>
+      !match ||
+      (target.season_id === match.season_id &&
+        target.category_id === match.category_id),
+  );
+  const [targetId, setTargetId] = useState("");
+  const [playerId, setPlayerId] = useState("");
+  const target = targets.find((x) => x.id === targetId) || targets[0];
+  const player = players.find((p) => p.id === playerId);
+  const rating = (v?: number | null) => (v == null ? "—" : `${v}/5`);
+  return (
+    <section className="ml-card ml-target-card">
+      <div className="ml-section-title">
+        <h2>{t.analysis.target}</h2>
+        <small>{t.analysis.targetMeta}</small>
+      </div>
+      {targets.length ? (
+        <div className="ml-form-grid">
+          <label>
+            {t.analysis.targetPosition}
+            <select
+              value={target?.id}
+              onChange={(e) => setTargetId(e.target.value)}
+            >
+              {targets.map((x) => (
+                <option key={x.id} value={x.id}>
+                  {positionNames[x.position]} · {x.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            {t.analysis.targetCompare}
+            <select
+              value={playerId}
+              onChange={(e) => setPlayerId(e.target.value)}
+            >
+              <option value="">—</option>
+              {players.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.full_name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      ) : (
+        <p className="ml-notice">{t.analysis.targetNone}</p>
+      )}
+      {target && player ? (
+        <div className="ml-table-wrap">
+          <table className="ml-target-table">
+            <thead>
+              <tr>
+                <th>{t.analysis.targetCriterion}</th>
+                <th>{t.analysis.targetPlayer}</th>
+                <th>{t.analysis.targetRequired}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fundamentalKeys.map((k, i) => (
+                <tr key={k}>
+                  <td>{t.players.columns[i + 2]}</td>
+                  <td>{rating(player.fundamentals[k])}</td>
+                  <td>{rating(target.fundamentals[k])}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        target && <p className="ml-target-empty">{t.analysis.targetEmpty}</p>
+      )}
+      <p className="ml-method">{t.analysis.targetNote}</p>
+      <Link className="ml-button secondary" href="/matchlab/players">
+        {t.analysis.manageProfiles} →
+      </Link>
+    </section>
   );
 }
 function AnalysisForm({ match }: { match?: Match }) {
@@ -159,6 +370,21 @@ function AnalysisForm({ match }: { match?: Match }) {
     <>
       <Heading title={t.analysis.title} eyebrow={t.analysis.eyebrow}>
         <div className="ml-actions">
+          <p
+            className={`ml-save-state${dirty ? " dirty" : match ? "" : " new"}`}
+            role="status"
+          >
+            {dirty
+              ? t.analysis.unsavedState
+              : match
+                ? `${t.analysis.lastSaved} · ${new Date(
+                    match.updated_at,
+                  ).toLocaleString("fr-FR", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}`
+                : t.analysis.notSaved}
+          </p>
           <button
             className="ml-button secondary"
             type="button"
@@ -196,15 +422,19 @@ function AnalysisForm({ match }: { match?: Match }) {
         onChange={() => setMatchDirty(true)}
         onSubmit={async (e) => {
           e.preventDefault();
-          const values = Object.fromEntries(new FormData(e.currentTarget));
-          const circumstances = Object.fromEntries(
-            Object.keys(t.match.circumstanceKeys)
-              .filter((k) => values[`c_${k}`] !== "")
-              .map((k) => [
-                k,
-                k === "duration" ? Number(values[`c_${k}`]) : values[`c_${k}`],
-              ]),
-          );
+          const fields = new FormData(e.currentTarget);
+          const values = Object.fromEntries(fields);
+          const circumstances: Record<string, unknown> = {};
+          for (const key of CIRCUMSTANCE_KEYS) {
+            if (key === "events") {
+              const events = fields.getAll("c_events").map(String);
+              if (events.length) circumstances.events = events;
+              continue;
+            }
+            const value = String(fields.get(`c_${key}`) ?? "").trim();
+            if (value)
+              circumstances[key] = key === "duration" ? Number(value) : value;
+          }
           await mutation.run(async () => {
             const saved = await api("data", {
               kind: "matches",
@@ -314,27 +544,10 @@ function AnalysisForm({ match }: { match?: Match }) {
               />
             </label>
           </div>
-          <details className="ml-circumstances">
+          <details className="ml-circumstances" open>
             <summary>{t.match.circumstances}</summary>
             <p>{t.match.circumstanceHint}</p>
-            <div className="ml-form-grid">
-              {Object.entries(t.match.circumstanceKeys).map(([key, label]) => (
-                <label key={key}>
-                  {label}
-                  <input
-                    type={key === "duration" ? "number" : "text"}
-                    min={key === "duration" ? 1 : undefined}
-                    max={key === "duration" ? 150 : undefined}
-                    name={`c_${key}`}
-                    defaultValue={
-                      match?.circumstances[
-                        key as keyof Match["circumstances"]
-                      ] ?? ""
-                    }
-                  />
-                </label>
-              ))}
-            </div>
+            <CircumstanceFields value={match?.circumstances} />
           </details>
         </fieldset>
       </form>
@@ -445,7 +658,13 @@ function AnalysisForm({ match }: { match?: Match }) {
               />
             </label>
           </div>
-          <p className="ml-method">{t.analysis.markerHint}</p>
+          <div className="ml-tip">
+            <Lightbulb size={17} aria-hidden />
+            <div>
+              <strong>{t.analysis.tip}</strong>
+              <p>{t.analysis.tipText}</p>
+            </div>
+          </div>
           <h3>{t.analysis.markers}</h3>
           {markers.length ? (
             markers.map((m) => (
@@ -479,24 +698,30 @@ function AnalysisForm({ match }: { match?: Match }) {
             <Empty />
           )}
         </section>
-        <section className="ml-card">
-          <h2>{t.analysis.collective}</h2>
-          <p className="ml-score-line">
-            {t.analysis.score}
-            <strong>{displayScore(collectiveScore(collective))}</strong>
-          </p>
-          <fieldset disabled={!canWrite}>
-            <Questions
-              items={collectiveQuestions}
-              values={collective}
-              onChange={(v) => {
-                setCollective(v);
-                setMatchDirty(true);
-              }}
-            />
-          </fieldset>
-          <p className="ml-method">{t.match.circumstanceHint}</p>
-        </section>
+        <div className="ml-analysis-side">
+          <section className="ml-card">
+            <h2>{t.analysis.collective}</h2>
+            <p className="ml-score-line">
+              {t.analysis.score}
+              <strong>{displayScore(collectiveScore(collective))}</strong>
+            </p>
+            <fieldset disabled={!canWrite}>
+              <Questions
+                items={collectiveQuestions}
+                values={collective}
+                onChange={(v) => {
+                  setCollective(v);
+                  setMatchDirty(true);
+                }}
+              />
+            </fieldset>
+            <p className="ml-method">{t.match.circumstanceHint}</p>
+          </section>
+          <TargetProfile
+            match={match}
+            players={match ? players : data.graph.players}
+          />
+        </div>
       </div>
       <section className="ml-card ml-individual">
         <h2>{t.analysis.individual}</h2>
@@ -594,7 +819,7 @@ function AnalysisForm({ match }: { match?: Match }) {
                     />
                   </label>
                   <label>
-                    {t.analysis.observation}
+                    {t.reports.highlight}
                     <textarea
                       value={observation}
                       onChange={(e) => {

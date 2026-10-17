@@ -1,9 +1,88 @@
 "use client";
 import { createContext, useContext, useState } from "react";
+import Image from "next/image";
 import { Dialog } from "@base-ui/react/dialog";
 import { X } from "lucide-react";
 import type { Graph, Member, Filters } from "@/lib/matchlab/schema";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
+export const fundamentalKeys = [
+  "technique",
+  "tactical",
+  "physical",
+  "mental",
+] as const;
+export const initials = (name = "") =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((n) => n[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+/** Authorised private photo (consent checked again by the media API) or initials. */
+export function PlayerAvatar({
+  playerId,
+  name,
+  size = 34,
+}: {
+  playerId: string;
+  name?: string;
+  size?: number;
+}) {
+  const { data } = useLab();
+  const photo = data.graph.media.find(
+    (m) => m.player_id === playerId && m.purpose === "photo",
+  );
+  return (
+    <span
+      className="ml-player-avatar"
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      {photo ? (
+        <Image
+          src={`/api/matchlab/media?id=${photo.id}`}
+          width={size}
+          height={size}
+          unoptimized
+          alt=""
+        />
+      ) : (
+        initials(name) || "N91"
+      )}
+    </span>
+  );
+}
+export const clock = (seconds: number) =>
+  `${Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0")}:${Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0")}`;
+/** Calendar date (YYYY-MM-DD) read at noon so no time zone shifts the day. */
+export const formatDay = (
+  day: string,
+  month: "short" | "long" = "short",
+) =>
+  new Date(`${day}T12:00:00`).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month,
+    year: "numeric",
+  });
+/** Jersey of a player within one season and category (1–99). */
+export function jerseyFor(
+  graph: Graph,
+  playerId: string,
+  seasonId?: string,
+  categoryId?: string,
+) {
+  return graph.memberships.find(
+    (m) =>
+      m.player_id === playerId &&
+      m.season_id === seasonId &&
+      m.category_id === categoryId,
+  )?.jersey;
+}
 export type LabData = {
   graph: Graph;
   member: Member;

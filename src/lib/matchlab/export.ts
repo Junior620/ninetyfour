@@ -4,6 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import type { Graph, Filters } from "./schema";
 import { individualScore, collectiveScore, displayScore } from "./scoring";
 import { positionNames } from "./questionnaire";
+import { describeCircumstances } from "./circumstances";
 export type ExportMetadata = {
   schema: "n91-matchlab/1";
   author: string;
@@ -50,7 +51,9 @@ export function sheets(
     })),
     Circonstances: g.matches.map((m) => ({
       match_id: m.id,
-      ...m.circumstances,
+      ...Object.fromEntries(
+        describeCircumstances(m.circumstances).map((c) => [c.key, c.value]),
+      ),
     })),
     Réponses: g.evaluations.flatMap((e) => [
       ...Array.from({ length: 6 }, (_, i) => ({

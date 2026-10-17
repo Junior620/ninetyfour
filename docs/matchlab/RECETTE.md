@@ -30,6 +30,14 @@ Cinq requêtes consécutives au graphe autorisé, serveur compilé local : **588
 
 Les tests ajoutent leurs propres comptes, saisons et données fictives dans la base isolée. Ils n’utilisent aucune donnée du club et ne réinitialisent pas la base. Une restauration copiée est identifiée par ses nouveaux identifiants ; relancer la recette ne doit pas la confondre avec les données d’une exécution antérieure.
 
+## Écarts comblés — 17 octobre 2026
+
+Serveur compilé Webpack reconstruit (`npm run matchlab:build`), Supabase local avec la migration 202610170012 appliquée par `npm run matchlab:migrate`. Données fictives uniquement.
+
+- Tests unitaires et non-régression : **50/50**, dont quatre nouveaux sur les circonstances (champs PDF acceptés, saisies libres antérieures conservées, codes inconnus et doublons refusés, libellés lisibles) et les points d’appui / à travailler.
+- Intégration PostgreSQL/RLS : **27/27**. HTTP sur serveur compilé : **21/21**. Routes publiques et privées : **33/33**. TypeScript et ESLint réussis.
+- Contrôle navigateur bout en bout (Edge headless piloté localement) : **13/13**. Saisie des nouvelles circonstances dans le vrai formulaire, état « Modifications non enregistrées », enregistrement confirmé, rechargement identique, date de dernière sauvegarde du jour, codes stockés par l’API, rapport avec cinq axes, avatar/photo, dossard, temps de jeu, circonstances lisibles et mention de revue, PDF de match 200, aucun débordement horizontal à 375 px.
+
 ## Limites connues
 
 Le chargement client d’un périmètre se fait après le shell ; le nombre de lignes est plafonné à 10 000 par table. Aucun budget mobile 3G/LCP n’est annoncé sans mesure dédiée. Le service SMTP de recette capture les messages dans Mailpit ; aucun email réel. Push préparé mais envoi absent. IA interface uniquement. Vitrine publique conservée ; CMS réel seulement lorsque explicitement activé et initialisé. Les 14 alertes de dépendances résiduelles sont décrites dans `SECURITE.md`. Aucun déploiement ni migration distante.

@@ -13,3 +13,7 @@
 - Alertes internes persistantes fonctionnelles ; livraison Push réelle hors service configuré. IA limitée aux interfaces/contrats/pseudo-code comme demandé.
 - Next16.4.2 et Webpack utilisés pour corriger une vulnérabilité Windows et éviter le blocage Turbopack local antérieur. Pas de migration majeure Prisma risquée.
 - Pas de suppression de profils par simple bouton : statut inactif et révocation média. Une politique de purge doit être définie avant automatisation.
+- Circonstances : listes de la référence pour la saisie rapide ; domicile/extérieur et événements stockés en codes pour l’analytique future, les autres valeurs en texte afin de garder les saisies libres antérieures. Elles contextualisent sans jamais modifier une note.
+- Rapport : points d’appui = critères notés 4–5, points à travailler = critères notés 1–2, directement issus des réponses ; « Non observé » et 3 n’apparaissent pas. Aucun texte généré.
+- Profil cible dans la salle d’analyse : comparaison factuelle des fondamentaux aux notes cibles, sans pourcentage tant que la formule de compatibilité n’est pas validée par la direction.
+- « Profils à revoir » de la vue d’ensemble : joueurs au statut « À revoir » uniquement ; la référence affichait des pourcentages de démonstration, non repris.

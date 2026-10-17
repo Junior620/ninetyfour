@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
   Flag,
@@ -43,20 +43,31 @@ export function Shell({
   children,
   member,
   email,
+  seasons,
   logo,
   localOnly,
 }: {
   children: React.ReactNode;
   member: Member;
   email: string;
+  seasons: { id: string; name: string }[];
   logo: boolean;
   localOnly: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const query = useSearchParams();
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
   const active = pathname.split("/")[2] as keyof typeof t.nav;
+  const changeSeason = (value: string) => {
+    const params = new URLSearchParams(query.toString());
+    if (value) params.set("season", value);
+    else params.delete("season");
+    const search = params.toString();
+    setOpen(false);
+    router.replace(search ? `${pathname}?${search}` : pathname);
+  };
   useEffect(() => {
     const media = window.matchMedia("(min-width: 1024px)");
     const close = () => {
@@ -113,11 +124,25 @@ export function Shell({
             </div>
           ))}
       </nav>
-      <div className="ml-sidebar-bottom">
+      <label className="ml-season">
+        <small>{t.season}</small>
+        <select
+          value={query.get("season") || ""}
+          onChange={(e) => changeSeason(e.target.value)}
+        >
+          <option value="">{t.allSeasons}</option>
+          {seasons.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div className="ml-sidebar-bottom" title={email}>
         <span className="ml-avatar">N91</span>
         <div>
-          <strong>{t.staff}</strong>
-          <small>{email}</small>
+          <strong>{t.staffTitle}</strong>
+          <small>{t.clubAccess}</small>
         </div>
         <button
           aria-label={t.logout}
@@ -180,7 +205,9 @@ export function Shell({
             >
               <Bell size={19} />
             </Link>
-            <span className="ml-avatar">{email.slice(0, 2).toUpperCase()}</span>
+            <span className="ml-avatar" title={email}>
+              {email.slice(0, 2).toUpperCase()}
+            </span>
           </div>
         </header>
         <main id="ml-main" tabIndex={-1} className="ml-main">

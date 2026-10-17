@@ -4,7 +4,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
+  ArrowRight,
   ArrowUpRight,
+  MapPin,
   Plus,
   Upload,
   Users,
@@ -18,6 +20,7 @@ import {
   displayScore,
   rankings,
 } from "@/lib/matchlab/scoring";
+import type { Match } from "@/lib/matchlab/schema";
 import {
   LabContext,
   type LabData,
@@ -25,7 +28,11 @@ import {
   Empty,
   Status,
   Pagination,
+  PlayerAvatar,
   api,
+  formatDay,
+  initials,
+  jerseyFor,
 } from "./shared";
 import { Players } from "./Players";
 import { Analysis } from "./Analysis";
@@ -103,20 +110,6 @@ export function Workspace({ section }: { section: string }) {
     <LabContext.Provider value={{ data, refresh }}>
       {!["analyze", "site", "admin", "ai", "alerts"].includes(section) && (
         <div className="ml-filterbar">
-          <label>
-            {t.season}
-            <select
-              value={query.get("season") || ""}
-              onChange={(e) => filter("season", e.target.value)}
-            >
-              <option value="">{t.all}</option>
-              {data.graph.seasons.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </label>
           <label>
             {t.category}
             <select
@@ -242,26 +235,15 @@ function MatchHighlights({
       </p>
       {rank.best.map((e, i) => {
         const p = data.graph.players.find((p) => p.id === e.player_id);
-        const photo = data.graph.media.find(
-          (m) => m.player_id === e.player_id && m.purpose === "photo",
+        const jersey = jerseyFor(
+          data.graph,
+          e.player_id,
+          match?.season_id,
+          match?.category_id,
         );
-        const jersey = data.graph.memberships.find(
-          (m) =>
-            m.player_id === e.player_id &&
-            m.season_id === match?.season_id &&
-            m.category_id === match?.category_id,
-        )?.jersey;
         return (
           <p key={i} className="ml-highlight">
-            {photo && (
-              <Image
-                src={`/api/matchlab/media?id=${photo.id}`}
-                alt=""
-                width={36}
-                height={36}
-                unoptimized
-              />
-            )}
+            <PlayerAvatar playerId={e.player_id} name={p?.full_name} size={36} />
             <strong>
               {p?.full_name} · #{jersey ?? "—"}
             </strong>{" "}
@@ -271,7 +253,7 @@ function MatchHighlights({
         );
       })}
       <p>
-        Poste(s) le(s) mieux évalué(s) :{" "}
+        {t.reports.bestPositions} :{" "}
         {rank.bestPositions
           .map(
             (p) =>
@@ -279,36 +261,100 @@ function MatchHighlights({
           )
           .join(" / ") || "Non calculable"}
       </p>
-      {rank.playerCount < 5 && <small>{t.reports.small}</small>}
+      {rank.playerCount > 0 && rank.playerCount < 5 && (
+        <small>{t.reports.small}</small>
+      )}
+    </div>
+  );
+}
+function DossierCard({ data, match }: { data: LabData; match: Match }) {
+  const ground = match.circumstances.ground;
+  const season = data.graph.seasons.find((s) => s.id === match.season_id);
+  const kind = match.competition || match.circumstances.match_type;
+  return (
+    <div className="ml-dossier">
+      <div className="ml-dossier-main">
+        <div className="ml-dossier-top">
+          <small>
+            {formatDay(match.played_on, "long").toUpperCase()}
+            {kind && ` / ${kind.toUpperCase()}`}
+          </small>
+          <span>{t.overview.reportStatus[match.status]}</span>
+        </div>
+        <div className="ml-dossier-teams">
+          <div className="ml-team">
+            <Image src="/logo-crest.png" alt="" width={46} height={46} />
+            <div>
+              <b>{t.overview.club}</b>
+              <small>
+                {match.category_id}
+                {season && ` · ${season.name}`}
+              </small>
+            </div>
+          </div>
+          <strong className="ml-dossier-score">
+            {match.home_score ?? "–"}
+            <span aria-hidden>—</span>
+            {match.away_score ?? "–"}
+          </strong>
+          <div className="ml-team ml-team-away">
+            <span className="ml-team-mark" aria-hidden>
+              {initials(match.opponent).slice(0, 1) || "?"}
+            </span>
+            <div>
+              <b>{match.opponent}</b>
+              <small>
+                {ground ? t.match.groundMatch[ground] : t.match.opponent}
+              </small>
+            </div>
+          </div>
+        </div>
+        {(match.venue || ground) && (
+          <p className="ml-dossier-venue">
+            <MapPin size={13} aria-hidden />
+            {[match.venue, ground && t.match.grounds[ground]]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        )}
+      </div>
+      <aside className="ml-dossier-review">
+        <small>{t.overview.review}</small>
+        <h3>{t.overview.reviewTitle[match.status]}</h3>
+        <p>{t.overview.reviewText[match.status]}</p>
+        <Link href={`/matchlab/analyze?id=${match.id}`}>
+          {t.overview.openFile}
+          <ArrowRight size={16} aria-hidden />
+        </Link>
+      </aside>
     </div>
   );
 }
 function Overview({ data }: { data: LabData }) {
   const { graph } = data;
   const last = graph.matches[0];
+  const toReview = graph.players.filter((p) => p.status === "trial");
   return (
     <>
       <section className="ml-hero">
-        <div className="ml-hero-copy">
-          <p className="ml-eyebrow">
-            {t.overview.eyebrow}
-            {data.filters.category ? ` · ${data.filters.category}` : ""}
-          </p>
-          <h1>
-            {t.overview.title}
-            <br />
-            <span>{t.overview.light}</span>
-          </h1>
-          <p>{t.overview.intro}</p>
+        <div className="ml-hero-head">
+          <div className="ml-hero-copy">
+            <p className="ml-eyebrow">
+              {t.overview.eyebrow}
+              {(data.filters.category || last?.category_id) &&
+                ` · ${data.filters.category || last?.category_id}`}
+            </p>
+            <h1>
+              {t.overview.title} <span>{t.overview.light}</span>
+            </h1>
+            <p>{t.overview.intro}</p>
+          </div>
           <div className="ml-actions">
-            <Link href="/matchlab/analyze" className="ml-button">
+            <Link href="/matchlab/analyze" className="ml-button secondary">
               <Plus size={17} />
               {t.overview.create}
             </Link>
-            <Link
-              href="/matchlab/analyze#video"
-              className="ml-button secondary"
-            >
+            <Link href="/matchlab/analyze#video" className="ml-button">
               <Upload size={17} />
               {t.overview.import}
             </Link>
@@ -316,89 +362,163 @@ function Overview({ data }: { data: LabData }) {
         </div>
         <div className="ml-hero-photo">
           <Image
-            src="/hero-3.jpeg"
+            src="/promise-01.png"
             alt=""
             fill
-            sizes="(min-width:1200px) 40vw, 100vw"
+            sizes="(min-width:1024px) 75vw, 100vw"
             priority
           />
-          <span>{t.overview.dossier}</span>
+          <div className="ml-banner-mark">
+            <Image
+              src="/n91-lab-logo.png"
+              alt="N91 MatchLab"
+              width={180}
+              height={90}
+            />
+            <span>
+              {t.overview.bannerBrand}
+              <br />
+              {t.overview.bannerLab}
+            </span>
+          </div>
         </div>
       </section>
-      <section className="ml-dossier">
-        <div>
-          <p className="ml-eyebrow">{t.overview.latest}</p>
-          <h2>{t.overview.shared}</h2>
+      <section className="ml-overview-block">
+        <div className="ml-block-head">
+          <p className="ml-eyebrow">{t.overview.dossierTitle}</p>
+          <small>{t.overview.shared}</small>
         </div>
         {last ? (
-          <Link
-            href={`/matchlab/analyze?id=${last.id}`}
-            className="ml-scorecard"
-          >
-            <span className="ml-team-mark">N91</span>
-            <strong>
-              {last.home_score ?? "—"} : {last.away_score ?? "—"}
-            </strong>
-            <div>
-              <b>{last.opponent}</b>
-              <small>
-                {last.category_id} · {last.played_on}
-              </small>
-            </div>
-            <ArrowUpRight size={21} />
-          </Link>
+          <DossierCard data={data} match={last} />
         ) : (
-          <p>{t.overview.noLast}</p>
+          <div className="ml-card ml-dossier-empty">
+            <p>{t.overview.noLast}</p>
+          </div>
         )}
       </section>
-      <section className="ml-readings">
-        <p className="ml-eyebrow">{t.overview.readings}</p>
-        <div>
-          {[
-            ["01", t.overview.collective, t.overview.collectiveText, "reports"],
-            ["02", t.overview.individual, t.overview.individualText, "players"],
-            [
-              "03",
-              t.overview.recruitment,
-              t.overview.recruitmentText,
-              "players",
-            ],
-          ].map(([num, title, text, link]) => (
-            <Link href={`/matchlab/${link}`} key={num}>
-              <span>{num}</span>
-              <h3>{title}</h3>
-              <p>{text}</p>
-              <ArrowUpRight size={18} />
-            </Link>
-          ))}
+      <section className="ml-overview-block">
+        <div className="ml-block-head">
+          <p className="ml-eyebrow">{t.overview.readings}</p>
+          <small>{t.overview.structure}</small>
         </div>
-        <small>{t.decision}</small>
+        <div className="ml-readings-grid">
+          <div className="ml-readings">
+            <div className="ml-panel-head">
+              <b>{t.overview.axesTitle}</b>
+              <small>{t.overview.axesKinds}</small>
+            </div>
+            <div className="ml-readings-items">
+              {[
+                [
+                  "01",
+                  t.overview.collective,
+                  t.overview.collectiveText,
+                  t.overview.collectiveDetail,
+                  "reports",
+                ],
+                [
+                  "02",
+                  t.overview.individual,
+                  t.overview.individualText,
+                  t.overview.individualDetail,
+                  "players",
+                ],
+                [
+                  "03",
+                  t.overview.recruitment,
+                  t.overview.recruitmentText,
+                  t.overview.recruitmentDetail,
+                  "players",
+                ],
+              ].map(([num, kind, title, text, link]) => (
+                <Link href={`/matchlab/${link}`} key={num}>
+                  <span>
+                    {num} / {kind.toUpperCase()}
+                  </span>
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                  <ArrowUpRight size={18} />
+                </Link>
+              ))}
+            </div>
+          </div>
+          <aside className="ml-review-panel">
+            <div className="ml-panel-head">
+              <b>{t.overview.toReview}</b>
+              <small>{t.overview.toReviewMeta}</small>
+            </div>
+            {toReview.length ? (
+              toReview.slice(0, 3).map((p) => (
+                <Link
+                  className="ml-review-row"
+                  href="/matchlab/players"
+                  key={p.id}
+                >
+                  <PlayerAvatar playerId={p.id} name={p.full_name} />
+                  <span>
+                    <b>{p.full_name}</b>
+                    <small>
+                      {graph.memberships
+                        .filter((m) => m.player_id === p.id)
+                        .map((m) => m.category_id)
+                        .filter((c, i, all) => all.indexOf(c) === i)
+                        .join(" · ")}{" "}
+                      · {positionNames[p.usual_position]}
+                    </small>
+                  </span>
+                  <span className="ml-badge">{t.players.trial}</span>
+                </Link>
+              ))
+            ) : (
+              <p className="ml-review-empty">{t.overview.toReviewEmpty}</p>
+            )}
+            {toReview.length > 3 && (
+              <Link className="ml-table-link" href="/matchlab/players">
+                {t.overview.allProfiles} ({toReview.length})
+                <ArrowUpRight size={15} />
+              </Link>
+            )}
+            <small>{t.decision}</small>
+          </aside>
+        </div>
       </section>
       <div className="ml-feature-grid">
         {[
           {
             Icon: Users,
             title: t.overview.squad,
+            heading: t.overview.squadTitle,
             text: "U-14 · U-16 · U-17 · U-18",
             href: "players",
           },
           {
             Icon: Film,
             title: t.overview.library,
-            text: t.overview.libraryText,
+            heading: t.overview.libraryText,
+            text: t.overview.libraryDetail,
             href: "video",
+            image: "/promise-03.png",
           },
           {
             Icon: FileText,
             title: t.overview.reports,
-            text: t.overview.reportsText,
+            heading: t.overview.reportsText,
+            text: t.overview.reportsDetail,
             href: "reports",
           },
         ].map((c) => (
-          <Link key={c.href} href={`/matchlab/${c.href}`} className="ml-card">
+          <Link
+            key={c.href}
+            href={`/matchlab/${c.href}`}
+            className={`ml-card${c.image ? " ml-feature-media" : ""}`}
+          >
             <c.Icon size={24} />
             <small>{c.title}</small>
-            <h3>{c.text}</h3>
+            <h3>{c.heading}</h3>
+            <p>{c.text}</p>
+            {c.image && (
+              <Image src={c.image} alt="" fill sizes="(min-width:1024px) 15vw, 45vw" />
+            )}
             <ArrowUpRight size={16} />
           </Link>
         ))}
