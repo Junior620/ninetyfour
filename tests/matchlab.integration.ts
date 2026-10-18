@@ -810,6 +810,35 @@ async function main() {
       .length === 1,
     "Removing a plan is audited",
   );
+  // Rule-based assistant: suggestions and validations are journaled, nothing else.
+  unwrap(
+    await reader.db.rpc("ml_assistant_log", {
+      event: "ASSISTANT_SUGGESTION",
+      details: { intent: "profiles", query: "milieux U-16" },
+    }),
+  );
+  ok(
+    unwrap(
+      await admin
+        .from("ml_audit")
+        .select("id")
+        .eq("action", "ASSISTANT_SUGGESTION")
+        .eq("user_id", reader.id),
+    ).length === 1,
+    "An assistant suggestion is journaled for its user",
+  );
+  ok(
+    (await staff.db.rpc("ml_assistant_log", { event: "EXPORT_OK", details: {} })).error &&
+      (
+        await staff.db.rpc("ml_assistant_log", {
+          event: "ASSISTANT_VALIDATED",
+          details: { query: "x".repeat(5000) },
+        })
+      ).error &&
+      (await client().rpc("ml_assistant_log", { event: "ASSISTANT_SUGGESTION", details: {} }))
+        .error,
+    "The assistant journal accepts only its own events, bounded, from active members",
+  );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",

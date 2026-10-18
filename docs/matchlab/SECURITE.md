@@ -16,6 +16,8 @@ Match en direct : le flux de la caméra reste dans le navigateur (aperçu) ; auc
 
 Cellule tactique : plans, priorités et bilans sont des documents internes du staff habilité sur le match et de la direction ; un lecteur n’y a pas accès. La base fixe l’auteur d’un plan et refuse une composition d’une autre saison ou catégorie ; la suppression d’un plan est journalisée avec son contenu.
 
+Assistant : il ne contient aucun moteur d’IA et n’envoie rien hors de MatchLab. Il ne lit que les données déjà chargées pour l’utilisateur (RLS) et ne modifie rien sans validation explicite ; les créations passent par l’API habituelle. Le texte des demandes est conservé au journal d’audit, accessible à la direction seulement.
+
 Archives : SHA256, manifeste versionné, validation des relations, limites compression/décompression, refus des chemins arbitraires, collisions explicites, compensation des fichiers. Les empreintes détectent la corruption ; elles ne sont pas une signature d’origine. Seule la direction habilitée restaure une archive de confiance.
 
 Audit : connexions/révocations, mutations avant/après, rapports, publications, exports, imports et accès médias. Accès direction uniquement. Les journaux contiennent des données privées ; leur conservation doit être définie avec les autres données. Politique/durée administrables, pas de purge automatique arbitraire. Sauvegarde et effacement réglementaire nécessitent une procédure d’exploitation distincte.

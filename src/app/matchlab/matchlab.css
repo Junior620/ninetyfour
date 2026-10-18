@@ -3116,6 +3116,82 @@
     justify-self: start;
   }
 }
+/* Rule-based assistant (cahier v2.2, §05). */
+.ml-assistant-slot {
+  display: contents;
+}
+.ml-help-panel.ml-assistant {
+  width: min(560px, 100%);
+}
+.ml-assistant-form {
+  display: grid;
+  gap: 10px;
+}
+.ml-assistant-examples {
+  display: grid;
+  gap: var(--ml-target-gap);
+}
+.ml-assistant-examples .ml-button {
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
+}
+.ml-assistant-answer {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--ml-border);
+}
+.ml-assistant-answer h3 {
+  margin: 6px 0 0;
+  font-size: var(--ml-font-md);
+}
+.ml-assistant-answer > p small {
+  display: block;
+  color: var(--ml-text-tertiary);
+  font-size: var(--ml-font-xs);
+}
+.ml-assistant-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.ml-assistant-steps li {
+  counter-increment: step;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--ml-surface-sunken);
+  color: var(--ml-text-secondary);
+  font-size: var(--ml-font-sm);
+}
+.ml-assistant-steps li::before {
+  content: counter(step) " · ";
+}
+.ml-assistant-steps li.done {
+  background: var(--ml-surface-accent);
+  color: var(--ml-accent-heading);
+}
+.ml-assistant-steps li[aria-current="step"] {
+  background: var(--ml-accent);
+  color: var(--ml-text-inverse);
+}
+.ml-assistant-card {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--ml-border);
+  border-radius: 8px;
+}
+.ml-assistant-card p {
+  margin: 0;
+}
+.ml-assistant-card .ml-button {
+  justify-self: start;
+}
 @media (min-width: 1600px) {
   .ml-hero-photo {
     height: 310px;

@@ -54,6 +54,11 @@ function useTour() {
   );
 }
 const steps = t.tour.steps;
+/** Starts the guided tour from its first step (help panel and assistant). */
+export function startTour(section: string, push: (href: string) => void) {
+  write({ active: true, step: 0, done: false });
+  if (steps[0].section !== section) push(`/matchlab/${steps[0].section}`);
+}
 type Section = keyof typeof t.help.pages;
 
 /** "?" button and side panel: page help, guided tour start and preference. */
@@ -88,10 +93,8 @@ export function HelpPanel({ section }: { section: string }) {
           <button
             className="ml-button"
             onClick={() => {
-              write({ active: true, step: 0, done: false });
               setOpen(false);
-              if (steps[0].section !== section)
-                router.push(`/matchlab/${steps[0].section}`);
+              startTour(section, router.push);
             }}
           >
             <Compass size={17} aria-hidden />

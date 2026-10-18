@@ -26,7 +26,7 @@ const words: Record<string, number> = {
   neuf: 9,
   dix: 10,
 };
-const plain = (s: string) =>
+export const plain = (s: string) =>
   s
     .toLocaleLowerCase("fr")
     .normalize("NFD")
@@ -53,6 +53,17 @@ const positionRules: [RegExp, Position[], string][] = [
   [/\battaquants?\b|\battaque\b/, ["WG", "ST"], "attaquants"],
 ];
 
+/** Positions named in a sentence, most specific phrase first. */
+export function positionsIn(input: string): Position[] {
+  let text = plain(input);
+  const found = new Set<Position>();
+  for (const [rule, list] of positionRules)
+    if (rule.test(text)) {
+      list.forEach((p) => found.add(p));
+      text = text.replace(rule, " ");
+    }
+  return POSITIONS.filter((p) => found.has(p));
+}
 /** Rule-based reading of a request in everyday French. Nothing is guessed silently. */
 export function parseProfileQuery(input: string): ProfileQuery {
   let text = plain(input);

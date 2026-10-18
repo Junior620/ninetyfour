@@ -39,6 +39,7 @@ import { Squad } from "./Squad";
 import { PlayerFile } from "./PlayerFile";
 import { Live } from "./Live";
 import { Tactics } from "./Tactics";
+import { AssistantSlot } from "./Assistant";
 import { Analysis } from "./Analysis";
 import { Reports } from "./Reports";
 import { Extensions } from "./Extensions";
@@ -51,6 +52,7 @@ async function fetchLab(queryString: string): Promise<LabData> {
   params.delete("module");
   params.delete("revision");
   params.delete("t");
+  params.delete("ask");
   const response = await fetch(`/api/matchlab/data?${params}`, {
     cache: "no-store",
   });
@@ -115,6 +117,7 @@ export function Workspace({ section }: { section: string }) {
   };
   return (
     <LabContext.Provider value={{ data, refresh }}>
+      <AssistantSlot section={section} />
       {!["analyze", "site", "admin", "ai", "alerts", "squad", "player", "live", "tactics"].includes(section) && (
         <div className="ml-filterbar">
           <label>

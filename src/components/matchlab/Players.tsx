@@ -327,7 +327,9 @@ export function Players() {
         <strong>{t.players.reading}</strong>
         <p>{t.players.explanation}</p>
       </aside>
-      {data.member.role !== "reader" && <ProfileSearch />}
+      {data.member.role !== "reader" && (
+        <ProfileSearch initial={query.get("ask") ?? ""} />
+      )}
       {warning && (
         <p className="ml-notice" role="status">
           {warning}

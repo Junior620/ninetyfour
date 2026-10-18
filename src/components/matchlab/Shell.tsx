@@ -203,6 +203,7 @@ export function Shell({
               <LockKeyhole size={13} />
               {t.private}
             </span>
+            <span id="ml-assistant-slot" className="ml-assistant-slot" />
             <HelpPanel section={active} />
             <Link
               className="ml-icon"
