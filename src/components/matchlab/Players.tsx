@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { TrialPanel } from "./Trial";
+import { ProfileSearch } from "./ProfileSearch";
 import { MediaManager } from "./MediaManager";
 import {
   PlayerPhoto,
@@ -28,8 +31,11 @@ import {
 } from "./shared";
 export function Players() {
   const { data } = useLab();
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Player | undefined>();
+  // A link from the squad board or the search opens a player's file (?id=).
+  const query = useSearchParams();
+  const linked = data.graph.players.find((p) => p.id === query.get("id"));
+  const [open, setOpen] = useState(!!linked);
+  const [editing, setEditing] = useState<Player | undefined>(linked);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const mutation = useMutation();
@@ -244,6 +250,12 @@ export function Players() {
               )}
             </form>
             {editing && canWrite && (
+              <details className="ml-trial-details">
+                <summary>{t.trial.open}</summary>
+                <TrialPanel player={editing} />
+              </details>
+            )}
+            {editing && canWrite && (
               <section>
                 <h3>Affectations et dossards</h3>
                 {data.graph.memberships
@@ -314,6 +326,7 @@ export function Players() {
         <strong>{t.players.reading}</strong>
         <p>{t.players.explanation}</p>
       </aside>
+      {data.member.role !== "reader" && <ProfileSearch />}
       {warning && (
         <p className="ml-notice" role="status">
           {warning}

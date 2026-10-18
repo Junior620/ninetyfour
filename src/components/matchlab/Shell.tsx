@@ -21,6 +21,7 @@ import {
   Bell,
   LogOut,
   ChevronRight,
+  LayoutTemplate,
 } from "lucide-react";
 import { Dialog } from "@base-ui/react/dialog";
 import { HelpPanel, Tour } from "./Help";
@@ -31,6 +32,7 @@ export const navigation = [
   { id: "overview", Icon: LayoutDashboard },
   { id: "matches", Icon: Flag },
   { id: "players", Icon: Users },
+  { id: "squad", Icon: LayoutTemplate },
   { id: "analyze", Icon: Video },
   { id: "reports", Icon: FileText },
   { id: "analytics", Icon: ChartNoAxesCombined },
@@ -102,9 +104,11 @@ export function Shell({
                 )) &&
               (n.id !== "exports" || member.permissions.includes("export")),
           )
-          .map((n, i) => (
+          .map((n) => (
             <div key={n.id}>
-              {i === 5 && <p className="ml-nav-label">{t.extensions}</p>}
+              {n.id === "analytics" && (
+                <p className="ml-nav-label">{t.extensions}</p>
+              )}
               <Link
                 onClick={() => setOpen(false)}
                 href={`/matchlab/${n.id}`}

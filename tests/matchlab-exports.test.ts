@@ -96,6 +96,9 @@ export function fixture(): Archive {
     consents: [],
     media: [],
     targets: [],
+    lineups: [],
+    requirements: [],
+    trials: [],
   };
   return {
     metadata: {

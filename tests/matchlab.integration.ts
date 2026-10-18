@@ -320,6 +320,132 @@ async function main() {
     ),
     "Audit stores previous and resulting versions for correction history",
   );
+  // Squad scenarios, category requirements and trial decisions (cahier v2.2 step 2).
+  const lineup = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "lineups",
+      payload: {
+        season_id: season.id,
+        category_id: "U-17",
+        name: "Équipe type fictive",
+        kind: "team",
+        formation: "4-3-3",
+        slots: {
+          st: { player_id: p.player.id, role: "Pointe", instructions: "" },
+        },
+        bench: [],
+      },
+      expected: 0,
+    }),
+  );
+  ok(lineup.id, "Scoped staff saves a lineup scenario");
+  ok(
+    unwrap(await other.db.from("ml_lineups").select("id").eq("id", lineup.id))
+      .length === 0,
+    "Other category cannot read the scenario",
+  );
+  ok(
+    (
+      await other.db.rpc("ml_save", {
+        kind: "lineups",
+        payload: {
+          season_id: season.id,
+          category_id: "U-14",
+          name: "Intrusion fictive",
+          formation: "4-3-3",
+          slots: { st: { player_id: p.player.id } },
+          bench: [],
+        },
+        expected: 0,
+      })
+    ).error,
+    "A scenario cannot place a player outside the author's access",
+  );
+  ok(
+    (
+      await staff.db.rpc("ml_save", {
+        kind: "requirements",
+        payload: {
+          category_id: "U-18",
+          position: "CM",
+          criterion: "common:q1",
+          level: 4,
+        },
+        expected: 0,
+      })
+    ).error,
+    "Staff cannot edit the category requirements",
+  );
+  // Fixed key reserved for this check, cleared first in case a previous run stopped early.
+  const requirementKey = {
+    category_id: "U-18",
+    position: "GK",
+    criterion: "common:q6",
+  };
+  await admin.from("ml_requirements").delete().match(requirementKey);
+  const requirementRow = unwrap(
+    await direction.db.rpc("ml_save", {
+      kind: "requirements",
+      payload: {
+        ...requirementKey,
+        level: 4,
+        min_matches: 3,
+      },
+      expected: 0,
+    }),
+  );
+  ok(requirementRow.id, "Direction defines a category requirement");
+  const trial = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "trials",
+      payload: {
+        player_id: p.player.id,
+        from_category: "U-17",
+        to_category: "U-18",
+        position: "CM",
+        proposal: "confirm",
+        decision: "plan",
+        reason: "Observé à l'entraînement",
+        decided_by: direction.id,
+        snapshot: {},
+      },
+      expected: 0,
+    }),
+  );
+  ok(
+    trial.decided_by === staff.id,
+    "A trial decision is signed by its real author",
+  );
+  ok(
+    (
+      await staff.db.rpc("ml_save", {
+        kind: "trials",
+        payload: { ...trial, decision: "dismissed" },
+        expected: trial.version,
+      })
+    ).error,
+    "A trial decision cannot be rewritten",
+  );
+  ok(
+    (
+      await reader.db.rpc("ml_save", {
+        kind: "trials",
+        payload: {
+          player_id: p.player.id,
+          from_category: "U-17",
+          to_category: "U-18",
+          position: "CM",
+          proposal: "none",
+          decision: "dismissed",
+          reason: "",
+          snapshot: {},
+        },
+        expected: 0,
+      })
+    ).error,
+    "Reader cannot record a trial decision",
+  );
+  await admin.from("ml_requirements").delete().eq("id", requirementRow.id);
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",

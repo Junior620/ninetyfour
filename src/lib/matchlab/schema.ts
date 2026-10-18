@@ -153,6 +153,72 @@ export const targetSchema = z
     notes: text().default(""),
   })
   .strict();
+export const LINEUP_KINDS = [
+  "team",
+  "rotation",
+  "alternative",
+  "matchday",
+] as const;
+export const FORMATION_IDS = ["4-3-3", "4-4-2", "4-2-3-1", "3-5-2"] as const;
+const slotSchema = z
+  .object({
+    player_id: id.nullable().default(null),
+    role: text(80).default(""),
+    instructions: text(500).default(""),
+  })
+  .strict();
+export const lineupSchema = z
+  .object({
+    ...base,
+    ...scope,
+    name: text(120).min(2),
+    kind: z.enum(LINEUP_KINDS).default("team"),
+    formation: z.enum(FORMATION_IDS),
+    slots: z
+      .record(z.string().regex(/^[a-z0-9-]{1,16}$/), slotSchema)
+      .default({}),
+    bench: z.array(id).max(30).default([]),
+    notes: text(2000).default(""),
+    match_id: id.nullable().default(null),
+  })
+  .strict();
+export const requirementSchema = z
+  .object({
+    ...base,
+    category_id: scope.category_id,
+    position: z.enum(POSITIONS),
+    criterion: z.string().regex(/^(common:q[1-6]|specific:q[1-5])$/),
+    level: z.number().int().min(1).max(5).nullable(),
+    min_matches: z.number().int().min(1).max(20).default(3),
+  })
+  .strict();
+export const TRIAL_PROPOSALS = ["plan", "confirm", "progress", "none"] as const;
+export const TRIAL_DECISIONS = [
+  "plan",
+  "confirm",
+  "progress",
+  "dismissed",
+] as const;
+export const trialSchema = z
+  .object({
+    ...base,
+    player_id: id,
+    from_category: scope.category_id,
+    to_category: scope.category_id,
+    position: z.enum(POSITIONS),
+    proposal: z.enum(TRIAL_PROPOSALS),
+    decision: z.enum(TRIAL_DECISIONS),
+    reason: text(2000).default(""),
+    snapshot: z.record(z.string(), z.unknown()).default({}),
+  })
+  .strict()
+  .refine(
+    (t) =>
+      t.decision === t.proposal ||
+      t.decision === "dismissed" ||
+      t.reason.length >= 3,
+    "Motif requis",
+  );
 export const schemas = {
   matches: matchSchema,
   players: playerSchema,
@@ -161,6 +227,9 @@ export const schemas = {
   markers: markerSchema,
   consents: consentSchema,
   targets: targetSchema,
+  lineups: lineupSchema,
+  requirements: requirementSchema,
+  trials: trialSchema,
 };
 export type Resource = keyof typeof schemas;
 export const filterSchema = z
@@ -208,6 +277,22 @@ export type Consent = z.infer<typeof consentSchema> & {
 export type Target = z.infer<typeof targetSchema> & {
   id: string;
   version: number;
+};
+export type Lineup = z.infer<typeof lineupSchema> & {
+  id: string;
+  version: number;
+  created_at?: string;
+  updated_at?: string;
+};
+export type Requirement = z.infer<typeof requirementSchema> & {
+  id: string;
+  version: number;
+};
+export type Trial = z.infer<typeof trialSchema> & {
+  id: string;
+  version: number;
+  decided_by: string | null;
+  decided_at: string;
 };
 export type Season = {
   id: string;
@@ -262,4 +347,7 @@ export type Graph = {
   media: Media[];
   reports: Report[];
   targets: Target[];
+  lineups: Lineup[];
+  requirements: Requirement[];
+  trials: Trial[];
 };

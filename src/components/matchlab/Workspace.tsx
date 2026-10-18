@@ -35,6 +35,7 @@ import {
   jerseyFor,
 } from "./shared";
 import { Players } from "./Players";
+import { Squad } from "./Squad";
 import { Analysis } from "./Analysis";
 import { Reports } from "./Reports";
 import { Extensions } from "./Extensions";
@@ -110,7 +111,7 @@ export function Workspace({ section }: { section: string }) {
   };
   return (
     <LabContext.Provider value={{ data, refresh }}>
-      {!["analyze", "site", "admin", "ai", "alerts"].includes(section) && (
+      {!["analyze", "site", "admin", "ai", "alerts", "squad"].includes(section) && (
         <div className="ml-filterbar">
           <label>
             {t.category}
@@ -167,6 +168,8 @@ export function Workspace({ section }: { section: string }) {
         <Overview data={data} />
       ) : section === "matches" ? (
         <Matches data={data} />
+      ) : section === "squad" ? (
+        <Squad />
       ) : section === "players" ? (
         <Players />
       ) : section === "analyze" ? (

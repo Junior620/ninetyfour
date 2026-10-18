@@ -7,9 +7,14 @@ import {
   markerSchema,
   consentSchema,
   targetSchema,
+  lineupSchema,
+  requirementSchema,
+  TRIAL_PROPOSALS,
+  TRIAL_DECISIONS,
   filterSchema,
   type Graph,
 } from "./schema";
+import { POSITIONS } from "./questionnaire";
 import { readArchive, copyGraph, checksum, type Archive } from "./export";
 const version = { id: z.uuid(), version: z.number().int().positive() };
 const match = matchSchema.extend({
@@ -85,6 +90,40 @@ const graphSchema = z
           .strict(),
       )
       .max(5000),
+    lineups: z
+      .array(
+        lineupSchema.extend({
+          ...version,
+          created_at: z.iso.datetime({ offset: true }).optional(),
+          updated_at: z.iso.datetime({ offset: true }).optional(),
+        }),
+      )
+      .max(2000)
+      .default([]),
+    requirements: z
+      .array(requirementSchema.extend(version))
+      .max(1000)
+      .default([]),
+    trials: z
+      .array(
+        z
+          .object({
+            ...version,
+            player_id: z.uuid(),
+            from_category: z.enum(["U-14", "U-16", "U-17", "U-18"]),
+            to_category: z.enum(["U-14", "U-16", "U-17", "U-18"]),
+            position: z.enum(POSITIONS),
+            proposal: z.enum(TRIAL_PROPOSALS),
+            decision: z.enum(TRIAL_DECISIONS),
+            reason: z.string().max(2000),
+            snapshot: z.record(z.string(), z.unknown()),
+            decided_by: z.uuid().nullable(),
+            decided_at: z.iso.datetime({ offset: true }),
+          })
+          .strict(),
+      )
+      .max(5000)
+      .default([]),
   })
   .strict();
 export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
@@ -163,6 +202,17 @@ export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
   }
   for (const target of graph.targets)
     if (!seasons.has(target.season_id)) throw new Error("INVALID_ARCHIVE");
+  for (const l of graph.lineups)
+    if (
+      !seasons.has(l.season_id) ||
+      (l.match_id && !matches.has(l.match_id)) ||
+      [...Object.values(l.slots).map((s) => s.player_id), ...l.bench].some(
+        (p) => p && !players.has(p),
+      )
+    )
+      throw new Error("INVALID_ARCHIVE");
+  for (const trial of graph.trials)
+    if (!players.has(trial.player_id)) throw new Error("INVALID_ARCHIVE");
   const finalGraph = mode === "copy" ? copyGraph(graph) : graph;
   const files: Record<string, Uint8Array> = {};
   finalGraph.media.forEach(

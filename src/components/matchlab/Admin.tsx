@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { Member } from "@/lib/matchlab/schema";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
 import { useLab, useMutation, Heading, api, Feedback } from "./shared";
+import { RequirementsEditor } from "./Requirements";
 type AdminData = {
   members: Member[];
   scopes: { user_id: string; season_id: string; category_id: string }[];
@@ -137,6 +138,7 @@ export function Admin() {
           </form>
         </section>
       </div>
+      <RequirementsEditor />
       <section className="ml-card">
         <h2>{t.admin.members}</h2>
         <div className="ml-evaluation-list">

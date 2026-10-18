@@ -11,6 +11,7 @@ export default async function Page({
       "overview",
       "matches",
       "players",
+      "squad",
       "analyze",
       "reports",
       "analytics",

@@ -38,6 +38,9 @@
   --ml-navy: #0f2745;
   --ml-navy-panel: #12345b;
   --ml-navy-glow: #2e5b89;
+  --ml-pitch-line: #ffffff59;
+  --ml-pitch-mark: #ffffffb3;
+  --ml-pitch-label: #0f2745cc;
   --ml-scrim-strong: #061a33e6;
   --ml-scrim: #061a3380;
   --ml-scrim-clear: #061a3300;
@@ -2049,6 +2052,394 @@
   flex: none;
   color: var(--ml-icon);
 }
+/* Squad board (cahier v2.2, step 2). */
+.ml-sr-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.ml-squad-toolbar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 0;
+}
+.ml-squad {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(0, 1.35fr);
+  gap: 22px;
+  align-items: start;
+}
+.ml-squad > .ml-card {
+  margin-top: 22px;
+}
+.ml-squad-list h2 {
+  margin-bottom: 4px !important;
+}
+.ml-squad-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.ml-squad-filters .ml-check {
+  grid-column: 1 / -1;
+}
+.ml-squad-players {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ml-target-gap);
+  max-height: 760px;
+  overflow-y: auto;
+}
+.ml-squad-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 4px 8px;
+  border: 1px solid var(--ml-border);
+  border-radius: 8px;
+  background: var(--ml-surface);
+}
+.ml-squad-card.placed {
+  background: var(--ml-surface-muted);
+}
+.ml-squad-card.selected {
+  border-color: var(--ml-accent);
+  box-shadow: 0 0 0 2px var(--ml-accent);
+}
+.ml-squad-photo {
+  display: grid;
+  place-items: center;
+  min-width: var(--ml-target);
+  min-height: var(--ml-target);
+}
+.ml-squad-pick {
+  min-height: var(--ml-target);
+  display: grid;
+  gap: 2px;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  text-align: left;
+  color: var(--ml-text);
+}
+.ml-squad-pick small {
+  color: var(--ml-text-tertiary);
+}
+.ml-squad-grip {
+  display: grid;
+  place-items: center;
+  width: var(--ml-target);
+  height: var(--ml-target);
+  border-radius: 6px;
+  color: var(--ml-text-tertiary);
+  cursor: grab;
+  touch-action: none;
+}
+.ml-squad-grip:hover {
+  background: var(--ml-surface-hover);
+}
+.ml-pitch-card {
+  display: grid;
+  gap: 18px;
+}
+/* The whole pitch stays on screen so a drag never has to scroll. */
+.ml-pitch {
+  position: relative;
+  width: min(100%, 560px, calc((100dvh - 150px) * 0.68));
+  margin: 0 auto;
+  aspect-ratio: 68 / 100;
+  border-radius: 10px;
+  background: var(--ml-navy);
+  overflow: hidden;
+}
+.ml-pitch svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--ml-pitch-line);
+  stroke-width: 0.4;
+}
+.ml-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 76px;
+}
+.ml-slot-button,
+.ml-bench-token {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: var(--ml-target);
+  min-height: var(--ml-target);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  touch-action: none;
+}
+/* Draggable tokens: no browser panning or text selection while dragging
+   (beats the general touch-action: manipulation on buttons). */
+.ml-body .ml-slot-button,
+.ml-body .ml-bench-token,
+.ml-body .ml-squad-grip {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.ml-slot-button img,
+.ml-bench-token img,
+.ml-drag-ghost img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.ml-slot-button .ml-player-avatar {
+  border: 2px solid var(--ml-text-inverse);
+}
+.ml-slot.selected .ml-player-avatar,
+.ml-bench-token[aria-pressed="true"] .ml-player-avatar {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 2px;
+}
+.ml-slot.over .ml-slot-button {
+  outline: 3px dashed var(--ml-gold);
+  outline-offset: 4px;
+}
+.ml-slot-empty {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 2px dashed var(--ml-pitch-mark);
+  border-radius: 50%;
+  color: var(--ml-text-inverse);
+  font-size: var(--ml-font-xs);
+  font-weight: 700;
+}
+.ml-token {
+  position: relative;
+  display: inline-grid;
+}
+.ml-token-number {
+  position: absolute;
+  right: -6px;
+  bottom: -2px;
+  min-width: 22px;
+  padding: 1px 5px;
+  border-radius: 10px;
+  background: var(--ml-gold);
+  color: var(--ml-text-strong);
+  font-size: var(--ml-font-xs);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.ml-slot-name {
+  max-width: 100%;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--ml-pitch-label);
+  color: var(--ml-text-inverse);
+  font-size: var(--ml-font-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ml-bench {
+  padding: 14px 16px;
+  border: 1px dashed var(--ml-border-strong);
+  border-radius: 8px;
+  background: var(--ml-surface-muted);
+}
+.ml-bench.over {
+  border-color: var(--ml-gold);
+  background: var(--ml-gold-surface);
+}
+.ml-bench h3 {
+  margin-bottom: 10px;
+  font-size: var(--ml-font-md);
+}
+.ml-bench ul {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-target-gap) 14px;
+}
+.ml-bench-token {
+  grid-template-rows: auto auto;
+  gap: 4px;
+  max-width: 96px;
+  border-radius: 8px;
+  color: var(--ml-text);
+  font-size: var(--ml-font-xs);
+}
+.ml-bench-token > span:last-child {
+  max-width: 96px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ml-selection {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--ml-border-accent);
+  border-radius: 8px;
+  background: var(--ml-surface-accent);
+}
+.ml-selection-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ml-selection-head strong {
+  display: block;
+}
+.ml-selection-head small {
+  color: var(--ml-text-secondary);
+}
+.ml-drag-ghost {
+  position: fixed;
+  z-index: 90;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.9;
+}
+.ml-compare-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 18px;
+  margin-top: 18px;
+  align-items: start;
+}
+.ml-mini-pitch {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.ml-mini-pitch figcaption {
+  font-weight: 600;
+}
+.ml-pitch.small {
+  width: min(100%, 260px);
+}
+.ml-mini-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  max-width: 34%;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ml-pitch-label);
+  color: var(--ml-text-inverse);
+  font-size: var(--ml-font-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ml-compare-diff ul {
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+/* Trial simulation inside the player file. */
+.ml-trial-details {
+  margin-top: 24px;
+  border-top: 1px solid var(--ml-border);
+  padding-top: 18px;
+}
+.ml-card details:not([class]) > summary,
+.ml-trial-details > summary {
+  padding: 12px 0;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ml-trial {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+}
+.ml-trial-table td {
+  white-space: normal;
+}
+.ml-trial-status {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.ml-trial-status.mastered {
+  color: var(--ml-success);
+}
+.ml-trial-status.gap {
+  color: var(--ml-warning);
+}
+.ml-trial-status.unobserved,
+.ml-trial-status.undefined {
+  color: var(--ml-text-tertiary);
+}
+.ml-trial-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-target-gap) 20px;
+}
+.ml-trial-decision {
+  display: grid;
+  gap: 14px;
+}
+.ml-trial-decision > .ml-button {
+  justify-self: start;
+}
+.ml-trial-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.ml-trial-history small {
+  display: block;
+  color: var(--ml-text-tertiary);
+}
+/* Profile search and requirements. */
+.ml-profile-search-form {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ml-profile-search-form label {
+  flex: 1;
+  min-width: 240px;
+}
+.ml-search-meta {
+  margin-top: 18px;
+}
+.ml-search-meta .wide {
+  grid-column: 1 / -1;
+}
+.ml-requirements td {
+  white-space: normal;
+}
+.ml-requirements td small {
+  max-width: 560px;
+}
+.ml-requirements-min {
+  max-width: 260px;
+  margin: 16px 0;
+}
 @media (min-width: 1600px) {
   .ml-hero-photo {
     height: 310px;
@@ -2098,6 +2489,21 @@
   }
   .ml-module-grid {
     grid-template-columns: 1fr 1fr;
+  }
+  .ml-squad-toolbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .ml-squad {
+    grid-template-columns: 1fr;
+  }
+  .ml-pitch-card {
+    order: -1;
+  }
+  .ml-compare-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ml-compare-diff {
+    grid-column: 1 / -1;
   }
 }
 @media (max-width: 1023px) {
@@ -2378,6 +2784,22 @@
   }
   .ml-photo-consent .ml-form-grid,
   .ml-new-photo .ml-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .ml-squad-toolbar,
+  .ml-squad-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ml-slot {
+    width: 64px;
+  }
+  /* 44 px tokens keep 8 px between neighbouring slots on a phone-width pitch. */
+  .ml-slot-button .ml-player-avatar,
+  .ml-slot-empty {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .ml-compare-grid {
     grid-template-columns: 1fr;
   }
   .ml-tour-card {

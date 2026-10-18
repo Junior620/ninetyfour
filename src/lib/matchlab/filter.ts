@@ -16,6 +16,9 @@ export function filterGraph(
     media,
     reports,
     targets,
+    lineups,
+    requirements,
+    trials,
   } = graph;
   const scopedMemberships = memberships.filter(
     (m) =>
@@ -142,5 +145,20 @@ export function filterGraph(
         ),
     ),
     targets: selectedTargets,
+    // Scenarios follow the season/category filters; in export mode only those whose
+    // players are all in the graph, so a restored scenario never points outside it.
+    lineups: lineups.filter(
+      (l) =>
+        (!filters.season || l.season_id === filters.season) &&
+        (!filters.category || l.category_id === filters.category) &&
+        (!exporting ||
+          ([
+            ...Object.values(l.slots).map((s) => s.player_id),
+            ...l.bench,
+          ].every((p) => !p || playerIds.has(p)) &&
+            (!l.match_id || matchIds.has(l.match_id)))),
+    ),
+    requirements,
+    trials: trials.filter((t) => playerIds.has(t.player_id)),
   };
 }
