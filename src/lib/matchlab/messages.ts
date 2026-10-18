@@ -16,6 +16,17 @@ export const fr = {
     proof: "Justificatif",
     fileHint: "Photo JPEG/PNG : 5 Mo. Justificatif PDF/JPEG/PNG : 10 Mo.",
     upload: "Téléverser dans l’espace privé",
+    profile: "Photo de profil",
+    noPhoto: "Aucune photo pour ce joueur.",
+    importPhoto: "Importer une photo",
+    replacePhoto: "Remplacer la photo",
+    viewPhoto: "Voir en grand",
+    formats: "JPEG ou PNG, 5 Mo maximum.",
+    consentUntil: "Autorisation photo de",
+    consentNeeded:
+      "Avant d’importer une photo, enregistrez l’autorisation du représentant légal.",
+    recordShort: "Enregistrer l’autorisation",
+    afterSave: "La photo de profil s’ajoute une fois le joueur enregistré.",
   },
   brand: "N91 MatchLab",
   subtitle: "Espace performance",
@@ -125,6 +136,7 @@ export const fr = {
     MEDIA_NOT_AUTHORIZED:
       "Le consentement ou l’habilitation ne permet pas cet accès.",
     PAYLOAD_TOO_LARGE: "Le fichier dépasse la limite autorisée.",
+    PHOTO_FORMAT: "Format non pris en charge : choisissez une photo JPEG ou PNG.",
     RECOVERY_UNAVAILABLE:
       "Le service de récupération est temporairement indisponible.",
   },

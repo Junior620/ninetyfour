@@ -249,6 +249,7 @@ export type Media = {
   bytes: number;
   sha256: string;
   version: number;
+  created_at?: string;
 };
 export type Graph = {
   seasons: Season[];

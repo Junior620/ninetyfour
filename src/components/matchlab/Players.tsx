@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { MediaManager } from "./MediaManager";
+import { PlayerPhoto } from "./PlayerPhoto";
 import { Plus } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
 import { POSITIONS, positionNames } from "@/lib/matchlab/questionnaire";
@@ -52,6 +53,7 @@ export function Players() {
             }}
           >
             <>
+              <PlayerPhoto player={editing} />
               <form
                 key={editing?.id || "new"}
                 onSubmit={async (e) => {

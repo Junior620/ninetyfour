@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { filterGraph } from "./filter";
+import { newestFirst } from "./photos";
 import type { Graph, Filters } from "./schema";
 import { dbError, LabError } from "./server";
 
@@ -55,7 +56,7 @@ export async function loadGraph(
       evaluations,
       markers,
       consents,
-      media,
+      media: newestFirst(media),
       reports,
       targets,
     },

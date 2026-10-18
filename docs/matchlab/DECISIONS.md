@@ -17,6 +17,7 @@
 - Rapport : points d’appui = critères notés 4–5, points à travailler = critères notés 1–2, directement issus des réponses ; « Non observé » et 3 n’apparaissent pas. Aucun texte généré.
 - Profil cible dans la salle d’analyse : comparaison factuelle des fondamentaux aux notes cibles, sans pourcentage tant que la formule de compatibilité n’est pas validée par la direction.
 - « Profils à revoir » de la vue d’ensemble : joueurs au statut « À revoir » uniquement ; la référence affichait des pourcentages de démonstration, non repris.
+- Photo de profil dans le dossier joueur (clic sur le joueur) : affichage en grand, import et remplacement directs (JPEG/PNG, 5 Mo). Si aucune autorisation photo interne n’est valide, elle se saisit au même endroit (représentant légal, dates) ; la base exige toujours ce consentement et masque la photo dès son retrait ou son expiration. La photo la plus récente fait foi pour l’avatar, le PDF et l’archive.
 
 ## Tokens et accessibilité
 

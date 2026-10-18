@@ -1171,6 +1171,61 @@
   height: 100%;
   object-fit: cover;
 }
+/* Profile photo at the top of the player file. */
+.ml-photo-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--ml-border);
+  border-radius: 10px;
+  background: var(--ml-surface-muted);
+}
+.ml-photo-profile .ml-player-avatar {
+  border: 1px solid var(--ml-border-strong);
+  font-size: 32px;
+}
+.ml-photo-body {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.ml-photo-body > .ml-actions {
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+.ml-photo-body small {
+  color: var(--ml-text-tertiary);
+}
+.ml-photo-consent p {
+  margin-bottom: 12px;
+  font-size: var(--ml-font-sm);
+  color: var(--ml-text-secondary);
+}
+/* File picker shown as a button: the label is the 44 px target. */
+.ml-body label.ml-file-button {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 9px;
+  position: relative;
+  cursor: pointer;
+}
+.ml-body .ml-file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.ml-file-button:focus-within {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 4px;
+}
 .ml-pagination {
   display: flex;
   justify-content: flex-end;
@@ -2178,6 +2233,10 @@
   }
   .ml-modal h2 {
     font-size: 19px;
+  }
+  .ml-photo-profile {
+    flex-direction: column;
+    padding: 16px;
   }
   .ml-footer {
     padding: 24px 18px;
