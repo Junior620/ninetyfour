@@ -19,6 +19,9 @@
 - « Profils à revoir » de la vue d’ensemble : joueurs au statut « À revoir » uniquement ; la référence affichait des pourcentages de démonstration, non repris.
 - Photo de profil : visible dans la fiche joueur, y compris en lecture seule (« Fiche joueur », champs verrouillés). Elle s’ajoute dès « Ajouter un joueur » ou depuis la fiche en une étape (JPEG/PNG, 5 Mo). L’autorisation du représentant légal reste obligatoire mais se saisit dans le même formulaire, dates préremplies sur un an. La direction a toujours le droit médias ; les autres comptes gardent la permission explicite. Les réglages d’Administration ne bloquent plus : sans politique du club, l’autorisation enregistre un texte par défaut ; sans durée de conservation, la photo reste visible tant que l’autorisation est valable ; une durée définie masque toujours les photos plus anciennes (migration `202610180013_photo_access.sql`). La photo la plus récente fait foi pour l’avatar, le PDF et l’archive.
 
+- Écart au profil cible (remplace « Compatibilité · Formule à valider », cahier v2.2) : fondamentaux du joueur comparés au profil cible de sa saison la plus récente, de sa catégorie et de son poste habituel. Affichage factuel (« 2 critères sous la cible · Technique, Mental », « Conforme », « Aucun profil cible », « Fondamentaux à renseigner »), sans pourcentage ni recommandation.
+- Lecteur (cahier v2.2 §09) : les notes de scouting sont retirées côté serveur de ses données et de ses exports ; la « Fiche joueur » en lecture seule ne montre aucune observation interne.
+
 ## Tokens et accessibilité
 
 Lisibilité au bord du terrain, sans changer la structure ni l’identité. Tout passe par `src/app/matchlab/matchlab.css`.

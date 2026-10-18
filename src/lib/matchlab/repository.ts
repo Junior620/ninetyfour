@@ -2,7 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { filterGraph } from "./filter";
 import { newestFirst } from "./photos";
-import type { Graph, Filters } from "./schema";
+import type { Graph, Filters, Member } from "./schema";
 import { dbError, LabError } from "./server";
 
 async function rows<T>(db: SupabaseClient, table: string): Promise<T[]> {
@@ -19,6 +19,11 @@ async function rows<T>(db: SupabaseClient, table: string): Promise<T[]> {
   }
   throw new LabError("SCOPE_TOO_LARGE", 413);
 }
+/** Readers see shared reports, never the staff's internal scouting notes. */
+export const forMember = (graph: Graph, member: Member): Graph =>
+  member.role === "reader"
+    ? { ...graph, players: graph.players.map((p) => ({ ...p, scouting: "" })) }
+    : graph;
 export async function loadGraph(
   db: SupabaseClient,
   filters: Filters,

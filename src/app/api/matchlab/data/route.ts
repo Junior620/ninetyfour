@@ -9,7 +9,7 @@ import {
   rateLimit,
   LabError,
 } from "@/lib/matchlab/server";
-import { loadGraph } from "@/lib/matchlab/repository";
+import { loadGraph, forMember } from "@/lib/matchlab/repository";
 import {
   filterSchema,
   schemas,
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const filters = filterSchema.parse(
       Object.fromEntries(new URL(request.url).searchParams),
     );
-    const graph = await loadGraph(db, filters);
+    const graph = forMember(await loadGraph(db, filters), member);
     const [alerts, scopes, settings] = await Promise.all([
       db
         .from("ml_alerts")

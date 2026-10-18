@@ -10,6 +10,7 @@ import {
 } from "./PlayerPhoto";
 import { Plus } from "lucide-react";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
+import { targetGaps, FUNDAMENTALS } from "@/lib/matchlab/targets";
 import { POSITIONS, positionNames } from "@/lib/matchlab/questionnaire";
 import type { Player, Target } from "@/lib/matchlab/schema";
 import {
@@ -190,15 +191,17 @@ export function Players() {
                     defaultValue={editing?.target_profile}
                   />
                 </label>
-                <label className="wide">
-                  {t.players.notes}
-                  <textarea
-                    name="scouting"
-                    rows={3}
-                    maxLength={5000}
-                    defaultValue={editing?.scouting}
-                  />
-                </label>
+                {canWrite && (
+                  <label className="wide">
+                    {t.players.notes}
+                    <textarea
+                      name="scouting"
+                      rows={3}
+                      maxLength={5000}
+                      defaultValue={editing?.scouting}
+                    />
+                  </label>
+                )}
                 <fieldset className="wide">
                   <legend>{t.players.fundamentals}</legend>
                   <div className="ml-fundamentals">
@@ -369,9 +372,7 @@ export function Players() {
                         ))}
                         <td>{p.target_profile || "—"}</td>
                         <td>
-                          <span className="ml-muted">
-                            {t.players.inactiveCompatibility}
-                          </span>
+                          <TargetGapCell gap={targetGaps(p, data.graph)} />
                         </td>
                       </tr>
                     );
@@ -520,6 +521,39 @@ export function Players() {
         )}
       </section>
       <MediaManager />
+    </>
+  );
+}
+
+const fundamentalName = (k: (typeof FUNDAMENTALS)[number]) =>
+  t.players.columns[FUNDAMENTALS.indexOf(k) + 2];
+/** Factual gap to the target profile: no percentage, no recommendation. */
+function TargetGapCell({ gap }: { gap: ReturnType<typeof targetGaps> }) {
+  if (gap.status === "none")
+    return <span className="ml-muted">{t.players.gapNone}</span>;
+  if (gap.status === "unrated")
+    return <span className="ml-muted">{t.players.gapUnrated}</span>;
+  const unrated = gap.unrated.length
+    ? `${gap.unrated.map(fundamentalName).join(", ")} ${t.players.gapUnratedSome}`
+    : "";
+  if (gap.status === "ok")
+    return (
+      <>
+        {t.players.gapOk}
+        {unrated && <small>{unrated}</small>}
+      </>
+    );
+  return (
+    <>
+      <strong>
+        {gap.gaps.length} critère{gap.gaps.length > 1 ? "s" : ""}{" "}
+        {t.players.gapBelow}
+      </strong>
+      <small>
+        {[gap.gaps.map(fundamentalName).join(", "), unrated]
+          .filter(Boolean)
+          .join(" · ")}
+      </small>
     </>
   );
 }

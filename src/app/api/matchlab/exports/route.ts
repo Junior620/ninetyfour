@@ -8,7 +8,7 @@ import {
   failure,
   LabError,
 } from "@/lib/matchlab/server";
-import { loadGraph } from "@/lib/matchlab/repository";
+import { loadGraph, forMember } from "@/lib/matchlab/repository";
 import { filterSchema } from "@/lib/matchlab/schema";
 import { csv, xlsx, zipArchive, type Archive } from "@/lib/matchlab/export";
 import { reportPdf } from "@/lib/matchlab/pdf";
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
       (kind === "player" && !filters.player)
     )
       throw new LabError("INVALID_DATA", 400);
-    const graph = await loadGraph(db, filters, true);
+    const graph = forMember(await loadGraph(db, filters, true), member);
     // Only photos with both a valid internal consent and an explicit export consent.
     graph.media = graph.media.filter(
       (m) =>
