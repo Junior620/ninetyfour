@@ -24,9 +24,12 @@ export const fr = {
     formats: "JPEG ou PNG, 5 Mo maximum.",
     consentUntil: "Autorisation photo de",
     consentNeeded:
-      "Avant d’importer une photo, enregistrez l’autorisation du représentant légal.",
-    recordShort: "Enregistrer l’autorisation",
-    afterSave: "La photo de profil s’ajoute une fois le joueur enregistré.",
+      "Autorisation du représentant légal, enregistrée avec la première photo.",
+    defaultPolicy:
+      "Autorisation du représentant légal d’utiliser la photo du joueur dans l’espace privé MatchLab du club, pour un usage interne, jusqu’à la date indiquée ou jusqu’à son retrait.",
+    photoOptional: "Photo de profil (facultatif)",
+    photoPartial:
+      "Joueur enregistré, mais la photo n’a pas été ajoutée. Ajoutez-la depuis sa fiche.",
   },
   brand: "N91 MatchLab",
   subtitle: "Espace performance",
@@ -136,6 +139,8 @@ export const fr = {
     MEDIA_NOT_AUTHORIZED:
       "Le consentement ou l’habilitation ne permet pas cet accès.",
     PAYLOAD_TOO_LARGE: "Le fichier dépasse la limite autorisée.",
+    GUARDIAN_REQUIRED:
+      "Indiquez le nom du représentant légal qui autorise la photo.",
     PHOTO_FORMAT: "Format non pris en charge : choisissez une photo JPEG ou PNG.",
     RECOVERY_UNAVAILABLE:
       "Le service de récupération est temporairement indisponible.",
@@ -213,6 +218,7 @@ export const fr = {
   players: {
     eyebrow: "Suivi individuel",
     add: "Ajouter un joueur",
+    file: "Fiche joueur",
     name: "Nom complet",
     jersey: "Dossard (1–99)",
     foot: "Pied fort",
@@ -247,7 +253,7 @@ export const fr = {
     targetTitle: "Intitulé du profil",
     photo: "Photo et consentement",
     photoHint:
-      "Les médias nécessitent un consentement valide et une politique définie par la direction.",
+      "Les médias nécessitent une autorisation valide du représentant légal.",
   },
   match: {
     eyebrow: "Historique sportif",

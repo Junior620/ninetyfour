@@ -40,7 +40,8 @@ export function MediaManager() {
                     player_id: player,
                     guardian_name: f.get("guardian_name"),
                     purpose: f.get("purpose"),
-                    policy: data.settings.consent_policy || "",
+                    // Replaced on the server by the policy in force.
+                    policy: t.media.defaultPolicy,
                     granted_at: new Date(
                       String(f.get("granted_at")),
                     ).toISOString(),
@@ -53,11 +54,7 @@ export function MediaManager() {
               });
             }}
           >
-            <fieldset
-              disabled={
-                !data.settings.retention_days || data.member.role === "reader"
-              }
-            >
+            <fieldset disabled={data.member.role === "reader"}>
               <div className="ml-form-grid">
                 <label>
                   {t.media.guardian}

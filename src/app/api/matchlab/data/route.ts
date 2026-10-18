@@ -16,6 +16,7 @@ import {
   playerSchema,
   membershipSchema,
 } from "@/lib/matchlab/schema";
+import { fr } from "@/lib/matchlab/messages";
 
 export async function GET(request: Request) {
   try {
@@ -76,10 +77,16 @@ export async function POST(request: Request) {
     if (input.kind === "consents") {
       if (!member.permissions.includes("media"))
         throw new LabError("FORBIDDEN", 403);
-      const { data, error } = await db.from("ml_settings").select("*").single();
-      dbError(error);
-      if (!data?.retention_days || !data?.consent_policy)
-        throw new LabError("GOVERNANCE_REQUIRED", 409);
+      // A new consent records the policy in force: the club text, or the default one.
+      if (input.version === 0) {
+        const { data, error } = await db
+          .from("ml_settings")
+          .select("*")
+          .single();
+        dbError(error);
+        (payload as { policy: string }).policy =
+          data?.consent_policy || fr.media.defaultPolicy;
+      }
     }
     const result = await db.rpc("ml_save", {
       kind: input.kind,

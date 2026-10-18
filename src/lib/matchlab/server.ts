@@ -78,6 +78,9 @@ export async function requireLab(permission?: string) {
   dbError(result.error);
   if (!result.data?.active) throw new LabError("FORBIDDEN", 403);
   const member = result.data as Member;
+  // Direction always holds the media right (same rule as ml_permission in the database).
+  if (member.role === "direction" && !member.permissions.includes("media"))
+    member.permissions = [...member.permissions, "media"];
   if (
     permission === "direction"
       ? member.role !== "direction"

@@ -350,6 +350,108 @@ async function main() {
       .length === 0,
     "Revoked session immediately loses direct database access",
   );
+  // Player photos: direction holds the media right, consent stays mandatory, governance is optional.
+  const coach = await account("direction");
+  unwrap(await coach.db.rpc("ml_register_session"));
+  const governance = unwrap(
+    await admin.from("ml_settings").select("*").eq("id", "governance").single(),
+  );
+  const consentPayload = {
+    player_id: p.player.id,
+    guardian_name: "Représentant fictif",
+    purpose: "internal_photo",
+    policy: "Politique fictive de recette",
+    granted_at: "2026-01-01T00:00:00Z",
+    expires_at: "2099-01-01T00:00:00Z",
+  };
+  const mediaId = randomUUID();
+  unwrap(
+    await admin
+      .from("ml_settings")
+      .update({ retention_days: null, consent_policy: null })
+      .eq("id", "governance"),
+  );
+  try {
+    const consent = unwrap(
+      await coach.db.rpc("ml_save", {
+        kind: "consents",
+        payload: consentPayload,
+        expected: 0,
+      }),
+    );
+    ok(
+      consent.id,
+      "Direction records a photo consent without explicit media right or governance",
+    );
+    ok(
+      (
+        await staff.db.rpc("ml_save", {
+          kind: "consents",
+          payload: consentPayload,
+          expected: 0,
+        })
+      ).error,
+      "Staff without the media permission still cannot record a consent",
+    );
+    ok(
+      (
+        await coach.db.rpc("ml_attach_media", {
+          payload: {
+            id: randomUUID(),
+            player_id: p.player.id,
+            consent_id: randomUUID(),
+            path: "players/none.jpg",
+            mime: "image/jpeg",
+            purpose: "photo",
+            bytes: 10,
+            sha256: "0".repeat(64),
+          },
+        })
+      ).error,
+      "A photo without a current consent is still rejected",
+    );
+    unwrap(
+      await admin.from("ml_media").insert({
+        id: mediaId,
+        player_id: p.player.id,
+        consent_id: consent.id,
+        path: `players/${p.player.id}/${mediaId}.jpg`,
+        mime: "image/jpeg",
+        purpose: "photo",
+        bytes: 10,
+        sha256: "0".repeat(64),
+        created_at: "2026-01-01T00:00:00Z",
+      }),
+    );
+    const visible = async () =>
+      unwrap(await coach.db.from("ml_media").select("id").eq("id", mediaId))
+        .length === 1;
+    ok(
+      await visible(),
+      "Without a retention period, a consented photo stays visible",
+    );
+    unwrap(
+      await admin
+        .from("ml_settings")
+        .update({ retention_days: 30 })
+        .eq("id", "governance"),
+    );
+    ok(
+      !(await visible()),
+      "A defined retention period still hides older photos",
+    );
+  } finally {
+    await admin.from("ml_media").delete().eq("id", mediaId);
+    unwrap(
+      await admin
+        .from("ml_settings")
+        .update({
+          retention_days: governance.retention_days,
+          consent_policy: governance.consent_policy,
+        })
+        .eq("id", "governance"),
+    );
+  }
   const anonymous = await client().from("ml_matches").select("*");
   ok(
     anonymous.error?.code === "42501" || anonymous.data?.length === 0,

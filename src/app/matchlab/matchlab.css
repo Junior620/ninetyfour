@@ -131,6 +131,14 @@
   color: var(--ml-text);
   font-size: var(--ml-font-field);
 }
+/* Read-only fields (reader file, locked scope): muted surface, text still fully legible. */
+.ml-body input:disabled,
+.ml-body textarea:disabled,
+.ml-body select:disabled {
+  background-color: var(--ml-surface-muted);
+  border-color: var(--ml-border);
+  cursor: default;
+}
 .ml-body textarea {
   resize: vertical;
   min-height: 88px;
@@ -1189,6 +1197,20 @@
 .ml-photo-body small {
   color: var(--ml-text-tertiary);
 }
+/* Optional photo in "Ajouter un joueur". */
+.ml-new-photo {
+  display: grid;
+  gap: 15px;
+}
+.ml-new-photo legend {
+  margin-bottom: 0;
+}
+/* File pickers open no keyboard: 13 px keeps their French status text visible. */
+.ml-new-photo input[type="file"],
+.ml-video-select input {
+  font-size: var(--ml-font-sm);
+  font-weight: 500;
+}
 .ml-photo-consent p {
   margin-bottom: 12px;
   font-size: var(--ml-font-sm);
@@ -1290,11 +1312,6 @@
 }
 .ml-video-select {
   margin: 12px 0;
-}
-/* A file picker opens no keyboard: no 16 px needed, and its French status text fits. */
-.ml-video-select input {
-  font-size: var(--ml-font-sm);
-  font-weight: 500;
 }
 .ml-marker-actions {
   display: flex;
@@ -2227,6 +2244,10 @@
   .ml-photo-profile {
     flex-direction: column;
     padding: 16px;
+  }
+  .ml-photo-consent .ml-form-grid,
+  .ml-new-photo .ml-form-grid {
+    grid-template-columns: 1fr;
   }
   .ml-footer {
     padding: 24px 18px;

@@ -183,16 +183,19 @@ export function Modal({
   onOpenChange,
 }: {
   title: string;
-  trigger: React.ReactNode;
+  /** Without a trigger the dialog only opens programmatically (read-only file). */
+  trigger?: React.ReactNode;
   children: React.ReactNode;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Trigger className="ml-button" aria-label={title}>
-        {trigger}
-      </Dialog.Trigger>
+      {trigger && (
+        <Dialog.Trigger className="ml-button" aria-label={title}>
+          {trigger}
+        </Dialog.Trigger>
+      )}
       <Dialog.Portal>
         <Dialog.Backdrop className="ml-backdrop" />
         <Dialog.Popup className="ml-modal">
