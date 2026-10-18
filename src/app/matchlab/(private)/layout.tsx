@@ -1,7 +1,5 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { Shell } from "@/components/matchlab/Shell";
 import { requireLab, LabError, labConfig } from "@/lib/matchlab/server";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
@@ -37,7 +35,6 @@ export default async function Layout({
       member={session.member}
       email={session.user.email || "N91"}
       seasons={seasons.data ?? []}
-      logo={existsSync(join(process.cwd(), "public/n91-lab-logo.png"))}
       localOnly={labConfig().url === "http://127.0.0.1:55321"}
     >
       {children}

@@ -44,14 +44,12 @@ export function Shell({
   member,
   email,
   seasons,
-  logo,
   localOnly,
 }: {
   children: React.ReactNode;
   member: Member;
   email: string;
   seasons: { id: string; name: string }[];
-  logo: boolean;
   localOnly: boolean;
 }) {
   const pathname = usePathname();
@@ -83,20 +81,13 @@ export function Shell({
         href="/matchlab/overview"
         aria-label="N91 MatchLab"
       >
-        {logo && (
-          <Image
-            src="/n91-lab-logo.png"
-            alt=""
-            width={175}
-            height={72}
-            loading="eager"
-          />
-        )}
-        {!logo && (
-          <strong>
-            N91<span>MatchLab</span>
-          </strong>
-        )}
+        <Image
+          src="/n91-lab-logo.png"
+          alt=""
+          width={175}
+          height={72}
+          loading="eager"
+        />
         <small>{t.subtitle}</small>
       </Link>
       <nav aria-label={t.brand}>
