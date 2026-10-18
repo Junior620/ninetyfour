@@ -102,6 +102,7 @@ export function fixture(): Archive {
     trials: [],
     dossiers: [],
     live_sessions: [],
+    plans: [],
   };
   return {
     metadata: {
@@ -179,6 +180,29 @@ test("Filtered archive closes seasons, players, memberships and snapshots over a
     2,
     "Editing still offers unevaluated players",
   );
+});
+test("An empty scenario of a season outside the export stays out of the archive", () => {
+  const a = fixture(),
+    g = a.graph;
+  const lineup = (season_id: string, category_id: "U-14" | "U-16" | "U-17" | "U-18") => ({
+    id: randomUUID(),
+    version: 1,
+    season_id,
+    category_id,
+    name: "Scénario vide",
+    kind: "team" as const,
+    formation: "4-3-3" as const,
+    slots: {},
+    bench: [],
+    notes: "",
+    match_id: null,
+  });
+  const m = g.matches[0];
+  g.lineups = [lineup(g.seasons[1].id, "U-14"), lineup(m.season_id, m.category_id)];
+  const f = filterGraph(g, { match: m.id, page: 1 }, true);
+  assert.deepEqual(f.lineups.map((l) => l.id), [g.lineups[1].id]);
+  const bytes = zipArchive({ ...a, graph: f }, {});
+  assert.equal(validateArchive(bytes, "preserve").archive.graph.lineups.length, 1);
 });
 test("XLSX reads back the precise 6.8 and CSV protects formulas, quotes and missing answers", async () => {
   const a = fixture(),

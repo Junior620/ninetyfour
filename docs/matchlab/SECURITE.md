@@ -14,6 +14,8 @@ Dossiers club : lisibles et modifiables seulement par le staff habilité sur le 
 
 Match en direct : le flux de la caméra reste dans le navigateur (aperçu) ; aucun enregistreur, aucune capture, aucun envoi d’image. Sessions et notes du direct sont réservées au staff habilité sur le match et à la direction. Les actions en attente de réseau sont gardées dans le stockage local de l’appareil jusqu’à leur envoi : utiliser un appareil du club verrouillé.
 
+Cellule tactique : plans, priorités et bilans sont des documents internes du staff habilité sur le match et de la direction ; un lecteur n’y a pas accès. La base fixe l’auteur d’un plan et refuse une composition d’une autre saison ou catégorie ; la suppression d’un plan est journalisée avec son contenu.
+
 Archives : SHA256, manifeste versionné, validation des relations, limites compression/décompression, refus des chemins arbitraires, collisions explicites, compensation des fichiers. Les empreintes détectent la corruption ; elles ne sont pas une signature d’origine. Seule la direction habilitée restaure une archive de confiance.
 
 Audit : connexions/révocations, mutations avant/après, rapports, publications, exports, imports et accès médias. Accès direction uniquement. Les journaux contiennent des données privées ; leur conservation doit être définie avec les autres données. Politique/durée administrables, pas de purge automatique arbitraire. Sauvegarde et effacement réglementaire nécessitent une procédure d’exploitation distincte.

@@ -13,6 +13,7 @@ export default async function Page({
       "players",
       "player",
       "squad",
+      "tactics",
       "analyze",
       "live",
       "reports",

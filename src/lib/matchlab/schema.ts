@@ -315,6 +315,50 @@ export const liveSessionSchema = z
     final_summary: z.record(z.string(), z.unknown()).nullable().default(null),
   })
   .strict();
+export const PLAN_BLOCKS = ["high", "mid", "low"] as const;
+export const priorityItemSchema = z
+  .object({
+    objective: text(200).min(2),
+    exercise: text(500).default(""),
+    category: scope.category_id,
+    indicator: text(300).default(""),
+    source: text(300).default(""),
+  })
+  .strict();
+export const planSchema = z
+  .object({
+    ...base,
+    match_id: id,
+    rank: z.number().int().min(1).max(3),
+    title: text(120).min(2),
+    lineup_id: id.nullable().default(null),
+    block: z.enum(PLAN_BLOCKS).nullable().default(null),
+    with_ball: text(2000).default(""),
+    without_ball: text(2000).default(""),
+    transitions: text(2000).default(""),
+    set_pieces: text(2000).default(""),
+    scenarios: z
+      .array(
+        z
+          .object({ trigger: text(300).min(2), change: text(500).min(2) })
+          .strict(),
+      )
+      .max(6)
+      .default([]),
+    reasons: text(2000).default(""),
+    opponent_notes: text(2000).default(""),
+    priorities: z.array(priorityItemSchema).max(5).default([]),
+    review: z
+      .object({
+        applied: z.enum(["yes", "partly", "no"]).nullable(),
+        notes: text(2000).default(""),
+        adjust: text(2000).default(""),
+      })
+      .strict()
+      .nullable()
+      .default(null),
+  })
+  .strict();
 export const schemas = {
   matches: matchSchema,
   players: playerSchema,
@@ -327,6 +371,7 @@ export const schemas = {
   requirements: requirementSchema,
   trials: trialSchema,
   live_sessions: liveSessionSchema,
+  plans: planSchema,
 };
 export type Resource = keyof typeof schemas;
 export const filterSchema = z
@@ -431,6 +476,13 @@ export type LiveSession = Omit<
   created_at: string;
   updated_at: string;
 };
+export type Plan = z.infer<typeof planSchema> & {
+  id: string;
+  version: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
 export type Season = {
   id: string;
   name: string;
@@ -490,4 +542,5 @@ export type Graph = {
   trials: Trial[];
   dossiers: Dossier[];
   live_sessions: LiveSession[];
+  plans: Plan[];
 };

@@ -22,6 +22,7 @@ export function filterGraph(
     trials,
     dossiers,
     live_sessions,
+    plans,
   } = graph;
   const scopedMemberships = memberships.filter(
     (m) =>
@@ -113,6 +114,24 @@ export function filterGraph(
             match.category_id === m.category_id,
         )),
   );
+  // Scenarios follow the season/category filters; in export mode only those of an
+  // exported season and category whose players are all in the graph, so a restored
+  // scenario never points outside it (an empty scenario included).
+  const selectedLineups = lineups.filter(
+    (l) =>
+      (!filters.season || l.season_id === filters.season) &&
+      (!filters.category || l.category_id === filters.category) &&
+      (!exporting ||
+        ([...selectedMatches, ...selectedMemberships].some(
+          (x) => x.season_id === l.season_id && x.category_id === l.category_id,
+        ) &&
+          [
+            ...Object.values(l.slots).map((s) => s.player_id),
+            ...l.bench,
+          ].every((p) => !p || playerIds.has(p)) &&
+          (!l.match_id || matchIds.has(l.match_id)))),
+  );
+  const lineupIds = new Set(selectedLineups.map((l) => l.id));
   return {
     seasons: seasons.filter((s) =>
       !exporting
@@ -150,19 +169,7 @@ export function filterGraph(
         ),
     ),
     targets: selectedTargets,
-    // Scenarios follow the season/category filters; in export mode only those whose
-    // players are all in the graph, so a restored scenario never points outside it.
-    lineups: lineups.filter(
-      (l) =>
-        (!filters.season || l.season_id === filters.season) &&
-        (!filters.category || l.category_id === filters.category) &&
-        (!exporting ||
-          ([
-            ...Object.values(l.slots).map((s) => s.player_id),
-            ...l.bench,
-          ].every((p) => !p || playerIds.has(p)) &&
-            (!l.match_id || matchIds.has(l.match_id)))),
-    ),
+    lineups: selectedLineups,
     requirements,
     trials: trials.filter((t) => playerIds.has(t.player_id)),
     // In export mode a dossier is kept only if the sequences it cites are in the graph.
@@ -172,5 +179,10 @@ export function filterGraph(
         (!exporting || d.sequence_ids.every((s) => markerIds.has(s))),
     ),
     live_sessions: live_sessions.filter((l) => matchIds.has(l.match_id)),
+    plans: plans.filter(
+      (p) =>
+        matchIds.has(p.match_id) &&
+        (!exporting || !p.lineup_id || lineupIds.has(p.lineup_id)),
+    ),
   };
 }

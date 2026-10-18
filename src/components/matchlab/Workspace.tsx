@@ -38,6 +38,7 @@ import { Players } from "./Players";
 import { Squad } from "./Squad";
 import { PlayerFile } from "./PlayerFile";
 import { Live } from "./Live";
+import { Tactics } from "./Tactics";
 import { Analysis } from "./Analysis";
 import { Reports } from "./Reports";
 import { Extensions } from "./Extensions";
@@ -114,7 +115,7 @@ export function Workspace({ section }: { section: string }) {
   };
   return (
     <LabContext.Provider value={{ data, refresh }}>
-      {!["analyze", "site", "admin", "ai", "alerts", "squad", "player", "live"].includes(section) && (
+      {!["analyze", "site", "admin", "ai", "alerts", "squad", "player", "live", "tactics"].includes(section) && (
         <div className="ml-filterbar">
           <label>
             {t.category}
@@ -179,6 +180,8 @@ export function Workspace({ section }: { section: string }) {
         <PlayerFile id={query.get("id") || undefined} />
       ) : section === "live" ? (
         <Live id={query.get("id") || undefined} />
+      ) : section === "tactics" ? (
+        <Tactics id={query.get("id") || undefined} />
       ) : section === "analyze" ? (
         <Analysis id={query.get("id") || undefined} />
       ) : section === "reports" ? (

@@ -13,6 +13,7 @@ import {
   TRIAL_DECISIONS,
   DOSSIER_SECTIONS,
   liveSessionSchema,
+  planSchema,
   filterSchema,
   type Graph,
 } from "./schema";
@@ -185,6 +186,17 @@ const graphSchema = z
       )
       .max(5000)
       .default([]),
+    plans: z
+      .array(
+        planSchema.extend({
+          ...version,
+          created_by: z.uuid().nullable(),
+          created_at: z.iso.datetime({ offset: true }),
+          updated_at: z.iso.datetime({ offset: true }),
+        }),
+      )
+      .max(5000)
+      .default([]),
   })
   .strict();
 export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
@@ -280,6 +292,10 @@ export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
   for (const trial of graph.trials)
     if (!players.has(trial.player_id)) throw new Error("INVALID_ARCHIVE");
   const markerIds = new Set(graph.markers.map((m) => m.id));
+  const lineupIds = new Set(graph.lineups.map((l) => l.id));
+  for (const plan of graph.plans)
+    if (!matches.has(plan.match_id) || (plan.lineup_id && !lineupIds.has(plan.lineup_id)))
+      throw new Error("INVALID_ARCHIVE");
   for (const l of graph.live_sessions)
     if (!matches.has(l.match_id) || l.present.some((p) => !players.has(p)))
       throw new Error("INVALID_ARCHIVE");

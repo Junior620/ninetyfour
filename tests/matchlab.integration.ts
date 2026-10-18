@@ -766,6 +766,50 @@ async function main() {
         "IMMUTABLE_DECISION",
     "A finished live session and its events can no longer be changed or undone",
   );
+  // Tactics cell: plans on a match, lineup of the same season and category (step 5).
+  const planSave = (payload: Record<string, unknown>, expected = 0, db = staff.db) =>
+    db.rpc("ml_save", { kind: "plans", payload, expected });
+  const mainPlan = unwrap(
+    await planSave({ match_id: match.id, rank: 1, title: "Plan principal fictif", reasons: "Bloc médian" }),
+  );
+  ok(
+    mainPlan.created_by === staff.id &&
+      unwrap(await reader.db.from("ml_plans").select("id")).length === 0 &&
+      unwrap(await other.db.from("ml_plans").select("id").eq("id", mainPlan.id)).length === 0,
+    "A game plan records its author and stays internal to the category staff",
+  );
+  ok(
+    (await planSave({ match_id: match.id, rank: 1, title: "Doublon" })).error,
+    "A match has a single plan per rank",
+  );
+  const foreignLineup = unwrap(
+    await direction.db.rpc("ml_save", {
+      kind: "lineups",
+      payload: {
+        season_id: season.id,
+        category_id: "U-14",
+        name: "Composition U-14 fictive",
+        formation: "4-3-3",
+      },
+      expected: 0,
+    }),
+  );
+  ok(
+    (await planSave({ ...mainPlan, lineup_id: foreignLineup.id }, mainPlan.version, direction.db))
+      .error,
+    "A plan cannot use a lineup of another category",
+  );
+  const altPlan = unwrap(await planSave({ match_id: match.id, rank: 2, title: "Plan alternatif fictif" }));
+  ok(
+    (await other.db.rpc("ml_remove_plan", { plan: altPlan.id })).error,
+    "Another category cannot remove a plan",
+  );
+  unwrap(await staff.db.rpc("ml_remove_plan", { plan: altPlan.id }));
+  ok(
+    unwrap(await admin.from("ml_audit").select("id").eq("action", "PLAN_REMOVED").eq("resource_id", altPlan.id))
+      .length === 1,
+    "Removing a plan is audited",
+  );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",
