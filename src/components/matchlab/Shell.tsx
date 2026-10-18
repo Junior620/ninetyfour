@@ -23,6 +23,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Dialog } from "@base-ui/react/dialog";
+import { HelpPanel, Tour } from "./Help";
 import { fr as t } from "@/lib/matchlab/messages";
 import type { Member } from "@/lib/matchlab/schema";
 
@@ -189,6 +190,7 @@ export function Shell({
               <LockKeyhole size={13} />
               {t.private}
             </span>
+            <HelpPanel section={active} />
             <Link
               className="ml-icon"
               href="/matchlab/alerts"
@@ -209,6 +211,7 @@ export function Shell({
           )}
           {children}
         </main>
+        <Tour section={active} />
         <footer className="ml-footer">
           <span>{t.footer}</span>
           <span>{t.decision}</span>

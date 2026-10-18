@@ -181,6 +181,7 @@ export function Modal({
   children,
   open,
   onOpenChange,
+  tour,
 }: {
   title: string;
   /** Without a trigger the dialog only opens programmatically (read-only file). */
@@ -188,11 +189,17 @@ export function Modal({
   children: React.ReactNode;
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  /** Guided tour anchor on the trigger. */
+  tour?: string;
 }) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       {trigger && (
-        <Dialog.Trigger className="ml-button" aria-label={title}>
+        <Dialog.Trigger
+          className="ml-button"
+          aria-label={title}
+          data-tour={tour}
+        >
           {trigger}
         </Dialog.Trigger>
       )}

@@ -736,6 +736,11 @@
 }
 .ml-dossier-empty {
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
 }
 .ml-dossier-empty p {
   font-size: var(--ml-font-md);
@@ -1918,6 +1923,132 @@
 .ml-preview p {
   margin-top: 18px;
 }
+/* Help panel, guided tour and getting-started blocks (cahier v2.2, step 1). */
+.ml-help-panel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 71;
+  width: min(440px, 100%);
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: calc(8px + var(--ml-target) + var(--ml-target-gap)) 24px 24px;
+  background: var(--ml-surface-raised);
+  box-shadow: var(--ml-shadow-modal);
+}
+.ml-help-panel h2 {
+  font-size: var(--ml-font-xl);
+}
+.ml-help-panel .ml-eyebrow {
+  margin: 0 !important;
+}
+.ml-help-panel > p {
+  color: var(--ml-text-secondary);
+}
+.ml-help-panel ul {
+  margin: 0 0 6px;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  color: var(--ml-text-secondary);
+}
+.ml-help-panel .ml-button {
+  justify-self: start;
+}
+.ml-tour-invite {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 0 0 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--ml-border-accent);
+  border-radius: 8px;
+  background: var(--ml-surface-accent);
+  color: var(--ml-accent-heading);
+}
+.ml-tour-invite p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+.ml-tour-invite svg {
+  flex: none;
+}
+.ml-tour-card {
+  position: fixed;
+  z-index: 80;
+  width: min(360px, calc(100vw - 32px));
+  display: grid;
+  gap: 10px;
+  padding: 18px 20px 12px;
+  border: 1px solid var(--ml-border);
+  border-radius: 10px;
+  background: var(--ml-surface-raised);
+  box-shadow: var(--ml-shadow-modal);
+}
+.ml-tour-card small {
+  color: var(--ml-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.ml-tour-card h2 {
+  font-size: var(--ml-font-lg);
+}
+.ml-tour-card h2:focus {
+  outline: none;
+}
+.ml-tour-card p {
+  color: var(--ml-text-secondary);
+}
+.ml-tour-card .ml-actions {
+  justify-content: flex-end;
+}
+.ml-tour-stop {
+  justify-self: start;
+  min-height: var(--ml-target);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ml-text-tertiary);
+  font-size: var(--ml-font-sm);
+  text-decoration: underline;
+}
+.ml-tour-target {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 6px;
+}
+.ml-eval-player {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 4px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--ml-surface-muted);
+}
+.ml-eval-player strong {
+  display: block;
+  font-size: var(--ml-font-lg);
+}
+.ml-eval-player small {
+  color: var(--ml-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.ml-report-list {
+  display: grid;
+  padding: 8px 0 0;
+  border: 1px solid var(--ml-border);
+  border-radius: 10px;
+  background: var(--ml-surface);
+  overflow: hidden;
+}
+.ml-report-list .ml-review-row svg {
+  flex: none;
+  color: var(--ml-icon);
+}
 @media (min-width: 1600px) {
   .ml-hero-photo {
     height: 310px;
@@ -2248,6 +2379,12 @@
   .ml-photo-consent .ml-form-grid,
   .ml-new-photo .ml-form-grid {
     grid-template-columns: 1fr;
+  }
+  .ml-tour-card {
+    top: auto !important;
+    bottom: 16px;
+    left: 16px !important;
+    transform: none !important;
   }
   .ml-footer {
     padding: 24px 18px;

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Printer } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
 import {
@@ -31,8 +32,10 @@ const axis = (value: number | null | undefined) =>
   value === undefined ? "—" : value === null ? t.reports.notObserved : `${value}/5`;
 export function Reports() {
   const { data } = useLab();
-  const [matchId, setMatchId] = useState("");
-  const [revision, setRevision] = useState("");
+  // A dashboard link may open a given match (?id=) and revision (?revision=).
+  const query = useSearchParams();
+  const [matchId, setMatchId] = useState(query.get("id") || "");
+  const [revision, setRevision] = useState(query.get("revision") || "");
   const [correction, setCorrection] = useState("");
   const mutation = useMutation();
   const match = data.graph.matches.find(
@@ -111,7 +114,7 @@ export function Reports() {
               </select>
             </label>
           </div>
-          <article className="ml-card ml-report">
+          <article className="ml-card ml-report" data-tour="report">
             <div className="ml-report-head">
               <div>
                 <small>{t.footer}</small>

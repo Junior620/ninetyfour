@@ -39,11 +39,13 @@ import { Analysis } from "./Analysis";
 import { Reports } from "./Reports";
 import { Extensions } from "./Extensions";
 import { PushSettings } from "./PushSettings";
+import { TourInvite } from "./Help";
 
 async function fetchLab(queryString: string): Promise<LabData> {
   const params = new URLSearchParams(queryString);
   params.delete("id");
   params.delete("module");
+  params.delete("revision");
   const response = await fetch(`/api/matchlab/data?${params}`, {
     cache: "no-store",
   });
@@ -334,8 +336,12 @@ function Overview({ data }: { data: LabData }) {
   const { graph } = data;
   const last = graph.matches[0];
   const toReview = graph.players.filter((p) => p.status === "trial");
+  const recent = [...graph.reports]
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .slice(0, 3);
   return (
     <>
+      <TourInvite />
       <section className="ml-hero">
         <div className="ml-hero-head">
           <div className="ml-hero-copy">
@@ -393,6 +399,53 @@ function Overview({ data }: { data: LabData }) {
         ) : (
           <div className="ml-card ml-dossier-empty">
             <p>{t.overview.noLast}</p>
+            <Link className="ml-button" href="/matchlab/analyze">
+              <Plus size={17} />
+              {t.overview.create}
+            </Link>
+          </div>
+        )}
+      </section>
+      <section className="ml-overview-block">
+        <div className="ml-block-head">
+          <p className="ml-eyebrow">{t.overview.recentReports}</p>
+          <small>{t.overview.recentReportsMeta}</small>
+        </div>
+        {recent.length ? (
+          <div className="ml-report-list">
+            {recent.map((r) => (
+              <Link
+                key={r.id}
+                className="ml-review-row"
+                href={`/matchlab/reports?id=${r.match_id}&revision=${r.id}`}
+              >
+                <FileText size={20} aria-hidden />
+                <span>
+                  <b>
+                    N91 {r.snapshot.match.category_id} —{" "}
+                    {r.snapshot.match.opponent}
+                  </b>
+                  <small>
+                    {formatDay(r.snapshot.match.played_on)} ·{" "}
+                    {t.overview.revision} #{r.revision}
+                  </small>
+                </span>
+                <span
+                  className={`ml-badge${r.validated_at ? " ml-badge-reviewed" : ""}`}
+                >
+                  {r.validated_at
+                    ? t.reports.validated
+                    : t.reports.unvalidated}
+                </span>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="ml-card ml-dossier-empty">
+            <p>{t.overview.noReports}</p>
+            <Link className="ml-button secondary" href="/matchlab/reports">
+              {t.overview.openReports}
+            </Link>
           </div>
         )}
       </section>

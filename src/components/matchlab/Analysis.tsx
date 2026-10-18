@@ -35,6 +35,8 @@ import {
   Empty,
   Status,
   fundamentalKeys,
+  PlayerAvatar,
+  jerseyFor,
 } from "./shared";
 
 export function Analysis({ id }: { id?: string }) {
@@ -366,6 +368,7 @@ function AnalysisForm({ match }: { match?: Match }) {
     setMinutes(saved?.minutes?.toString() || "");
   };
   const score = individualScore(common, specific);
+  const evaluated = players.find((p) => p.id === player);
   return (
     <>
       <Heading title={t.analysis.title} eyebrow={t.analysis.eyebrow}>
@@ -419,6 +422,7 @@ function AnalysisForm({ match }: { match?: Match }) {
         key={formKey}
         ref={form}
         className="ml-card ml-match-form"
+        data-tour="match-form"
         onChange={() => setMatchDirty(true)}
         onSubmit={async (e) => {
           e.preventDefault();
@@ -699,7 +703,7 @@ function AnalysisForm({ match }: { match?: Match }) {
           )}
         </section>
         <div className="ml-analysis-side">
-          <section className="ml-card">
+          <section className="ml-card" data-tour="collective">
             <h2>{t.analysis.collective}</h2>
             <p className="ml-score-line">
               {t.analysis.score}
@@ -723,7 +727,7 @@ function AnalysisForm({ match }: { match?: Match }) {
           />
         </div>
       </div>
-      <section className="ml-card ml-individual">
+      <section className="ml-card ml-individual" data-tour="individual">
         <h2>{t.analysis.individual}</h2>
         {!match ? (
           <p className="ml-notice">{t.analysis.saveFirst}</p>
@@ -771,6 +775,29 @@ function AnalysisForm({ match }: { match?: Match }) {
                 </select>
               </label>
             </div>
+            {evaluated && (
+              <div className="ml-eval-player">
+                <PlayerAvatar
+                  playerId={evaluated.id}
+                  name={evaluated.full_name}
+                  size={56}
+                />
+                <div>
+                  <strong>{evaluated.full_name}</strong>
+                  <small>
+                    #
+                    {jerseyFor(
+                      data.graph,
+                      evaluated.id,
+                      match.season_id,
+                      match.category_id,
+                    ) ?? "—"}{" "}
+                    · {positionNames[position]} ·{" "}
+                    {minutes ? `${minutes} min` : `${t.analysis.minutes} —`}
+                  </small>
+                </div>
+              </div>
+            )}
             {player && (
               <fieldset disabled={!canWrite || mutation.busy}>
                 <div className="ml-question-grid">

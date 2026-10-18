@@ -22,6 +22,9 @@
 - Écart au profil cible (remplace « Compatibilité · Formule à valider », cahier v2.2) : fondamentaux du joueur comparés au profil cible de sa saison la plus récente, de sa catégorie et de son poste habituel. Affichage factuel (« 2 critères sous la cible · Technique, Mental », « Conforme », « Aucun profil cible », « Fondamentaux à renseigner »), sans pourcentage ni recommandation.
 - Lecteur (cahier v2.2 §09) : les notes de scouting sont retirées côté serveur de ses données et de ses exports ; la « Fiche joueur » en lecture seule ne montre aucune observation interne.
 
+- Prise en main (cahier v2.2, étape 1) : aide contextuelle par page (bouton « ? ») et guide pas à pas sur huit étapes (joueur, match, collectif, joueurs, rapport). Le guide met en évidence l’élément visé, change de page seul, s’arrête avec « Arrêter le guide » ou Échap et reprend où il s’était arrêté. Sa progression et l’invitation de la vue d’ensemble sont mémorisées par navigateur et désactivables depuis l’aide. Aucune IA : textes fixes et vérifiables.
+- Vue d’ensemble : trois derniers rapports (révision, état de validation) avec lien direct vers la révision ; actions directes quand aucun match ni rapport n’existe. La salle d’analyse affiche photo, dossard, poste observé et minutes du joueur évalué.
+
 ## Tokens et accessibilité
 
 Lisibilité au bord du terrain, sans changer la structure ni l’identité. Tout passe par `src/app/matchlab/matchlab.css`.

@@ -54,6 +54,7 @@ export function Players() {
             ) : undefined
           }
           open={open}
+          tour="add-player"
           onOpenChange={(v) => {
             setOpen(v);
             if (!v) setEditing(undefined);
@@ -329,7 +330,7 @@ export function Players() {
           }}
         />
       </label>
-      <div className="ml-card">
+      <div className="ml-card" data-tour="players-table">
         {players.length ? (
           <>
             <div className="ml-table-wrap">

@@ -145,6 +145,179 @@ export const fr = {
     RECOVERY_UNAVAILABLE:
       "Le service de récupération est temporairement indisponible.",
   },
+  help: {
+    button: "Aide",
+    title: "Aide",
+    close: "Fermer l’aide",
+    startTour: "Lancer le guide de prise en main",
+    autoTour: "Proposer le guide sur la vue d’ensemble",
+    pages: {
+      overview: {
+        title: "Vue d’ensemble",
+        intro: "Le point d’entrée du staff : dernier match, rapports récents, joueurs à revoir et chiffres du périmètre choisi.",
+        points: [
+          "Le filtre Catégorie et la saison du menu limitent toutes les données affichées.",
+          "« Dossier match » montre la dernière rencontre et son état de revue.",
+          "Les chiffres comptent uniquement les données autorisées pour votre compte.",
+        ],
+      },
+      matches: {
+        title: "Matchs analysés",
+        intro: "Tous les matchs du périmètre, avec leur note collective et leur état.",
+        points: [
+          "Recherchez un match par adversaire.",
+          "« Ouvrir l’analyse » reprend le match dans la salle d’analyse.",
+          "Note collective : moyenne des axes observés, multipliée par deux pour une note sur 10.",
+        ],
+      },
+      players: {
+        title: "Joueurs & profils",
+        intro: "L’effectif avec photo, dossard, poste, fondamentaux et écart au profil cible.",
+        points: [
+          "Cliquez sur un joueur pour ouvrir sa fiche : photo, informations et dossards.",
+          "Les fondamentaux (1 à 5) sont une observation indépendante du questionnaire officiel.",
+          "L’écart au profil cible compare des faits : aucun pourcentage, aucune recommandation automatique.",
+          "Une photo exige l’autorisation du représentant légal, saisie dans la fiche.",
+        ],
+      },
+      analyze: {
+        title: "Salle d’analyse",
+        intro: "Le parcours d’après-match : créer le match, décrire le contexte, évaluer le collectif puis chaque joueur.",
+        points: [
+          "Note individuelle : questions communes × 40 % + questions du poste × 60 %, le tout × 2 pour une note sur 10.",
+          "« Non observé » est exclu du calcul ; il faut au moins une réponse chiffrée dans chaque groupe.",
+          "Le questionnaire change selon le poste réellement joué.",
+          "Les circonstances contextualisent le rapport ; elles ne modifient jamais une note.",
+        ],
+      },
+      reports: {
+        title: "Rapports",
+        intro: "La synthèse d’un match : notes, axes, circonstances, joueurs en tête et repères vidéo.",
+        points: [
+          "Chaque révision fige les données au moment de sa création.",
+          "Les ex æquo sont affichés ; aucun départage n’est caché.",
+          "Sous cinq joueurs évalués, la performance reste « à confirmer ».",
+          "« Imprimer / PDF » produit la version A4.",
+        ],
+      },
+      analytics: {
+        title: "Analytique",
+        intro: "L’évolution des notes collectives et individuelles sur la période filtrée.",
+        points: [
+          "Chaque graphique indique sa période et son échantillon.",
+          "Les dates Du / Au du menu « Périmètre » changent la période.",
+        ],
+      },
+      video: {
+        title: "Vidéothèque",
+        intro: "Les séquences vidéo horodatées du périmètre.",
+        points: [
+          "Une séquence ouvre la salle d’analyse à son horodatage.",
+          "Chaque séquence peut être attribuée à un joueur puis corrigée.",
+        ],
+      },
+      ai: {
+        title: "IA · Laboratoire",
+        intro: "Les contrats prévus pour l’IA. Aucun moteur n’est branché : aucune donnée n’est envoyée.",
+        points: [
+          "Chaque future proposition affichera ses preuves, son niveau de confiance et la validation humaine.",
+        ],
+      },
+      exports: {
+        title: "Exports",
+        intro: "PDF, Excel, CSV et archive complète du périmètre filtré.",
+        points: [
+          "Les photos ne sont incluses qu’avec une autorisation d’export valide.",
+          "L’archive ZIP permet une restauration complète, liens compris.",
+        ],
+      },
+      site: {
+        title: "Gestion du site",
+        intro: "Les articles du site public, en brouillon puis publiés.",
+        points: [
+          "La publication est explicite et journalisée.",
+        ],
+      },
+      admin: {
+        title: "Administration",
+        intro: "Saisons, gouvernance des médias, comptes, partages et journal d’audit.",
+        points: [
+          "Rôles : direction (tout), staff (catégories autorisées), lecteur (partages explicites).",
+          "Une durée de conservation, une fois définie, masque les médias plus anciens.",
+        ],
+      },
+      alerts: {
+        title: "Alertes",
+        intro: "Les notifications après l’évaluation d’un match : joueur le mieux évalué, note et poste.",
+        points: [
+          "Marquez une alerte comme lue une fois traitée.",
+        ],
+      },
+    },
+  },
+  tour: {
+    invite: "Découvrir MatchLab en six étapes : ajouter un joueur, analyser un match, valider un rapport.",
+    start: "Lancer le guide",
+    later: "Plus tard",
+    next: "Suivant",
+    previous: "Précédent",
+    stop: "Arrêter le guide",
+    finish: "Terminer",
+    resume: "Afficher l’étape",
+    step: "Étape",
+    of: "sur",
+    label: "Guide de prise en main",
+    steps: [
+      {
+        section: "overview",
+        target: "",
+        title: "Bienvenue dans MatchLab",
+        text: "Ce guide montre comment ajouter un joueur, analyser un match et valider un rapport. Vous pouvez l’arrêter et reprendre la main à tout moment.",
+      },
+      {
+        section: "players",
+        target: "add-player",
+        title: "Ajouter un joueur",
+        text: "Créez le joueur avec sa saison, sa catégorie, son dossard et, si l’autorisation existe, sa photo.",
+      },
+      {
+        section: "players",
+        target: "players-table",
+        title: "Ouvrir la fiche",
+        text: "Cliquez sur un joueur pour voir sa photo, ses informations et ses dossards.",
+      },
+      {
+        section: "analyze",
+        target: "match-form",
+        title: "Créer le match",
+        text: "Renseignez la date, l’adversaire, le score et les circonstances, puis enregistrez l’analyse.",
+      },
+      {
+        section: "analyze",
+        target: "collective",
+        title: "Évaluer le collectif",
+        text: "Notez chaque axe de 1 à 5, ou « Non observé ». La note collective se calcule seule.",
+      },
+      {
+        section: "analyze",
+        target: "individual",
+        title: "Évaluer les joueurs",
+        text: "Choisissez le joueur et le poste réellement joué : le questionnaire s’adapte. Enregistrez ensuite l’évaluation.",
+      },
+      {
+        section: "reports",
+        target: "report",
+        title: "Valider la synthèse",
+        text: "Contrôlez les notes, les joueurs en tête et les priorités, puis créez ou validez une révision.",
+      },
+      {
+        section: "overview",
+        target: "help",
+        title: "C’est terminé",
+        text: "Le guide se relance depuis l’aide (?) en haut de l’écran.",
+      },
+    ],
+  },
   overview: {
     eyebrow: "CELLULE PERFORMANCE",
     title: "Le match,",
@@ -177,6 +350,12 @@ export const fr = {
     history: "Historique récent des matchs",
     method: "Périmètre sélectionné · données autorisées · effectifs distincts",
     noLast: "Le prochain dossier enregistré apparaîtra ici.",
+    recentReports: "RAPPORTS RÉCENTS",
+    recentReportsMeta: "Révisions figées et validations",
+    noReports:
+      "Aucun rapport pour l’instant. Créez une révision depuis Rapports après l’analyse d’un match.",
+    openReports: "Ouvrir les rapports",
+    revision: "Révision",
     bannerBrand: "NINETY ONE FOOT ACADEMY",
     bannerLab: "MATCH ANALYSIS LAB",
     dossierTitle: "DOSSIER MATCH · DERNIÈRE RENCONTRE",
