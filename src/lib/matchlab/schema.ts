@@ -284,6 +284,37 @@ export const dossierSchema = z
   })
   .strict()
   .refine((d) => d.period_to >= d.period_from, "Période invalide");
+export const LIVE_PHASES = [
+  "ready",
+  "first_half",
+  "half_time",
+  "second_half",
+  "finished",
+] as const;
+const stamp = z.iso.datetime({ offset: true }).nullable().default(null);
+export const liveNoteSchema = z
+  .object({
+    minute: z.number().int().min(0).max(150),
+    text: text(500).min(1),
+    at: z.iso.datetime({ offset: true }),
+  })
+  .strict();
+/** Always saved whole: a missing field would reset a frozen summary. */
+export const liveSessionSchema = z
+  .object({
+    ...base,
+    match_id: id,
+    status: z.enum(LIVE_PHASES),
+    present: z.array(id).max(60).default([]),
+    first_half_at: stamp,
+    half_time_at: stamp,
+    second_half_at: stamp,
+    finished_at: stamp,
+    notes: z.array(liveNoteSchema).max(300).default([]),
+    half_summary: z.record(z.string(), z.unknown()).nullable().default(null),
+    final_summary: z.record(z.string(), z.unknown()).nullable().default(null),
+  })
+  .strict();
 export const schemas = {
   matches: matchSchema,
   players: playerSchema,
@@ -295,6 +326,7 @@ export const schemas = {
   lineups: lineupSchema,
   requirements: requirementSchema,
   trials: trialSchema,
+  live_sessions: liveSessionSchema,
 };
 export type Resource = keyof typeof schemas;
 export const filterSchema = z
@@ -387,6 +419,18 @@ export type Dossier = z.infer<typeof dossierSchema> & {
   validated_at: string | null;
   withdrawn_at: string | null;
 };
+export type LiveSession = Omit<
+  z.infer<typeof liveSessionSchema>,
+  "half_summary" | "final_summary"
+> & {
+  id: string;
+  version: number;
+  half_summary: import("./live").LiveSummary | null;
+  final_summary: import("./live").LiveSummary | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
 export type Season = {
   id: string;
   name: string;
@@ -445,4 +489,5 @@ export type Graph = {
   requirements: Requirement[];
   trials: Trial[];
   dossiers: Dossier[];
+  live_sessions: LiveSession[];
 };

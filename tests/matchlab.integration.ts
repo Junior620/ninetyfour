@@ -658,6 +658,114 @@ async function main() {
         .error,
     "A withdrawn club dossier keeps its record but can no longer be exported",
   );
+  // Live match: phases forward only, frozen summaries, undo while running (step 4).
+  const kickoff = new Date(Date.now() - 50 * 60000).toISOString();
+  const liveSave = (payload: Record<string, unknown>, expected: number, db = staff.db) =>
+    db.rpc("ml_save", { kind: "live_sessions", payload, expected });
+  const liveBase = {
+    match_id: match.id,
+    status: "ready",
+    present: [p.player.id],
+    notes: [],
+  };
+  const liveRow = unwrap(await liveSave(liveBase, 0));
+  ok(
+    liveRow.created_by === staff.id && liveRow.status === "ready",
+    "A live session records who opened it",
+  );
+  ok(
+    unwrap(await reader.db.from("ml_live_sessions").select("id")).length === 0 &&
+      unwrap(await other.db.from("ml_live_sessions").select("id").eq("id", liveRow.id))
+        .length === 0,
+    "Readers and other categories cannot see live observations",
+  );
+  ok(
+    (
+      await liveSave(
+        { ...liveRow, status: "first_half", first_half_at: new Date(Date.now() + 3600000).toISOString() },
+        liveRow.version,
+      )
+    ).error,
+    "A live phase cannot start in the future",
+  );
+  const firstHalf = unwrap(
+    await liveSave({ ...liveRow, status: "first_half", first_half_at: kickoff }, liveRow.version),
+  );
+  ok(
+    (await liveSave({ ...firstHalf, status: "ready" }, firstHalf.version)).error,
+    "Live phases only move forward",
+  );
+  const liveEvent = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "markers",
+      payload: {
+        match_id: match.id,
+        player_id: p.player.id,
+        seconds: 600,
+        kind: "recovery",
+        outcome: "success",
+        source: "live",
+        minute: 11,
+      },
+      expected: 0,
+    }),
+  );
+  ok(
+    (await other.db.rpc("ml_remove_live_event", { event: liveEvent.id })).error &&
+      (await staff.db.rpc("ml_remove_live_event", { event: sequence.id })).error,
+    "Only live events of an accessible match can be undone",
+  );
+  unwrap(await staff.db.rpc("ml_remove_live_event", { event: liveEvent.id }));
+  ok(
+    unwrap(await admin.from("ml_audit").select("id").eq("action", "LIVE_EVENT_REMOVED").eq("resource_id", liveEvent.id))
+      .length === 1,
+    "Undoing a live event is audited",
+  );
+  const halfTime = unwrap(
+    await liveSave(
+      {
+        ...firstHalf,
+        status: "half_time",
+        half_time_at: new Date(Date.now() - 2 * 60000).toISOString(),
+        half_summary: { version: 1, phase: "half_time", events: 0 },
+      },
+      firstHalf.version,
+    ),
+  );
+  ok(
+    (
+      await liveSave(
+        { ...halfTime, half_summary: { version: 1, phase: "half_time", events: 9 } },
+        halfTime.version,
+      )
+    ).error?.message === "IMMUTABLE_DECISION",
+    "A half-time summary is frozen",
+  );
+  const finished = unwrap(
+    await liveSave(
+      {
+        ...halfTime,
+        status: "finished",
+        finished_at: new Date().toISOString(),
+        final_summary: { version: 1, phase: "finished", events: 0 },
+      },
+      halfTime.version,
+    ),
+  );
+  const lateEvent = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "markers",
+      payload: { match_id: match.id, seconds: 2800, kind: "press", source: "live", minute: 47 },
+      expected: 0,
+    }),
+  );
+  ok(
+    (await liveSave({ ...finished, notes: [] }, finished.version)).error?.message ===
+      "IMMUTABLE_DECISION" &&
+      (await staff.db.rpc("ml_remove_live_event", { event: lateEvent.id })).error?.message ===
+        "IMMUTABLE_DECISION",
+    "A finished live session and its events can no longer be changed or undone",
+  );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",

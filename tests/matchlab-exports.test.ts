@@ -101,6 +101,7 @@ export function fixture(): Archive {
     requirements: [],
     trials: [],
     dossiers: [],
+    live_sessions: [],
   };
   return {
     metadata: {

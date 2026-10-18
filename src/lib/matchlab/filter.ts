@@ -21,6 +21,7 @@ export function filterGraph(
     requirements,
     trials,
     dossiers,
+    live_sessions,
   } = graph;
   const scopedMemberships = memberships.filter(
     (m) =>
@@ -170,5 +171,6 @@ export function filterGraph(
         playerIds.has(d.player_id) &&
         (!exporting || d.sequence_ids.every((s) => markerIds.has(s))),
     ),
+    live_sessions: live_sessions.filter((l) => matchIds.has(l.match_id)),
   };
 }

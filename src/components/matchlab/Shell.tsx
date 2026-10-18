@@ -22,6 +22,7 @@ import {
   LogOut,
   ChevronRight,
   LayoutTemplate,
+  Radio,
 } from "lucide-react";
 import { Dialog } from "@base-ui/react/dialog";
 import { HelpPanel, Tour } from "./Help";
@@ -34,6 +35,7 @@ export const navigation = [
   { id: "players", Icon: Users },
   { id: "squad", Icon: LayoutTemplate },
   { id: "analyze", Icon: Video },
+  { id: "live", Icon: Radio },
   { id: "reports", Icon: FileText },
   { id: "analytics", Icon: ChartNoAxesCombined },
   { id: "video", Icon: Film },
@@ -98,6 +100,7 @@ export function Shell({
           .filter(
             (n) =>
               (n.id !== "admin" || member.role === "direction") &&
+              (n.id !== "live" || member.role !== "reader") &&
               (n.id !== "site" ||
                 member.permissions.some(
                   (p) => p === "site_editor" || p === "site_publisher",

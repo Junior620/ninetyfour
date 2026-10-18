@@ -14,6 +14,7 @@ export default async function Page({
       "player",
       "squad",
       "analyze",
+      "live",
       "reports",
       "analytics",
       "video",
