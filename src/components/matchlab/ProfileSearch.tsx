@@ -108,7 +108,7 @@ export function ProfileSearch({ initial = "" }: { initial?: string }) {
                       <td>
                         <Link
                           className="ml-player-name"
-                          href={`/matchlab/players?id=${r.player.id}`}
+                          href={`/matchlab/player?id=${r.player.id}`}
                         >
                           <PlayerAvatar
                             playerId={r.player.id}

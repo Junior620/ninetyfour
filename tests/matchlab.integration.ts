@@ -533,6 +533,131 @@ async function main() {
     unlinked[0]?.video_id === null,
     "Removing a video keeps its sequences and unlinks them",
   );
+  // Club dossier: prepared by the staff, validated by the direction (cahier v2.2 step 3).
+  const dossierDraft = {
+    player_id: p.player.id,
+    recipient: "Club fictif de recette",
+    period_from: "2026-07-01",
+    period_to: "2026-12-31",
+    sections: ["statistics", "sequences"],
+    sequence_ids: [sequence.id],
+    version: 1,
+  };
+  ok(
+    (
+      await staff.db
+        .from("ml_dossiers")
+        .insert({ ...dossierDraft, status: "validated", content: {} })
+    ).error,
+    "A club dossier cannot be created already validated",
+  );
+  const dossier = unwrap(
+    await staff.db
+      .from("ml_dossiers")
+      .insert({ ...dossierDraft, prepared_by: direction.id })
+      .select()
+      .single(),
+  );
+  ok(
+    dossier.prepared_by === staff.id && dossier.status === "draft",
+    "The database records who prepared the club dossier",
+  );
+  ok(
+    unwrap(await reader.db.from("ml_dossiers").select("id")).length === 0 &&
+      unwrap(await other.db.from("ml_dossiers").select("id").eq("id", dossier.id))
+        .length === 0,
+    "Readers and other categories cannot see a club dossier",
+  );
+  const validate = (db: typeof staff.db, d: { id: string; version: number }) =>
+    db
+      .from("ml_dossiers")
+      .update({ status: "validated", content: { version: 1 }, version: d.version + 1 })
+      .eq("id", d.id)
+      .select()
+      .single();
+  ok(
+    (await validate(staff.db, dossier)).error,
+    "Staff cannot validate a club dossier",
+  );
+  ok(
+    (await validate(direction.db, dossier)).error?.message ===
+      "SHARE_CONSENT_REQUIRED",
+    "Validation requires the guardian's diffusion consent",
+  );
+  unwrap(
+    await direction.db.rpc("ml_save", {
+      kind: "consents",
+      payload: {
+        player_id: p.player.id,
+        guardian_name: "Représentant fictif",
+        purpose: "dossier_share",
+        policy: "Politique fictive de diffusion.",
+        granted_at: new Date(Date.now() - 86400000).toISOString(),
+        expires_at: new Date(Date.now() + 86400000 * 30).toISOString(),
+      },
+      expected: 0,
+    }),
+  );
+  const photoDossier = unwrap(
+    await staff.db
+      .from("ml_dossiers")
+      .insert({ ...dossierDraft, sections: ["photo"] })
+      .select()
+      .single(),
+  );
+  ok(
+    (await validate(direction.db, photoDossier)).error?.message ===
+      "SHARE_CONSENT_REQUIRED",
+    "Including the photo also requires the export photo consent",
+  );
+  const validated = unwrap(await validate(direction.db, dossier));
+  ok(
+    validated.validated_by === direction.id &&
+      validated.prepared_by === staff.id &&
+      !!validated.validated_at,
+    "Validated by the direction, prepared by the staff: both recorded",
+  );
+  ok(
+    (
+      await staff.db
+        .from("ml_dossiers")
+        .update({ recipient: "Autre club", version: validated.version + 1 })
+        .eq("id", dossier.id)
+    ).error?.message === "IMMUTABLE_DECISION",
+    "A validated club dossier cannot be edited",
+  );
+  ok(
+    (await staff.db.rpc("ml_dossier_exported", { dossier: dossier.id })).error,
+    "Exporting a club dossier requires the export permission",
+  );
+  unwrap(await direction.db.rpc("ml_dossier_exported", { dossier: dossier.id }));
+  const exportLog = unwrap(
+    await admin
+      .from("ml_audit")
+      .select("details")
+      .eq("action", "DOSSIER_EXPORTED")
+      .eq("resource_id", dossier.id),
+  );
+  ok(
+    exportLog.length === 1 &&
+      exportLog[0].details.recipient === "Club fictif de recette",
+    "Each club dossier export is logged with its recipient",
+  );
+  const withdrawn = unwrap(
+    await staff.db
+      .from("ml_dossiers")
+      .update({ status: "withdrawn", version: validated.version + 1 })
+      .eq("id", dossier.id)
+      .select()
+      .single(),
+  );
+  ok(
+    !!withdrawn.withdrawn_at &&
+      withdrawn.content !== null &&
+      (await direction.db.rpc("ml_dossier_exported", { dossier: dossier.id }))
+        .error,
+    "A withdrawn club dossier keeps its record but can no longer be exported",
+  );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",

@@ -63,6 +63,10 @@ export function dbError(error: { code?: string; message: string } | null) {
     throw new LabError("GOVERNANCE_REQUIRED", 409);
   if (["CONSENT_REQUIRED", "MEDIA_NOT_AUTHORIZED"].includes(error.message))
     throw new LabError("MEDIA_NOT_AUTHORIZED", 403);
+  if (error.message === "SHARE_CONSENT_REQUIRED")
+    throw new LabError("SHARE_CONSENT_REQUIRED", 403);
+  if (error.message === "IMMUTABLE_DECISION")
+    throw new LabError("IMMUTABLE_DECISION", 409);
   if (error.code?.startsWith("23") || error.code === "22P02")
     throw new LabError("INVALID_DATA", 400);
   console.error("[MatchLab database]", error.code ?? "unavailable");

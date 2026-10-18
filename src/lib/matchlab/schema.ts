@@ -165,7 +165,7 @@ export const consentSchema = z
     ...base,
     player_id: id,
     guardian_name: text(120).min(2),
-    purpose: z.enum(["internal_photo", "export_photo"]),
+    purpose: z.enum(["internal_photo", "export_photo", "dossier_share"]),
     policy: text(2000).min(5),
     granted_at: z.iso.datetime({ offset: true }),
     expires_at: z.iso.datetime({ offset: true }),
@@ -252,6 +252,38 @@ export const trialSchema = z
       t.reason.length >= 3,
     "Motif requis",
   );
+/** Elements a club dossier can carry; identity and period are always included. */
+export const DOSSIER_SECTIONS = [
+  "photo",
+  "positions",
+  "statistics",
+  "criteria",
+  "progression",
+  "strengths",
+  "development",
+  "sequences",
+  "staff_comments",
+  "scouting",
+  "status",
+] as const;
+const day = z.iso.date();
+export const dossierSchema = z
+  .object({
+    player_id: id,
+    recipient: text(160).min(2),
+    recipient_contact: text(200).default(""),
+    period_from: day,
+    period_to: day,
+    sections: z
+      .array(z.enum(DOSSIER_SECTIONS))
+      .max(DOSSIER_SECTIONS.length)
+      .refine((s) => new Set(s).size === s.length, "Élément en double"),
+    strengths: text(2000).default(""),
+    development: text(2000).default(""),
+    sequence_ids: z.array(id).max(30).default([]),
+  })
+  .strict()
+  .refine((d) => d.period_to >= d.period_from, "Période invalide");
 export const schemas = {
   matches: matchSchema,
   players: playerSchema,
@@ -344,6 +376,17 @@ export type Trial = z.infer<typeof trialSchema> & {
   decided_by: string | null;
   decided_at: string;
 };
+export type Dossier = z.infer<typeof dossierSchema> & {
+  id: string;
+  version: number;
+  status: "draft" | "validated" | "withdrawn";
+  content: import("./dossier").DossierContent | null;
+  prepared_by: string | null;
+  prepared_at: string;
+  validated_by: string | null;
+  validated_at: string | null;
+  withdrawn_at: string | null;
+};
 export type Season = {
   id: string;
   name: string;
@@ -401,4 +444,5 @@ export type Graph = {
   lineups: Lineup[];
   requirements: Requirement[];
   trials: Trial[];
+  dossiers: Dossier[];
 };

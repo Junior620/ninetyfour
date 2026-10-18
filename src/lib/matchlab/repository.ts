@@ -44,6 +44,7 @@ export async function loadGraph(
     lineups,
     requirements,
     trials,
+    dossiers,
   ] = await Promise.all([
     rows<Graph["seasons"][number]>(db, "seasons"),
     rows<Graph["players"][number]>(db, "players"),
@@ -59,6 +60,7 @@ export async function loadGraph(
     rows<Graph["lineups"][number]>(db, "lineups"),
     rows<Graph["requirements"][number]>(db, "requirements"),
     rows<Graph["trials"][number]>(db, "trials"),
+    rows<Graph["dossiers"][number]>(db, "dossiers"),
   ]);
   return filterGraph(
     {
@@ -76,6 +78,7 @@ export async function loadGraph(
       lineups,
       requirements,
       trials,
+      dossiers,
     },
     filters,
     exporting,

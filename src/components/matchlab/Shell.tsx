@@ -112,7 +112,11 @@ export function Shell({
               <Link
                 onClick={() => setOpen(false)}
                 href={`/matchlab/${n.id}`}
-                aria-current={active === n.id ? "page" : undefined}
+                aria-current={
+                  active === n.id || (active === "player" && n.id === "players")
+                    ? "page"
+                    : undefined
+                }
               >
                 <n.Icon size={18} />
                 <span>{t.nav[n.id]}</span>

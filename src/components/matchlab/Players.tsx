@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { TrialPanel } from "./Trial";
 import { ProfileSearch } from "./ProfileSearch";
 import { MediaManager } from "./MediaManager";
@@ -363,16 +364,13 @@ export function Players() {
                     return (
                       <tr key={p.id}>
                         <td>
-                          <button
+                          <Link
                             className="ml-player-name"
-                            onClick={() => {
-                              setEditing(p);
-                              setOpen(true);
-                            }}
+                            href={`/matchlab/player?id=${p.id}`}
                           >
                             <PlayerAvatar playerId={p.id} name={p.full_name} />
                             <strong>{p.full_name}</strong>
-                          </button>
+                          </Link>
                           <small>
                             {memberships.map((m) => `#${m.jersey}`).join(" · ")}
                           </small>
@@ -542,7 +540,7 @@ export function Players() {
 const fundamentalName = (k: (typeof FUNDAMENTALS)[number]) =>
   t.players.columns[FUNDAMENTALS.indexOf(k) + 2];
 /** Factual gap to the target profile: no percentage, no recommendation. */
-function TargetGapCell({ gap }: { gap: ReturnType<typeof targetGaps> }) {
+export function TargetGapCell({ gap }: { gap: ReturnType<typeof targetGaps> }) {
   if (gap.status === "none")
     return <span className="ml-muted">{t.players.gapNone}</span>;
   if (gap.status === "unrated")

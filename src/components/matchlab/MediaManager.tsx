@@ -63,8 +63,13 @@ export function MediaManager() {
                 <label>
                   {t.media.purpose}
                   <select name="purpose">
-                    <option value="internal_photo">{t.media.internal}</option>
-                    <option value="export_photo">{t.media.export}</option>
+                    {(["internal_photo", "export_photo", "dossier_share"] as const).map(
+                      (p) => (
+                        <option key={p} value={p}>
+                          {t.media.purposes[p]}
+                        </option>
+                      ),
+                    )}
                   </select>
                 </label>
                 <label>
@@ -84,9 +89,7 @@ export function MediaManager() {
           {consents.map((c) => (
             <div className="ml-cms-row" key={c.id}>
               <span>
-                {c.purpose === "internal_photo"
-                  ? t.media.internal
-                  : t.media.export}{" "}
+                {t.media.purposes[c.purpose]}{" "}
                 · {c.guardian_name} · {c.expires_at.slice(0, 10)}
               </span>
               <button
@@ -141,7 +144,7 @@ export function MediaManager() {
                     )
                     .map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.guardian_name} · {c.purpose}
+                        {c.guardian_name} · {t.media.purposes[c.purpose]}
                       </option>
                     ))}
                 </select>

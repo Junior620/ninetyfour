@@ -11,6 +11,7 @@ import {
   requirementSchema,
   TRIAL_PROPOSALS,
   TRIAL_DECISIONS,
+  DOSSIER_SECTIONS,
   filterSchema,
   type Graph,
 } from "./schema";
@@ -145,6 +146,33 @@ const graphSchema = z
       )
       .max(5000)
       .default([]),
+    dossiers: z
+      .array(
+        z
+          .object({
+            ...version,
+            player_id: z.uuid(),
+            recipient: z.string().min(2).max(160),
+            recipient_contact: z.string().max(200),
+            period_from: z.iso.date(),
+            period_to: z.iso.date(),
+            sections: z.array(z.enum(DOSSIER_SECTIONS)).max(DOSSIER_SECTIONS.length),
+            strengths: z.string().max(2000),
+            development: z.string().max(2000),
+            sequence_ids: z.array(z.uuid()).max(30),
+            status: z.enum(["draft", "validated", "withdrawn"]),
+            content: z.record(z.string(), z.unknown()).nullable(),
+            prepared_by: z.uuid().nullable(),
+            prepared_at: z.iso.datetime({ offset: true }),
+            validated_by: z.uuid().nullable(),
+            validated_at: z.iso.datetime({ offset: true }).nullable(),
+            withdrawn_at: z.iso.datetime({ offset: true }).nullable(),
+          })
+          .strict()
+          .refine((d) => d.status !== "validated" || (!!d.content && !!d.validated_by)),
+      )
+      .max(5000)
+      .default([]),
   })
   .strict();
 export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
@@ -239,6 +267,10 @@ export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
       throw new Error("INVALID_ARCHIVE");
   for (const trial of graph.trials)
     if (!players.has(trial.player_id)) throw new Error("INVALID_ARCHIVE");
+  const markerIds = new Set(graph.markers.map((m) => m.id));
+  for (const d of graph.dossiers)
+    if (!players.has(d.player_id) || d.sequence_ids.some((s) => !markerIds.has(s)))
+      throw new Error("INVALID_ARCHIVE");
   const finalGraph = mode === "copy" ? copyGraph(graph) : graph;
   const files: Record<string, Uint8Array> = {};
   finalGraph.media.forEach(

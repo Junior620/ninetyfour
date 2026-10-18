@@ -84,8 +84,12 @@ export async function POST(request: Request) {
           .select("*")
           .single();
         dbError(error);
-        (payload as { policy: string }).policy =
-          data?.consent_policy || fr.media.defaultPolicy;
+        const consent = payload as {
+          policy: string;
+          purpose: keyof typeof fr.media.policies;
+        };
+        consent.policy =
+          data?.consent_policy || fr.media.policies[consent.purpose];
       }
     }
     const result = await db.rpc("ml_save", {

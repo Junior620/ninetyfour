@@ -100,6 +100,7 @@ export function fixture(): Archive {
     lineups: [],
     requirements: [],
     trials: [],
+    dossiers: [],
   };
   return {
     metadata: {

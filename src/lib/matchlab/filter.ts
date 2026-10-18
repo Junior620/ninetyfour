@@ -20,6 +20,7 @@ export function filterGraph(
     lineups,
     requirements,
     trials,
+    dossiers,
   } = graph;
   const scopedMemberships = memberships.filter(
     (m) =>
@@ -89,6 +90,7 @@ export function filterGraph(
       (!filters.player || m.player_id === filters.player) &&
       (!filters.position || m.position === filters.position),
   );
+  const markerIds = new Set(selectedMarkers.map((m) => m.id));
   const selectedTargets = targets.filter(
     (t) =>
       (!filters.season || t.season_id === filters.season) &&
@@ -162,5 +164,11 @@ export function filterGraph(
     ),
     requirements,
     trials: trials.filter((t) => playerIds.has(t.player_id)),
+    // In export mode a dossier is kept only if the sequences it cites are in the graph.
+    dossiers: dossiers.filter(
+      (d) =>
+        playerIds.has(d.player_id) &&
+        (!exporting || d.sequence_ids.every((s) => markerIds.has(s))),
+    ),
   };
 }

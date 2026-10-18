@@ -658,7 +658,7 @@ export function Squad() {
               <div className="ml-actions">
                 <Link
                   className="ml-button secondary"
-                  href={`/matchlab/players?id=${selectedPlayer.id}`}
+                  href={`/matchlab/player?id=${selectedPlayer.id}`}
                 >
                   {t.squad.openFile}
                 </Link>
@@ -823,7 +823,7 @@ function SquadCard({
       className={`ml-squad-card${selected ? " selected" : ""}${where ? " placed" : ""}`}
     >
       <Link
-        href={`/matchlab/players?id=${player.id}`}
+        href={`/matchlab/player?id=${player.id}`}
         className="ml-squad-photo"
         aria-label={`${t.squad.openFile} : ${player.full_name}`}
       >
