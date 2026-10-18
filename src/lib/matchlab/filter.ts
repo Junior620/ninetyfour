@@ -12,6 +12,7 @@ export function filterGraph(
     matches,
     evaluations,
     markers,
+    videos,
     consents,
     media,
     reports,
@@ -124,6 +125,7 @@ export function filterGraph(
     ),
     evaluations: selectedEvaluations.filter((e) => playerIds.has(e.player_id)),
     markers: selectedMarkers,
+    videos: videos.filter((v) => matchIds.has(v.match_id)),
     consents: consents.filter((c) => playerIds.has(c.player_id)),
     media: media.filter((m) => playerIds.has(m.player_id)),
     // Snapshot revisions may contain former players or answers outside a filter.

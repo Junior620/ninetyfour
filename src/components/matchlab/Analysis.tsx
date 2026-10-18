@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lightbulb, Play, Plus, Save } from "lucide-react";
+import { Lightbulb, Save } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
 import {
   CIRCUMSTANCE_KEYS,
@@ -38,6 +38,8 @@ import {
   PlayerAvatar,
   jerseyFor,
 } from "./shared";
+import { VideoPanel } from "./VideoPanel";
+import { Sequences } from "./Sequences";
 
 export function Analysis({ id }: { id?: string }) {
   const { data } = useLab();
@@ -321,9 +323,7 @@ function AnalysisForm({ match }: { match?: Match }) {
   const [observation, setObservation] = useState("");
   const [priorities, setPriorities] = useState("");
   const [minutes, setMinutes] = useState("");
-  const [markerPlayer, setMarkerPlayer] = useState("");
-  const [markerNote, setMarkerNote] = useState("");
-  const [markerTheme, setMarkerTheme] = useState("");
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const canWrite = data.member.role !== "reader";
   const players = match
     ? data.graph.players.filter((p) =>
@@ -338,7 +338,6 @@ function AnalysisForm({ match }: { match?: Match }) {
   const evaluations = data.graph.evaluations.filter(
     (e) => e.match_id === match?.id,
   );
-  const markers = data.graph.markers.filter((m) => m.match_id === match?.id);
   useEffect(
     () => () => {
       if (videoUrl) URL.revokeObjectURL(videoUrl);
@@ -396,8 +395,6 @@ function AnalysisForm({ match }: { match?: Match }) {
               setCollective(match?.collective || {});
               setFormKey((k) => k + 1);
               setVideoUrl("");
-              setMarkerNote("");
-              setMarkerTheme("");
               setVideoName(match?.video_name || "");
               loadEvaluation(player, position);
               setMatchDirty(false);
@@ -558,110 +555,20 @@ function AnalysisForm({ match }: { match?: Match }) {
       <div className="ml-analysis-grid">
         <section className="ml-card" id="video">
           <div className="ml-section-title">
-            <h2>{t.overview.library}</h2>
+            <h2>{t.video.title}</h2>
             {match && <Status value={match.status} />}
           </div>
-          <div className="ml-video-stage">
-            {videoUrl ? (
-              <video ref={video} src={videoUrl} controls playsInline />
-            ) : (
-              <div>
-                <Play size={42} />
-                <p>{t.analysis.chooseVideo}</p>
-                {videoName && <small>{videoName}</small>}
-              </div>
-            )}
-          </div>
-          <label className="ml-video-select">
-            {t.analysis.chooseVideo}
-            <input
-              type="file"
-              accept="video/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setVideoUrl(URL.createObjectURL(file));
-                  setVideoName(file.name);
-                  setMatchDirty(true);
-                }
-              }}
-            />
-          </label>
-          <p className="ml-muted">{t.analysis.local}</p>
-          <small>{t.analysis.reselect}</small>
-          <div className="ml-marker-actions">
-            {Object.entries(t.analysis.markerTypes).map(([kind, label]) => (
-              <button
-                key={kind}
-                className="ml-button secondary"
-                disabled={!canWrite || !match || !videoUrl || mutation.busy}
-                onClick={() =>
-                  mutation.run(async () => {
-                    await api("data", {
-                      kind: "markers",
-                      version: 0,
-                      payload: {
-                        match_id: match?.id,
-                        player_id: markerPlayer || null,
-                        seconds: video.current?.currentTime || 0,
-                        kind,
-                        position: markerPlayer ? position : null,
-                        theme: markerTheme,
-                        observation: markerNote,
-                      },
-                    });
-                    setMarkerNote("");
-                  })
-                }
-              >
-                <Plus size={14} />
-                {label}
-              </button>
-            ))}
-          </div>
-          <div className="ml-form-grid">
-            <label>
-              {t.analysis.markerPlayer}
-              <select
-                value={markerPlayer}
-                onChange={(e) => setMarkerPlayer(e.target.value)}
-              >
-                <option value="">—</option>
-                {players.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.full_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {t.analysis.theme}
-              <select
-                value={markerTheme}
-                onChange={(e) => setMarkerTheme(e.target.value)}
-              >
-                <option value="">—</option>
-                {[
-                  "Technique",
-                  "Placement",
-                  "Vitesse",
-                  "Décision",
-                  "Duels",
-                  "Finition",
-                  "Comportement",
-                ].map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
-            </label>
-            <label className="wide">
-              {t.analysis.observation}
-              <textarea
-                value={markerNote}
-                onChange={(e) => setMarkerNote(e.target.value)}
-              />
-            </label>
-          </div>
+          <VideoPanel
+            match={match}
+            videoRef={video}
+            local={{ url: videoUrl, name: videoName }}
+            onLocalFile={(file) => {
+              setVideoUrl(URL.createObjectURL(file));
+              setVideoName(file.name);
+              setMatchDirty(true);
+            }}
+            onActive={setActiveVideo}
+          />
           <div className="ml-tip">
             <Lightbulb size={17} aria-hidden />
             <div>
@@ -669,38 +576,13 @@ function AnalysisForm({ match }: { match?: Match }) {
               <p>{t.analysis.tipText}</p>
             </div>
           </div>
-          <h3>{t.analysis.markers}</h3>
-          {markers.length ? (
-            markers.map((m) => (
-              <button
-                className="ml-marker"
-                key={m.id}
-                onClick={() => {
-                  if (video.current) {
-                    video.current.currentTime = m.seconds;
-                    video.current.focus();
-                  } else window.alert(t.analysis.noVideo);
-                }}
-              >
-                <time>
-                  {Math.floor(m.seconds / 60)
-                    .toString()
-                    .padStart(2, "0")}
-                  :
-                  {Math.floor(m.seconds % 60)
-                    .toString()
-                    .padStart(2, "0")}
-                </time>
-                <span>
-                  <strong>{t.analysis.markerTypes[m.kind]}</strong>
-                  <small>{m.observation}</small>
-                </span>
-                <Play size={14} />
-              </button>
-            ))
-          ) : (
-            <Empty />
-          )}
+          <Sequences
+            match={match}
+            players={players}
+            videoRef={video}
+            videoId={activeVideo}
+            hasVideo={!!videoUrl || !!activeVideo}
+          />
         </section>
         <div className="ml-analysis-side">
           <section className="ml-card" data-tour="collective">

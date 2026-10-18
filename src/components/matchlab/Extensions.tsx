@@ -21,6 +21,7 @@ import {
   displayScore,
 } from "@/lib/matchlab/scoring";
 import { positionNames } from "@/lib/matchlab/questionnaire";
+import { timecode } from "@/lib/matchlab/sequences";
 import { useLab, Heading, Empty } from "./shared";
 import { Admin } from "./Admin";
 import { SiteEditor } from "./SiteEditor";
@@ -35,31 +36,36 @@ export function Extensions({ section }: { section: string }) {
     return (
       <>
         <Heading title={t.nav.video} eyebrow={t.analysis.markers} />
-        <p className="ml-notice">{t.analysis.reselect}</p>
+        <p className="ml-notice">{t.sequences.indicatorsHint}</p>
         {graph.markers.length ? (
           <div className="ml-module-grid">
-            {graph.markers.map((m) => (
-              <Link
-                className="ml-card"
-                key={m.id}
-                href={`/matchlab/analyze?id=${m.match_id}#video`}
-              >
-                <small>
-                  {
-                    graph.matches.find((match) => match.id === m.match_id)
-                      ?.opponent
-                  }
-                </small>
-                <h3>
-                  {Math.floor(m.seconds / 60)}:
-                  {Math.floor(m.seconds % 60)
-                    .toString()
-                    .padStart(2, "0")}{" "}
-                  · {t.analysis.markerTypes[m.kind]}
-                </h3>
-                <p>{m.observation}</p>
-              </Link>
-            ))}
+            {[...graph.markers]
+              .sort((a, b) => a.seconds - b.seconds)
+              .map((m) => {
+                const match = graph.matches.find((x) => x.id === m.match_id);
+                const player = graph.players.find((p) => p.id === m.player_id);
+                return (
+                  <Link
+                    className="ml-card"
+                    key={m.id}
+                    href={`/matchlab/analyze?id=${m.match_id}&t=${m.seconds}#video`}
+                  >
+                    <small>
+                      {match?.opponent} · {match?.played_on}
+                    </small>
+                    <h3>
+                      <time>{timecode(m.seconds)}</time> ·{" "}
+                      {t.analysis.markerTypes[m.kind]}
+                      {m.outcome && ` · ${t.sequences.outcomes[m.outcome]}`}
+                    </h3>
+                    <p>
+                      {player?.full_name ?? t.sequences.unknownPlayer} ·{" "}
+                      {m.verified ? t.sequences.verified : t.sequences.unverified}
+                      {m.observation && ` — ${m.observation}`}
+                    </p>
+                  </Link>
+                );
+              })}
           </div>
         ) : (
           <Empty />

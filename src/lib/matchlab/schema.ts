@@ -104,13 +104,42 @@ export const evaluationSchema = z
     minutes: z.number().int().min(0).max(150).nullable(),
   })
   .strict();
+/** The cahier's twelve actions, after the four original marker kinds. */
+export const SEQUENCE_ACTIONS = [
+  "pass",
+  "control",
+  "duel",
+  "recovery",
+  "loss",
+  "shot",
+  "run",
+  "press",
+  "cover",
+  "reposition",
+  "save",
+  "buildup",
+] as const;
+export const MARKER_KINDS = [
+  "positive",
+  "correction",
+  "chance",
+  "transition",
+  ...SEQUENCE_ACTIONS,
+] as const;
 export const markerSchema = z
   .object({
     ...base,
     match_id: id,
     player_id: id.nullable().default(null),
     seconds: z.number().min(0).max(86400),
-    kind: z.enum(["positive", "correction", "chance", "transition"]),
+    end_seconds: z.number().min(0).max(86400).nullable().default(null),
+    kind: z.enum(MARKER_KINDS),
+    outcome: z.enum(["success", "fail"]).nullable().default(null),
+    tags: z.array(text(30).min(1)).max(10).default([]),
+    verified: z.boolean().default(false),
+    source: z.enum(["manual", "live", "ai"]).default("manual"),
+    video_id: id.nullable().default(null),
+    minute: z.number().int().min(0).max(150).nullable().default(null),
     position: z.enum(POSITIONS).nullable().default(null),
     theme: z
       .enum([
@@ -126,7 +155,11 @@ export const markerSchema = z
       .default(""),
     observation: text().default(""),
   })
-  .strict();
+  .strict()
+  .refine(
+    (m) => m.end_seconds === null || m.end_seconds >= m.seconds,
+    "Fin avant le début",
+  );
 export const consentSchema = z
   .object({
     ...base,
@@ -250,6 +283,7 @@ export type Filters = z.infer<typeof filterSchema>;
 export type Player = z.infer<typeof playerSchema> & {
   id: string;
   version: number;
+  updated_at?: string;
 };
 export type Membership = z.infer<typeof membershipSchema> & {
   id: string;
@@ -268,6 +302,22 @@ export type Evaluation = z.infer<typeof evaluationSchema> & {
 };
 export type Marker = z.infer<typeof markerSchema> & {
   id: string;
+  version: number;
+  validated_by?: string | null;
+};
+export type Video = {
+  id: string;
+  match_id: string;
+  path: string;
+  name: string;
+  mime: "video/mp4" | "video/quicktime" | "video/webm";
+  bytes: number;
+  duration_seconds: number | null;
+  team_filmed: string;
+  conditions: string;
+  status: "uploading" | "ready";
+  created_by: string | null;
+  created_at: string;
   version: number;
 };
 export type Consent = z.infer<typeof consentSchema> & {
@@ -343,6 +393,7 @@ export type Graph = {
   matches: Match[];
   evaluations: Evaluation[];
   markers: Marker[];
+  videos: Video[];
   consents: Consent[];
   media: Media[];
   reports: Report[];

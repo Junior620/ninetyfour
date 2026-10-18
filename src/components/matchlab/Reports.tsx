@@ -16,6 +16,7 @@ import {
   answerHighlights,
 } from "@/lib/matchlab/questionnaire";
 import { describeCircumstances } from "@/lib/matchlab/circumstances";
+import { sequenceIndicators, timecode } from "@/lib/matchlab/sequences";
 import {
   useLab,
   Heading,
@@ -228,6 +229,15 @@ export function Reports() {
                             <b>{t.reports.priority} :</b> {e.priorities}
                           </p>
                         )}
+                        {sequenceIndicators(markers, { playerId: e.player_id }).map((i) => (
+                          <p key={i.kind} className="ml-report-indicator">
+                            <b>{t.analysis.markerTypes[i.kind]} :</b>{" "}
+                            {i.success + i.fail
+                              ? `${i.success}/${i.success + i.fail} ${t.sequences.successRate}`
+                              : `${i.total} ${t.sequences.sample}`}{" "}
+                            ({i.sequences.map((s) => timecode(s.seconds)).join(" · ")})
+                          </p>
+                        ))}
                       </div>
                       <strong className="ml-report-note">
                         {displayScore(individualScore(e.common, e.specific))}
@@ -289,6 +299,7 @@ export function Reports() {
                       <time>{clock(m.seconds)}</time>
                       <span>
                         <b>{t.analysis.markerTypes[m.kind]}</b>
+                        {m.outcome && ` · ${t.sequences.outcomes[m.outcome]}`}
                         {m.theme && ` · ${m.theme}`}
                         {m.player_id && ` · ${nameOf(m.player_id) ?? ""}`}
                         {m.observation && ` — ${m.observation}`}

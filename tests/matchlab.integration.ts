@@ -446,6 +446,93 @@ async function main() {
     "Reader cannot record a trial decision",
   );
   await admin.from("ml_requirements").delete().eq("id", requirementRow.id);
+  // Imported videos and verifiable sequences (cahier v2.2 step 3).
+  const settingsBefore = unwrap(
+    await admin.from("ml_settings").select("*").eq("id", "governance").single(),
+  );
+  const videoRow = (id: string) => ({
+    id,
+    match_id: match.id,
+    path: `matches/${match.id}/${id}.mp4`,
+    name: "Match fictif.mp4",
+    mime: "video/mp4",
+    bytes: 1000,
+  });
+  await admin
+    .from("ml_settings")
+    .update({ retention_days: null, consent_policy: null })
+    .eq("id", "governance");
+  const ungoverned = await staff.db
+    .from("ml_videos")
+    .insert(videoRow(randomUUID()));
+  await admin
+    .from("ml_settings")
+    .update({
+      retention_days: settingsBefore.retention_days ?? 365,
+      consent_policy:
+        settingsBefore.consent_policy ?? "Politique fictive de recette.",
+    })
+    .eq("id", "governance");
+  ok(
+    ungoverned.error?.message === "GOVERNANCE_REQUIRED",
+    "A youth match video cannot be imported before retention is defined",
+  );
+  const videoId = randomUUID();
+  unwrap(await staff.db.from("ml_videos").insert(videoRow(videoId)));
+  ok(
+    unwrap(await other.db.from("ml_videos").select("id").eq("id", videoId))
+      .length === 0,
+    "Another category cannot see the match video",
+  );
+  ok(
+    (await reader.db.from("ml_videos").insert(videoRow(randomUUID()))).error,
+    "Reader cannot import a video",
+  );
+  const sequence = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "markers",
+      payload: {
+        match_id: match.id,
+        player_id: p.player.id,
+        seconds: 12.5,
+        end_seconds: 18,
+        kind: "duel",
+        outcome: "success",
+        tags: ["pressing haut"],
+        verified: true,
+        source: "manual",
+        video_id: videoId,
+        validated_by: direction.id,
+      },
+      expected: 0,
+    }),
+  );
+  ok(
+    sequence.validated_by === staff.id && sequence.video_id === videoId,
+    "A verified attribution is signed by its reviewer and linked to the video",
+  );
+  ok(
+    (
+      await staff.db.rpc("ml_save", {
+        kind: "markers",
+        payload: { ...sequence, seconds: 30, end_seconds: 20 },
+        expected: sequence.version,
+      })
+    ).error,
+    "A sequence cannot end before it starts",
+  );
+  ok(
+    (await other.db.rpc("ml_remove_video", { video: videoId })).error,
+    "Another category cannot remove the video",
+  );
+  unwrap(await staff.db.rpc("ml_remove_video", { video: videoId }));
+  const unlinked = unwrap(
+    await staff.db.from("ml_markers").select("video_id").eq("id", sequence.id),
+  );
+  ok(
+    unlinked[0]?.video_id === null,
+    "Removing a video keeps its sequences and unlinks them",
+  );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,
     "Direct storage listing exposes no private files",

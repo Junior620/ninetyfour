@@ -25,9 +25,29 @@ const match = matchSchema.extend({
 const player = playerSchema.extend({
   ...version,
   created_at: z.iso.datetime({ offset: true }).optional(),
+  updated_at: z.iso.datetime({ offset: true }).optional(),
 });
 const evaluation = evaluationSchema.extend(version);
-const marker = markerSchema.extend(version);
+const marker = markerSchema.safeExtend({
+  ...version,
+  validated_by: z.uuid().nullable().optional(),
+});
+const video = z
+  .object({
+    ...version,
+    match_id: z.uuid(),
+    path: z.string().max(300),
+    name: z.string().min(1).max(200),
+    mime: z.enum(["video/mp4", "video/quicktime", "video/webm"]),
+    bytes: z.number().int().positive(),
+    duration_seconds: z.number().min(0).max(86400).nullable(),
+    team_filmed: z.string().max(120),
+    conditions: z.string().max(500),
+    status: z.enum(["uploading", "ready"]),
+    created_by: z.uuid().nullable(),
+    created_at: z.iso.datetime({ offset: true }),
+  })
+  .strict();
 const media = z
   .object({
     ...version,
@@ -62,6 +82,7 @@ const graphSchema = z
     matches: z.array(match).max(5000),
     evaluations: z.array(evaluation).max(10000),
     markers: z.array(marker).max(10000),
+    videos: z.array(video).max(2000).default([]),
     consents: z.array(consentSchema.safeExtend(version)).max(10000),
     media: z.array(media).max(500),
     targets: z.array(targetSchema.extend(version)).max(1000),
@@ -167,6 +188,11 @@ export function validateArchive(bytes: Uint8Array, mode: "preserve" | "copy") {
     )
       throw new Error("INVALID_ARCHIVE");
   }
+  const videos = new Set(graph.videos.map((v) => v.id));
+  for (const v of graph.videos)
+    if (!matches.has(v.match_id)) throw new Error("INVALID_ARCHIVE");
+  for (const m of graph.markers)
+    if (m.video_id && !videos.has(m.video_id)) throw new Error("INVALID_ARCHIVE");
   for (const c of graph.consents)
     if (!players.has(c.player_id)) throw new Error("INVALID_ARCHIVE");
   for (const r of graph.reports)

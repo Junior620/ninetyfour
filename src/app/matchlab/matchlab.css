@@ -2440,6 +2440,133 @@
   max-width: 260px;
   margin: 16px 0;
 }
+/* Match video and sequences (cahier v2.2, step 3). */
+.ml-video-panel {
+  display: grid;
+  gap: 12px;
+}
+.ml-video-panel .ml-video-stage {
+  margin-bottom: 0;
+}
+.ml-video-import {
+  border-top: 1px solid var(--ml-border);
+  padding-top: 6px;
+}
+.ml-video-import > summary {
+  padding: 12px 0;
+  line-height: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ml-upload-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ml-upload-progress progress {
+  flex: 1;
+  height: 12px;
+  accent-color: var(--ml-accent);
+}
+.ml-sequences {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+.ml-sequence-create {
+  display: grid;
+  gap: 12px;
+  padding: 16px !important;
+  border: 1px solid var(--ml-border) !important;
+  border-radius: 8px;
+  background: var(--ml-surface-muted);
+}
+.ml-sequence-create > legend {
+  padding: 0 6px;
+}
+.ml-outcomes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-target-gap) 20px;
+}
+.ml-outcomes legend {
+  width: 100%;
+  margin-bottom: 0;
+}
+.ml-sequence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.ml-sequence {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ml-border-soft);
+}
+.ml-sequence .ml-marker {
+  margin: 0;
+}
+.ml-sequence-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  color: var(--ml-text-secondary);
+  font-size: var(--ml-font-sm);
+}
+.ml-sequence-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ml-tag {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--ml-surface-accent);
+  color: var(--ml-accent-heading);
+  font-size: var(--ml-font-xs);
+}
+.ml-outcome.success {
+  color: var(--ml-success);
+}
+.ml-outcome.fail {
+  color: var(--ml-warning);
+}
+.ml-sequence-edit {
+  padding: 14px;
+  border-radius: 8px;
+  background: var(--ml-surface-accent);
+}
+.ml-indicators {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.ml-indicators td {
+  white-space: normal;
+}
+.ml-indicator-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-target-gap);
+}
+.ml-timecode {
+  min-width: var(--ml-target);
+  min-height: var(--ml-target);
+  padding: 0 10px;
+  border: 1px solid var(--ml-border-strong);
+  border-radius: 6px;
+  background: var(--ml-surface);
+  color: var(--ml-accent-text);
+  font-variant-numeric: tabular-nums;
+}
+.ml-report-indicator {
+  font-variant-numeric: tabular-nums;
+}
 @media (min-width: 1600px) {
   .ml-hero-photo {
     height: 310px;

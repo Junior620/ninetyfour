@@ -201,6 +201,7 @@ export async function reportPdf(
                     .toString()
                     .padStart(2, "0")}{" "}
                   · {t.analysis.markerTypes[marker.kind]}
+                  {marker.outcome && ` · ${t.sequences.outcomes[marker.outcome]}`}
                   {marker.theme && ` · ${marker.theme}`} · {marker.observation}
                 </Text>
               ))}

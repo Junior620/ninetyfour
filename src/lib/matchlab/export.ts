@@ -273,6 +273,11 @@ export function copyGraph(graph: Graph): Graph {
     return value;
   };
   const copy = remap(graph) as Graph;
+  // A copied video row gets its own path; the file itself is not part of the archive.
+  copy.videos = copy.videos.map((v) => ({
+    ...v,
+    path: `matches/${v.match_id}/${v.id}${v.path.slice(v.path.lastIndexOf("."))}`,
+  }));
   copy.seasons = copy.seasons.map((s) => ({
     ...s,
     name: `${s.name} · copie ${s.id.slice(0, 8)}`,

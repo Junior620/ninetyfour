@@ -58,6 +58,11 @@ export function dbError(error: { code?: string; message: string } | null) {
   if (error.code === "40001") throw new LabError("VERSION_CONFLICT", 409);
   if (error.code === "23505") throw new LabError("ALREADY_EXISTS", 409);
   if (error.code === "42501") throw new LabError("FORBIDDEN", 403);
+  // Business refusals raised by name in the database keep their own message.
+  if (error.message === "GOVERNANCE_REQUIRED")
+    throw new LabError("GOVERNANCE_REQUIRED", 409);
+  if (["CONSENT_REQUIRED", "MEDIA_NOT_AUTHORIZED"].includes(error.message))
+    throw new LabError("MEDIA_NOT_AUTHORIZED", 403);
   if (error.code?.startsWith("23") || error.code === "22P02")
     throw new LabError("INVALID_DATA", 400);
   console.error("[MatchLab database]", error.code ?? "unavailable");

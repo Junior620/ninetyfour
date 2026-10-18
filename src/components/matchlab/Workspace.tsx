@@ -47,6 +47,7 @@ async function fetchLab(queryString: string): Promise<LabData> {
   params.delete("id");
   params.delete("module");
   params.delete("revision");
+  params.delete("t");
   const response = await fetch(`/api/matchlab/data?${params}`, {
     cache: "no-store",
   });
