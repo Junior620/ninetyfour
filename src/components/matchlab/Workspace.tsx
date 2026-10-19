@@ -14,7 +14,13 @@ import {
   FileText,
 } from "lucide-react";
 import { fr as t, errorMessage } from "@/lib/matchlab/messages";
-import { positionNames, POSITIONS } from "@/lib/matchlab/questionnaire";
+import {
+  positionNames,
+  POSITIONS,
+  answerHighlights,
+  type Position,
+} from "@/lib/matchlab/questionnaire";
+import { sequenceIndicators } from "@/lib/matchlab/sequences";
 import {
   collectiveScore,
   displayScore,
@@ -259,17 +265,56 @@ function MatchHighlights({
           match?.season_id,
           match?.category_id,
         );
+        const evaluation = data.graph.evaluations.find(
+          (x) =>
+            x.match_id === matchId &&
+            x.player_id === e.player_id &&
+            x.position === e.position,
+        );
+        const support = evaluation
+          ? answerHighlights(
+              e.position as Position,
+              evaluation.common,
+              evaluation.specific,
+            ).support
+          : [];
+        const sequences = sequenceIndicators(
+          data.graph.markers.filter((m) => m.match_id === matchId),
+          { playerId: e.player_id, verifiedOnly: true },
+        );
         return (
-          <p key={i} className="ml-highlight">
-            <PlayerAvatar playerId={e.player_id} name={p?.full_name} size={36} />
-            <strong>
-              {p?.full_name} · #{jersey ?? "—"}
-            </strong>{" "}
-            · {positionNames[e.position as keyof typeof positionNames]} ·{" "}
-            {displayScore(e.score)} /10
-          </p>
+          <div key={i} className="ml-alert-best">
+            <small>{t.alerts.best}</small>
+            <p className="ml-highlight">
+              <PlayerAvatar playerId={e.player_id} name={p?.full_name} size={36} />
+              <strong>
+                {p?.full_name} · #{jersey ?? "—"}
+              </strong>{" "}
+              · {positionNames[e.position as keyof typeof positionNames]} ·{" "}
+              {displayScore(e.score)} /10
+              {evaluation?.minutes != null &&
+                ` · ${evaluation.minutes} ${t.alerts.played}`}
+            </p>
+            <p>
+              <b>{t.alerts.why} :</b>{" "}
+              {support.length
+                ? `${support.join(", ")} (${t.alerts.support})`
+                : t.alerts.whyNone}
+              {sequences.length > 0 &&
+                ` · ${sequences
+                  .map(
+                    (s) =>
+                      `${t.analysis.markerTypes[s.kind]} ${s.success + s.fail ? `${s.success}/${s.success + s.fail}` : s.total}`,
+                  )
+                  .join(", ")} (${t.alerts.sequences})`}
+            </p>
+            <Link className="ml-list-link" href={`/matchlab/player?id=${e.player_id}`}>
+              {t.alerts.openFile}
+            </Link>
+          </div>
         );
       })}
+      {rank.best.length > 0 && <small>{t.alerts.oneMatch}</small>}
       <p>
         {t.reports.bestPositions} :{" "}
         {rank.bestPositions

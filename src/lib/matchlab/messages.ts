@@ -1304,6 +1304,14 @@ export const fr = {
     informative:
       "Évaluation enregistrée ; aucune note individuelle n’est encore calculable.",
     read: "Marquer comme lue",
+    best: "Joueur le mieux évalué sur ce match",
+    why: "Éléments qui justifient la distinction",
+    whyNone: "Aucune réponse à 4 ou 5 : distinction par la moyenne des réponses seulement.",
+    support: "réponses à 4–5/5",
+    sequences: "séquences vérifiées du match",
+    played: "min jouées",
+    oneMatch: "Résultat d’un seul match, à confirmer sur la période ; la décision reste au staff.",
+    openFile: "Ouvrir la fiche",
   },
   admin: {
     title: "Administration",

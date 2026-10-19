@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID, randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { copyGraph } from "../src/lib/matchlab/export";
+import type { Graph } from "../src/lib/matchlab/schema";
 const config = JSON.parse(readFileSync(".matchlab-local/env.json", "utf8"));
 if (config.MATCHLAB_SUPABASE_URL !== "http://127.0.0.1:55321")
   throw new Error("Refusing non-local integration database");
@@ -838,6 +840,60 @@ async function main() {
       (await client().rpc("ml_assistant_log", { event: "ASSISTANT_SUGGESTION", details: {} }))
         .error,
     "The assistant journal accepts only its own events, bounded, from active members",
+  );
+  // A copied archive of the v2.2 tables restores with every relation remapped.
+  const ownLineup = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "lineups",
+      payload: {
+        season_id: season.id,
+        category_id: "U-17",
+        name: "Composition U-17 fictive",
+        formation: "4-3-3",
+        slots: { lcm: { player_id: p.player.id, role: "Relayeur", instructions: "" } },
+      },
+      expected: 0,
+    }),
+  );
+  const planWithLineup = unwrap(
+    await planSave({ ...mainPlan, lineup_id: ownLineup.id }, mainPlan.version),
+  );
+  const rows = async (table: string, column: string, value: string) =>
+    unwrap(await admin.from(table).select("*").eq(column, value));
+  const archived = {
+    seasons: await rows("ml_seasons", "id", season.id),
+    players: await rows("ml_players", "id", p.player.id),
+    memberships: await rows("ml_memberships", "player_id", p.player.id),
+    matches: await rows("ml_matches", "id", match.id),
+    evaluations: await rows("ml_evaluations", "match_id", match.id),
+    markers: await rows("ml_markers", "match_id", match.id),
+    videos: [],
+    consents: [],
+    media: [],
+    reports: [],
+    targets: [],
+    lineups: await rows("ml_lineups", "id", ownLineup.id),
+    requirements: [],
+    trials: [],
+    dossiers: await rows("ml_dossiers", "id", dossier.id),
+    live_sessions: await rows("ml_live_sessions", "match_id", match.id),
+    plans: await rows("ml_plans", "id", planWithLineup.id),
+  };
+  const copy = copyGraph(archived as unknown as Graph);
+  unwrap(await direction.db.rpc("ml_restore", { data: copy }));
+  const [restoredPlan] = await rows("ml_plans", "id", copy.plans[0].id);
+  const [restoredDossier] = await rows("ml_dossiers", "id", copy.dossiers[0].id);
+  const [restoredLive] = await rows("ml_live_sessions", "id", copy.live_sessions[0].id);
+  const copiedSequence = copy.markers.find((m) => m.kind === "duel")!;
+  ok(
+    restoredPlan.match_id === copy.matches[0].id &&
+      restoredPlan.lineup_id === copy.lineups[0].id &&
+      restoredDossier.sequence_ids[0] === copiedSequence.id &&
+      restoredDossier.player_id === copy.players[0].id &&
+      restoredDossier.validated_by === direction.id &&
+      restoredLive.present[0] === copy.players[0].id &&
+      restoredLive.status === "finished",
+    "A copied archive restores plans, dossiers and live sessions with their links",
   );
   ok(
     (await staff.db.storage.from("matchlab-private").list()).data?.length === 0,

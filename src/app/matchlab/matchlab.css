@@ -3116,6 +3116,24 @@
     justify-self: start;
   }
 }
+/* Post-match alert: who stands out on this match, and why. */
+.ml-alert-best {
+  display: grid;
+  gap: 4px;
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--ml-surface-muted);
+}
+.ml-alert-best > small {
+  color: var(--ml-text-tertiary);
+  font-size: var(--ml-font-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.ml-alert-best p {
+  margin: 0;
+}
 /* Rule-based assistant (cahier v2.2, §05). */
 .ml-assistant-slot {
   display: contents;

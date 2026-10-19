@@ -34,3 +34,20 @@ Audit comparatif contre le PDF v1.1, le prompt V3 et le dashboard de référence
 Captures avant : `overview-1440.jpg`, `analyze-1440.jpg`, `reports-1440.jpg`. Après : `apres-overview-1440.jpg`, `apres-analyse-1440.jpg`, `apres-rapport-1440.jpg` et leurs variantes 375 px.
 
 Références : types/schema dans src/lib/matchlab, API src/app/api/matchlab, tests matchlab-scoring/exports/report/integration/http. Les limites d’exploitation, services non activés et fonctionnalités volontairement absentes sont distingués dans README et RECETTE.
+
+## Cahier des besoins v2.2 — 18–19 octobre 2026
+
+| Section | Exigence | Réalisation |
+|---|---|---|
+| 01–02 | Prise en main, photo et dossard partout | Aide contextuelle, guide pas à pas désactivable, derniers rapports, photo/dossard dans l’évaluation, la fiche, le rapport et l’alerte |
+| 03 | Terrain tactique, essai en catégorie supérieure, recherche de profils | `/matchlab/squad`, référentiel `ml_requirements`, décisions `ml_trials`, analyseur à règles avec sources |
+| 04 | Vidéo, séquences, indicateurs | Envoi reprenable vers Supabase Storage, douze actions, vérification tracée, horodatages, indicateurs avec échantillon ; mesure physique « non mesurée » |
+| 05 | Assistant | Assistant à règles en quatre étapes, validation obligatoire, journal ; aucun moteur IA |
+| 06 | Live scouting | Match en direct sans enregistrement, file hors ligne, synthèses figées, joueurs non identifiés gardés comme tels ; commentaire IA désactivé |
+| 07 | Cellule tactique | Entrées sourcées, plans principal/alternatifs, tableau de terrain, priorités, avant/après ; adversaire jamais observé = aucune faiblesse déduite |
+| 08 | Fiche joueur et dossier club | Fiche par période ; dossier validé par la direction, autorisation de diffusion, PDF du contenu figé, journal des exports |
+| 08 | Alerte post-match | Joueur le mieux évalué sur ce match, photo, dossard, poste, note, éléments qui justifient la distinction, postes en tête |
+| 09 | Confiance et données | RLS par rôle et catégorie, lecteurs sans observations internes, consentements, durée de conservation, audit |
+| 10 | Recette indispensable | Les 15 critères et leurs preuves dans `RECETTE.md` |
+
+Remplacements décidés avec le club : compatibilité remplacée par l’écart factuel au profil cible ; IA remplacée par des règles transparentes, emplacements prêts mais désactivés.

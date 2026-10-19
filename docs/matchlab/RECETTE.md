@@ -41,3 +41,34 @@ Serveur compilé Webpack reconstruit (`npm run matchlab:build`), Supabase local 
 ## Limites connues
 
 Le chargement client d’un périmètre se fait après le shell ; le nombre de lignes est plafonné à 10 000 par table. Aucun budget mobile 3G/LCP n’est annoncé sans mesure dédiée. Le service SMTP de recette capture les messages dans Mailpit ; aucun email réel. Push préparé mais envoi absent. IA interface uniquement. Vitrine publique conservée ; CMS réel seulement lorsque explicitement activé et initialisé. Les 14 alertes de dépendances résiduelles sont décrites dans `SECURITE.md`. Aucun déploiement ni migration distante.
+
+## Cahier des besoins v2.2 — 19 octobre 2026
+
+Code vérifié sur la branche `claude/modest-wiles-05282e`, poussé sur `master` lot par lot (c387ed1, 0986f23, e97b8ed, ecc81ed, 7f86ddc, 09107f6, 80740a2, 375f8fc, puis ce commit). Environnement : Windows, Node 24.14.1, Next 16 Webpack (version compilée), Supabase local avec les migrations 202610180013 à 202610180019, Edge headless piloté par CDP. Données fictives uniquement ; la caméra du mode direct est simulée par Edge (`--use-fake-device-for-media-stream`), la tablette par l’émulation tactile.
+
+Résultats automatisés :
+
+- Tests unitaires : **77/77** (dont écarts au profil cible, terrain tactique, essai, recherche de profils, séquences, fiche et dossier, direct, cellule tactique, assistant, export d’un scénario vide).
+- Intégration PostgreSQL/RLS : **74/74** (vidéo, séquences, dossiers, direct, plans, journal de l’assistant, restauration copiée des nouvelles tables).
+- HTTP sur serveur compilé : **21/21**. TypeScript et ESLint : réussis. Build de production : réussi.
+- Parcours navigateur par lot, rejoués sur la version finale, avec audit d’accessibilité (texte ≥ 12 px, contraste ≥ 4,5:1, cibles ≥ 44 px et écarts ≥ 8 px, pas de débordement) à 1 440 et 375 px : vidéo et séquences, fiche et dossier, direct, cellule tactique, assistant, alerte. Aucun défaut relevé, hors le tiret décoratif déjà documenté de la vue d’ensemble.
+
+| # | Critère de recette indispensable | Résultat et preuve |
+|---|---|---|
+| 1 | Photo et dossard dans la liste, la fiche, le rapport et l’alerte | Liste « Joueurs & profils », fiche joueur, rapport (écran et PDF), alerte : avatar ou photo autorisée et dossard ; alerte contrôlée à 1 440 et 375 px. |
+| 2 | Questionnaire selon le poste réellement observé ; « non observé » ne fausse pas la note | Inchangé depuis la v1.1 : questions du poste joué, `null` exclu du calcul (`matchlab-scoring.test.ts`). |
+| 3 | Notes collective et individuelle recalculables depuis les réponses | Calcul pur dans `scoring.ts` à partir des réponses enregistrées ; rapports figés en révisions. |
+| 4 | Synthèse : résultats en tête, nombre de joueurs évalués, ex æquo | Classement avec ex æquo et joueurs distincts (`rankings`), mention sous 5 joueurs. |
+| 5 | Tableau tactique : déplacer, remplacer, comparer ; tablette | Glisser-déposer souris et toucher (768 px), alternative clavier, échange, banc, comparaison de scénarios (lot 2). |
+| 6 | Montée de catégorie : critères, écarts, confiance ; le staff garde le dernier mot | Comparaison au référentiel, statut par critère, confiance selon l’échantillon ; décision du staff obligatoire, motif si elle diffère, décisions non modifiables. |
+| 7 | Une séquence ouvre l’horodatage correct ; une suggestion IA est corrigeable et tracée | Horodatages de la salle d’analyse, de la fiche et de la vidéothèque (`?t=`) ouvrent la vidéo au bon instant. Aucune suggestion IA n’est générée (moteur non configuré) ; toute séquence, quelle que soit sa source, se corrige, et la validation enregistre son auteur. |
+| 8 | L’assistant explique la page, guide vers une action, laisse reprendre la main | Aide de la page en cours, lancement du guide, « Annuler » à chaque étape ; guide interruptible et désactivable (lot 1). |
+| 9 | Action préparée par l’assistant prévisualisée ; exécution seulement après validation | Création annulée : aucune ligne écrite ; création validée : ligne créée et journal `ASSISTANT_VALIDATED` avec la cible. Partage : le dossier club n’est exportable qu’après validation par la direction. |
+| 10 | Recherche ou analyse : période, critères, échantillon, données manquantes | Recherche de profils, fiche joueur, entrées de la cellule tactique, synthèses du direct et indicateurs affichent leur période et leur échantillon ; informations manquantes listées. |
+| 11 | Mode match depuis la caméra, aucun fichier vidéo ; seules notes et analyses persistent | Parcours du direct : 0 `MediaRecorder`, 0 objet blob, aucune requête de stockage, corps de requête ≤ 2 Ko, aucune vidéo en base ni dans le bucket. |
+| 12 | Synthèse à la mi-temps et après le match ; joueur non reconnu explicitement non identifié | Synthèses figées à la mi-temps et au coup de sifflet final ; actions « Joueur non identifié » comptées à part, jamais attribuées. |
+| 13 | Comparaisons selon la catégorie d’âge vérifiée, le poste et un échantillon suffisant ; pas de promotion préjugée | Essai : catégorie d’affectation et poste du scénario, confiance selon le nombre de matchs ; recherche : deux matchs minimum ; direct : moins de trois actions = données insuffisantes. MatchLab ne gère pas de date de naissance : la catégorie vérifiée est l’affectation saisie par le staff. |
+| 14 | Dossier club limité aux éléments approuvés ; export filtré conforme au périmètre | Contenu calculé et figé par le serveur à la validation, éléments internes exclus par défaut, PDF relu sans note interne ; filtre d’export fermé sur les relations (HTTP) et scénario vide d’une autre saison exclu (test unitaire). |
+| 15 | Sauvegarde complète importable sans perdre les liens joueurs, matchs, médias | Restauration copiée avec photo (HTTP) ; restauration copiée des plans, dossiers, sessions en direct, compositions et séquences avec liens remappés (intégration). |
+
+Limites connues de la v2.2 : aucune fonction d’IA (assistant, recherche, propositions et synthèses par règles) ; commentaire en direct et suggestions IA restent des emplacements désactivés. Pas de compression ni de conversion vidéo. Distance, vitesse et charge physique non mesurées. Les tests multi-éducateurs, réseau mobile réel et tablette physique restent à faire sur le terrain. Les migrations 202610180013 à 202610180019 ne sont pas appliquées en production.

@@ -17,3 +17,16 @@ Migrations additives `supabase/migrations/202610150001…` : tables préfixées 
 Note individuelle = (moyenne des réponses communes notées × 0,40 + moyenne des réponses de poste notées × 0,60) × 2. Un groupe entièrement absent/non observé rend la note non calculable. Pas de zéro ajouté. Précision conservée ; une décimale à l’affichage. Exemple 4 et 3 → 6,8/10. La note collective est indépendante et les circonstances n’altèrent jamais le calcul.
 
 Ex æquo conservés, effectifs de joueurs distincts, résultats ventilés par poste et avertissement n < 5. Les notes de fondamentaux n’entrent pas dans le 40/60. Toute écriture utilise une version attendue et un conflit explicite HTTP409. Les rapports créent de nouvelles révisions ; ils ne remplacent pas un instantané validé.
+
+## Ajouts du cahier v2.2 (migrations 202610180013 à 202610180019)
+
+- lineups : scénarios du terrain tactique (saison, catégorie, type, formation, placements avec rôle et consigne, banc, notes, match optionnel).
+- requirements / trials : référentiel d’essai (catégorie × poste × critère → niveau 1–5, échantillon minimal) et décisions d’essai immuables, auteur fixé par la base.
+- videos : vidéo de match dans le bucket privé `matchlab-videos` (chemin, taille, durée, équipe filmée, conditions, état) ; import soumis à la gouvernance.
+- markers (étendu) : douze actions du cahier, fin, résultat, tags, vérification avec auteur, source (manuelle, direct, IA), vidéo, minute.
+- players.updated_at : date de mise à jour de la fiche.
+- consents.purpose : ajout de `dossier_share` (diffusion d’un dossier club).
+- dossiers : dossier club (destinataire, période, éléments, points forts, axes, séquences choisies), préparé par / validé par / retiré, contenu figé à la validation.
+- live_sessions : match en direct (phases et leurs horodatages, présents, notes, synthèses de mi-temps et finale figées) ; les actions sont des `markers` de source `live`.
+- plans : plans de match (rang 1 à 3, composition liée, bloc, quatre phases, scénarios, raisons, notes sur l’adversaire, priorités d’entraînement, bilan avant/après).
+- Fonctions : `ml_remove_video`, `ml_current_consent`, `ml_dossier_exported`, `ml_remove_live_event`, `ml_remove_plan`, `ml_assistant_log` ; `ml_save` et `ml_restore` couvrent les nouvelles tables.

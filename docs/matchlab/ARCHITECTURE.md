@@ -22,5 +22,15 @@ Les composants React appellent `/api/matchlab`. La validation Zod précède les 
 | /api/matchlab/exports, imports | Téléchargement, dry-run et restauration |
 | /api/matchlab/articles | Un seul service CMS, y compris l’ancien écran admin |
 | /api/matchlab/ai/[module], push | Contrats désactivés / abonnement optionnel préparé |
+| /matchlab/squad | Terrain tactique : compositions, scénarios, essai en catégorie supérieure |
+| /matchlab/player?id= | Fiche joueur interne et dossiers club |
+| /matchlab/live?id= | Match en direct, sans enregistrement |
+| /matchlab/tactics?id= | Cellule tactique : entrées, plans, priorités, avant/après |
+| /api/matchlab/videos | Envoi TUS signé reprenable, lecture par URL signée, retrait |
+| /api/matchlab/dossiers | Aperçu calculé par le serveur, brouillon, validation, retrait ; GET = PDF du contenu figé |
+| /api/matchlab/live, plans | Annulation d’une action du direct ; suppression d’un plan (journalisées) |
+| /api/matchlab/assistant | Journal des suggestions, validations et annulations de l’assistant |
+
+Cahier v2.2 : la logique métier ajoutée est en fonctions pures testées, sans réseau, dans `src/lib/matchlab` : `targets`, `formations`, `trials`, `search`, `sequences`, `profile`, `dossier`, `live`, `tactics`, `assistant`. L’assistant tourne dans le navigateur, sur les seules données déjà autorisées par RLS ; il n’appelle aucun service externe.
 
 Le chargement SQL est paginé par lots de 500 et plafonné à 10 000 lignes par table ; les listes affichent 20 lignes. L’agrégation actuelle filtre en mémoire après RLS. Ce plafond produit une erreur explicite ; un volume supérieur nécessitera agrégation/pagination serveur spécialisée et une nouvelle recette de charge. Aucun objectif de performance à grande échelle n’est affirmé.
