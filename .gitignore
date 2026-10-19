@@ -45,3 +45,6 @@ next-env.d.ts
 supabase/.temp/
 supabase/.branches/
 .matchlab-local/
+
+# MediaPipe runtime copied at build time (scripts/copy-mediapipe.mjs)
+/public/matchlab/mediapipe/

@@ -41,6 +41,8 @@
   --ml-pitch-line: #ffffff59;
   --ml-pitch-mark: #ffffffb3;
   --ml-pitch-label: #0f2745cc;
+  --ml-crop-shade: #0f2745a6;
+  --ml-crop-ring: #ffffffd9;
   --ml-scrim-strong: #061a33e6;
   --ml-scrim: #061a3380;
   --ml-scrim-clear: #061a3300;
@@ -3133,6 +3135,91 @@
 }
 .ml-alert-best p {
   margin: 0;
+}
+/* Photo cropping: square frame, round mask, live previews. */
+.ml-crop {
+  display: grid;
+  gap: 14px;
+}
+.ml-crop-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ml-text-secondary);
+}
+.ml-crop-frame {
+  position: relative;
+  width: min(360px, 100%);
+  aspect-ratio: 1;
+  justify-self: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--ml-navy);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.ml-crop-frame:active {
+  cursor: grabbing;
+}
+.ml-crop-frame:focus-visible {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 3px;
+}
+.ml-crop-frame img,
+.ml-crop-preview img {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.ml-crop-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 999px var(--ml-crop-shade);
+  outline: 2px solid var(--ml-crop-ring);
+  outline-offset: -2px;
+  pointer-events: none;
+}
+.ml-crop-zoom {
+  justify-self: center;
+  width: min(360px, 100%);
+}
+.ml-crop-zoom input {
+  width: 100%;
+  min-height: var(--ml-target);
+  accent-color: var(--ml-accent);
+}
+.ml-crop-previews {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.ml-crop-preview {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid var(--ml-border-strong);
+  background: var(--ml-surface-sunken);
+}
+.ml-crop-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.ml-crop-result .ml-crop-preview img {
+  position: static;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 /* Rule-based assistant (cahier v2.2, §05). */
 .ml-assistant-slot {

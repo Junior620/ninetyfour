@@ -21,7 +21,25 @@ export const fr = {
     importPhoto: "Importer une photo",
     replacePhoto: "Remplacer la photo",
     viewPhoto: "Voir en grand",
-    formats: "JPEG ou PNG, 5 Mo maximum.",
+    formats: "JPEG, PNG ou WebP. Vous recadrez la photo sur cet appareil avant l’envoi.",
+    crop: {
+      title: "Recadrer la photo",
+      loading: "Recherche du visage sur cet appareil…",
+      face: "Visage détecté : cadrage proposé, ajustez si besoin.",
+      none: "Aucun visage détecté : cadrage centré, à ajuster.",
+      unavailable: "Recadrage automatique indisponible sur cet appareil : cadrage centré, à ajuster.",
+      loadFailed: "Cette image ne peut pas être lue. Choisissez une photo JPEG, PNG ou WebP.",
+      frameLabel: "Cadrage de la photo : glissez pour déplacer, flèches du clavier pour déplacer, + et − pour zoomer.",
+      zoom: "Zoom",
+      previews: "Aperçu de la photo de profil",
+      hint: "Glissez la photo pour la déplacer ; zoomez avec le curseur, la molette ou deux doigts.",
+      privacy: "La recherche du visage et le recadrage se font sur cet appareil : seule la photo recadrée est envoyée.",
+      recenter: "Recentrer sur le visage",
+      confirm: "Valider le cadrage",
+      recrop: "Recadrer",
+      ready: "Photo recadrée, envoyée avec le joueur.",
+      remove: "Retirer la photo",
+    },
     consentUntil: "Autorisation photo de",
     consentNeeded:
       "Autorisation du représentant légal, enregistrée avec la première photo.",
@@ -159,7 +177,7 @@ export const fr = {
     PAYLOAD_TOO_LARGE: "Le fichier dépasse la limite autorisée.",
     GUARDIAN_REQUIRED:
       "Indiquez le nom du représentant légal qui autorise la photo.",
-    PHOTO_FORMAT: "Format non pris en charge : choisissez une photo JPEG ou PNG.",
+    PHOTO_FORMAT: "Format non pris en charge : choisissez une photo JPEG, PNG ou WebP.",
     SHARE_CONSENT_REQUIRED:
       "Autorisation manquante ou expirée : la diffusion du dossier (et l’export de la photo si elle est incluse) doit être autorisée par le représentant légal.",
     IMMUTABLE_DECISION:

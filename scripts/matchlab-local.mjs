@@ -54,6 +54,9 @@ if (command === "setup") {
   const config = JSON.parse(readFileSync(".matchlab-local/env.json", "utf8"));
   if (!/^http:\/\/127\.0\.0\.1:55321$/.test(config.MATCHLAB_SUPABASE_URL))
     throw new Error("Local host required.");
+  // The photo cropper loads its face detection runtime from public/matchlab/mediapipe.
+  if (command === "build" || command === "dev")
+    execFileSync(process.execPath, ["scripts/copy-mediapipe.mjs"], { stdio: "inherit" });
   if (command === "dev" || command === "start")
     config.MATCHLAB_APP_ORIGIN = `http://127.0.0.1:${process.argv[3] || "3000"}`;
   const args =

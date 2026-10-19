@@ -1,7 +1,7 @@
 "use client";
-import { useRef, useState } from "react";
-import { Camera, Maximize2 } from "lucide-react";
-import { fr as t } from "@/lib/matchlab/messages";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Crop, Maximize2 } from "lucide-react";
+import { fr as t, errorMessage } from "@/lib/matchlab/messages";
 import { photoConsent } from "@/lib/matchlab/photos";
 import type { Player } from "@/lib/matchlab/schema";
 import {
@@ -12,6 +12,11 @@ import {
   PlayerAvatar,
   formatDay,
 } from "./shared";
+import { PhotoCropper, checkSource, SOURCE_TYPES } from "./PhotoCropper";
+
+type Pending = { source: Blob; name: string };
+const message = (e: unknown) =>
+  errorMessage(e instanceof Error ? e.message : "INTERNAL_ERROR");
 
 const MAX_PHOTO = 5 * 1024 * 1024;
 const day = (d: Date) =>
@@ -115,18 +120,94 @@ function ConsentFields({ prefix = "" }: { prefix?: string }) {
   );
 }
 
-/** Optional photo inside "Ajouter un joueur": uploaded right after the player is created. */
+/**
+ * Optional photo inside "Ajouter un joueur": cropped on this device when chosen, then
+ * uploaded right after the player is created. The form field holds the cropped JPEG.
+ */
 export function NewPlayerPhotoFields() {
   const { data } = useLab();
+  const input = useRef<HTMLInputElement>(null);
+  const [pending, setPending] = useState<Pending | null>(null);
+  const [cropped, setCropped] = useState<{ file: File; url: string } | null>(null);
+  const [error, setError] = useState("");
+  useEffect(
+    () => () => {
+      if (cropped) URL.revokeObjectURL(cropped.url);
+    },
+    [cropped],
+  );
   if (!data.member.permissions.includes("media")) return null;
+  // Puts the cropped photo back in the form field (or empties it).
+  const hold = (file: File | null) => {
+    if (!input.current) return;
+    const transfer = new DataTransfer();
+    if (file) transfer.items.add(file);
+    input.current.files = transfer.files;
+  };
   return (
     <fieldset className="wide ml-new-photo">
       <legend>{t.media.photoOptional}</legend>
       <label>
         {t.media.formats}
-        <input name="photo_file" type="file" accept="image/jpeg,image/png" />
+        <input
+          ref={input}
+          name="photo_file"
+          type="file"
+          accept={SOURCE_TYPES.join(",")}
+          onChange={(e) => {
+            const file = e.currentTarget.files?.[0];
+            if (!file) return;
+            try {
+              checkSource(file);
+              setError("");
+              setPending({ source: file, name: file.name });
+            } catch (err) {
+              setError(message(err));
+              hold(cropped?.file ?? null);
+            }
+          }}
+        />
       </label>
+      {cropped && (
+        <div className="ml-crop-result">
+          <span className="ml-crop-preview" style={{ width: 56, height: 56 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- local object URL */}
+            <img src={cropped.url} alt="" />
+          </span>
+          <span>{t.media.crop.ready}</span>
+          <button
+            type="button"
+            className="ml-button secondary"
+            onClick={() => {
+              hold(null);
+              setCropped(null);
+            }}
+          >
+            {t.media.crop.remove}
+          </button>
+        </div>
+      )}
+      {error && (
+        <p className="ml-error" role="alert">
+          {error}
+        </p>
+      )}
       <ConsentFields prefix="photo_" />
+      {pending && (
+        <PhotoCropper
+          source={pending.source}
+          name={pending.name}
+          onCancel={() => {
+            setPending(null);
+            hold(cropped?.file ?? null);
+          }}
+          onConfirm={(file) => {
+            hold(file);
+            setCropped({ file, url: URL.createObjectURL(file) });
+            setPending(null);
+          }}
+        />
+      )}
     </fieldset>
   );
 }
@@ -149,34 +230,45 @@ export function PlayerPhoto({ player }: { player: Player }) {
   const mutation = useMutation();
   const consentForm = useRef<HTMLFormElement>(null);
   const [now] = useState(() => Date.now());
+  const [pending, setPending] = useState<Pending | null>(null);
+  const [error, setError] = useState("");
   if (!data.member.permissions.includes("media")) return null;
   const canWrite = data.member.role !== "reader";
   const photo = data.graph.media.find(
     (m) => m.player_id === player.id && m.purpose === "photo",
   );
   const consent = photoConsent(data.graph.consents, player.id, now);
+  // The cropped photo is uploaded with the current consent, or the one typed here.
+  const save = (file: File) =>
+    mutation.run(async () => {
+      if (consent) return attachPhoto(player.id, file, consent);
+      const f = new FormData(consentForm.current!);
+      await attachPhoto(player.id, file, {
+        guardian: String(f.get("guardian") ?? ""),
+        granted: String(f.get("granted") ?? ""),
+        expires: String(f.get("expires") ?? ""),
+      });
+    });
   const upload = (
     <label className="ml-button secondary ml-file-button">
       <Camera size={17} aria-hidden />
       {photo ? t.media.replacePhoto : t.media.importPhoto}
       <input
         type="file"
-        accept="image/jpeg,image/png"
+        accept={SOURCE_TYPES.join(",")}
         disabled={mutation.busy}
-        onChange={async (e) => {
+        onChange={(e) => {
           const input = e.currentTarget;
           const file = input.files?.[0];
-          if (!file) return;
-          await mutation.run(async () => {
-            if (consent) return attachPhoto(player.id, file, consent);
-            const f = new FormData(consentForm.current!);
-            await attachPhoto(player.id, file, {
-              guardian: String(f.get("guardian") ?? ""),
-              granted: String(f.get("granted") ?? ""),
-              expires: String(f.get("expires") ?? ""),
-            });
-          });
           input.value = "";
+          if (!file) return;
+          try {
+            checkSource(file);
+            setError("");
+            setPending({ source: file, name: file.name });
+          } catch (err) {
+            setError(message(err));
+          }
         }}
       />
     </label>
@@ -207,6 +299,26 @@ export function PlayerPhoto({ player }: { player: Player }) {
         {(canWrite || photo) && (
           <div className="ml-actions">
             {canWrite && upload}
+            {canWrite && photo && consent && (
+              <button
+                type="button"
+                className="ml-button secondary"
+                disabled={mutation.busy}
+                onClick={async () => {
+                  setError("");
+                  try {
+                    const response = await fetch(`/api/matchlab/media?id=${photo.id}`);
+                    if (!response.ok) throw new Error("MEDIA_NOT_AUTHORIZED");
+                    setPending({ source: await response.blob(), name: "photo.jpg" });
+                  } catch (err) {
+                    setError(message(err));
+                  }
+                }}
+              >
+                <Crop size={16} aria-hidden />
+                {t.media.crop.recrop}
+              </button>
+            )}
             {photo && (
               <a
                 className="ml-button secondary"
@@ -221,7 +333,23 @@ export function PlayerPhoto({ player }: { player: Player }) {
           </div>
         )}
         {canWrite && <small>{t.media.formats}</small>}
+        {error && (
+          <p className="ml-error" role="alert">
+            {error}
+          </p>
+        )}
         <Feedback {...mutation} />
+        {pending && (
+          <PhotoCropper
+            source={pending.source}
+            name={pending.name}
+            onCancel={() => setPending(null)}
+            onConfirm={(file) => {
+              setPending(null);
+              void save(file);
+            }}
+          />
+        )}
       </div>
     </section>
   );

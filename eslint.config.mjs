@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // MediaPipe runtime copied at build time (scripts/copy-mediapipe.mjs).
+    "public/matchlab/mediapipe/**",
   ]),
 ]);
 
