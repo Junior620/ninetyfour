@@ -51,36 +51,25 @@ import { Reports } from "./Reports";
 import { Extensions } from "./Extensions";
 import { PushSettings } from "./PushSettings";
 import { TourInvite } from "./Help";
+import { labQuery, cachedLab, fetchLab } from "./labCache";
 
-async function fetchLab(queryString: string): Promise<LabData> {
-  const params = new URLSearchParams(queryString);
-  params.delete("id");
-  params.delete("module");
-  params.delete("revision");
-  params.delete("t");
-  params.delete("ask");
-  const response = await fetch(`/api/matchlab/data?${params}`, {
-    cache: "no-store",
-  });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.code);
-  return result;
-}
 
 export function Workspace({ section }: { section: string }) {
   const query = useSearchParams();
   const router = useRouter();
-  const [data, setData] = useState<LabData | null>(null);
-  const [error, setError] = useState("");
   const queryString = query.toString();
+  // Same scope as the previous page: shown at once, then reloaded in the background.
+  const key = labQuery(queryString);
+  const [data, setData] = useState<LabData | null>(() => cachedLab(key));
+  const [error, setError] = useState("");
   const refresh = useCallback(async () => {
-    const result = await fetchLab(queryString);
+    const result = await fetchLab(key);
     setData(result);
     setError("");
-  }, [queryString]);
+  }, [key]);
   useEffect(() => {
     let active = true;
-    fetchLab(queryString)
+    fetchLab(key)
       .then((result) => {
         if (active) {
           setData(result);
@@ -93,7 +82,7 @@ export function Workspace({ section }: { section: string }) {
     return () => {
       active = false;
     };
-  }, [queryString]);
+  }, [key]);
   if (error)
     return (
       <div className="ml-service-state">

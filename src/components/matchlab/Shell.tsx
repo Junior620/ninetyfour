@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Dialog } from "@base-ui/react/dialog";
 import { HelpPanel, Tour } from "./Help";
+import { clearLabCache } from "./labCache";
 import { fr as t } from "@/lib/matchlab/messages";
 import type { Member } from "@/lib/matchlab/schema";
 
@@ -46,6 +47,13 @@ export const navigation = [
   { id: "site", Icon: Newspaper },
   { id: "admin", Icon: Settings },
 ] as const;
+/** Confirms a tap on a menu link while the next page is on its way. */
+function NavPending() {
+  const { pending } = useLinkStatus();
+  return (
+    <span aria-hidden className={`ml-nav-pending${pending ? " is-pending" : ""}`} />
+  );
+}
 export function Shell({
   children,
   member,
@@ -125,6 +133,7 @@ export function Shell({
               >
                 <n.Icon size={18} />
                 <span>{t.nav[n.id]}</span>
+                <NavPending />
               </Link>
             </div>
           ))}
@@ -156,6 +165,7 @@ export function Shell({
               method: "POST",
             });
             if (response.ok) {
+              clearLabCache();
               router.replace("/matchlab/login");
               router.refresh();
             }

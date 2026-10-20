@@ -3221,6 +3221,42 @@
   height: 100%;
   object-fit: cover;
 }
+/* Menu tap feedback: pressed state at once, then a pulse while the page is on its way. */
+.ml-sidebar nav a:active,
+.ml-drawer nav a:active {
+  background: var(--ml-surface-hover);
+}
+.ml-nav-pending {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--ml-accent);
+  opacity: 0;
+}
+.ml-nav-pending.is-pending {
+  animation: ml-nav-pulse 0.9s ease-in-out 120ms infinite;
+}
+.ml-sidebar nav a:has(.is-pending),
+.ml-drawer nav a:has(.is-pending) {
+  background: var(--ml-surface-accent);
+}
+@keyframes ml-nav-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-nav-pending.is-pending {
+    animation: none;
+    opacity: 1;
+  }
+}
 /* Rule-based assistant (cahier v2.2, §05). */
 .ml-assistant-slot {
   display: contents;
