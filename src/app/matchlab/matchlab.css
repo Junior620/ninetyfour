@@ -41,6 +41,8 @@
   --ml-pitch-line: #ffffff59;
   --ml-pitch-mark: #ffffffb3;
   --ml-pitch-label: #0f2745cc;
+  --ml-pitch-run: #9fc6f0;
+  --ml-goal-net: #9fb2c880;
   --ml-crop-shade: #0f2745a6;
   --ml-crop-ring: #ffffffd9;
   --ml-scrim-strong: #061a33e6;
@@ -2357,6 +2359,232 @@
   padding-left: 18px;
   display: grid;
   gap: 8px;
+}
+/* Tactical board modes: place players, or simulate an action with the ball. */
+.ml-squad > [hidden] {
+  display: none;
+}
+.ml-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ml-target-gap);
+  padding: 4px;
+  border: 1px solid var(--ml-border);
+  border-radius: 10px;
+  background: var(--ml-surface-muted);
+}
+.ml-mode-switch button {
+  min-height: var(--ml-target);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: var(--ml-text-secondary);
+  font-weight: 600;
+}
+.ml-mode-switch button:hover {
+  background: var(--ml-surface-hover);
+}
+.ml-mode-switch button[aria-pressed="true"] {
+  background: var(--ml-accent);
+  color: var(--ml-text-inverse);
+}
+.ml-sim-panel {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+.ml-card.ml-sim-panel h2,
+.ml-card.ml-sim-panel h3 {
+  margin-bottom: 0;
+}
+.ml-sim-panel h3 {
+  margin-top: 6px;
+  font-size: var(--ml-font-md);
+}
+.ml-sim-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ml-sim-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.ml-sim-steps li {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--ml-gold);
+  border-radius: 0 6px 6px 0;
+  background: var(--ml-surface-muted);
+}
+/* A shot ends in the net, above the goal line. */
+.ml-sim-pitch,
+.ml-pitch .ml-sim-paths {
+  overflow: visible;
+}
+.ml-sim-pitch.drawing {
+  cursor: crosshair;
+}
+.ml-sim-paths {
+  pointer-events: none;
+}
+.ml-pitch .ml-sim-path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.7;
+}
+.ml-pitch .ml-sim-path.pass,
+.ml-pitch .ml-sim-path.carry {
+  stroke: var(--ml-text-inverse);
+}
+.ml-pitch .ml-sim-path.carry {
+  stroke-dasharray: 1.6 1.1;
+}
+.ml-pitch .ml-sim-path.shot {
+  stroke: var(--ml-gold);
+  stroke-width: 0.8;
+}
+.ml-pitch .ml-sim-path.run {
+  stroke: var(--ml-pitch-run);
+  stroke-width: 0.6;
+  stroke-dasharray: 1 1;
+}
+.ml-pitch .ml-sim-path.drawing {
+  stroke: var(--ml-gold);
+  stroke-width: 1;
+  stroke-dasharray: none;
+}
+.ml-pitch .ml-sim-path.drawing.run {
+  stroke: var(--ml-pitch-run);
+}
+.ml-sim-arrow path {
+  fill: var(--ml-text-inverse);
+  stroke: none;
+}
+.ml-sim-arrow.shot path {
+  fill: var(--ml-gold);
+}
+.ml-sim-arrow.run path {
+  fill: var(--ml-pitch-run);
+}
+.ml-sim-actor .ml-slot-empty {
+  border-style: solid;
+  background: var(--ml-navy-panel);
+}
+.ml-sim-actor.has-ball .ml-player-avatar,
+.ml-sim-actor.has-ball .ml-slot-empty {
+  box-shadow: 0 0 0 3px var(--ml-gold);
+}
+.ml-sim-actor.selected .ml-slot-empty {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 2px;
+}
+.ml-sim-actor.target .ml-slot-button {
+  outline: 3px dashed var(--ml-gold);
+  outline-offset: 4px;
+}
+/* Pitch and the opponent goal above it, sized so both stay on screen. */
+.ml-sim-stage {
+  width: min(100%, 560px, calc((100dvh - 194px) * 0.68));
+  margin: 0 auto;
+  display: grid;
+  justify-items: center;
+}
+.ml-sim-stage .ml-pitch {
+  width: 100%;
+}
+/* The goal: a target for a drawn shot, and a button to shoot without drawing. */
+.ml-sim-goal {
+  width: max(var(--ml-target), 16%);
+  height: var(--ml-target);
+  padding: 0;
+  border: 3px solid var(--ml-navy);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  background:
+    repeating-linear-gradient(45deg, var(--ml-goal-net) 0 1px, var(--ml-scrim-clear) 1px 7px),
+    repeating-linear-gradient(-45deg, var(--ml-goal-net) 0 1px, var(--ml-scrim-clear) 1px 7px);
+}
+.ml-sim-goal:hover:not(:disabled) {
+  border-color: var(--ml-gold);
+}
+.ml-sim-goal:disabled {
+  opacity: 0.6;
+}
+.ml-sim-ball {
+  position: absolute;
+  z-index: 3;
+  width: 20px;
+  height: 20px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px var(--ml-scrim));
+}
+/* At the holder's feet, clear of the jersey number. */
+.ml-sim-ball.held {
+  transform: translate(calc(-50% - 22px), calc(-50% + 16px));
+}
+.ml-pitch .ml-sim-ball svg circle {
+  fill: var(--ml-text-inverse);
+  stroke: var(--ml-navy);
+  stroke-width: 1.2;
+}
+.ml-pitch .ml-sim-ball svg path {
+  fill: var(--ml-navy);
+  stroke: none;
+}
+.ml-sim-goal-flash {
+  position: absolute;
+  z-index: 4;
+  top: 24%;
+  left: 50%;
+  margin: 0;
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: var(--ml-gold);
+  color: var(--ml-text-strong);
+  font-size: 28px;
+  font-weight: 800;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: ml-goal-pop 1.8s ease-out both;
+}
+@keyframes ml-goal-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.ml-sim-controls {
+  justify-content: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-sim-goal-flash {
+    animation: none;
+  }
 }
 /* Trial simulation inside the player file. */
 .ml-trial-details {

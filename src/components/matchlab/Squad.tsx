@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { GripVertical, Save } from "lucide-react";
+import { GripVertical, Route, Save, Users } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
 import { positionNames, POSITIONS } from "@/lib/matchlab/questionnaire";
 import {
@@ -31,6 +31,7 @@ import {
   PlayerAvatar,
   jerseyFor,
 } from "./shared";
+import { PitchLines, SquadSimulation } from "./SquadSimulation";
 
 type Draft = {
   id?: string;
@@ -90,6 +91,7 @@ export function Squad() {
   const [status, setStatus] = useState("");
   const [position, setPosition] = useState("");
   const [dossier, setDossier] = useState<keyof typeof t.squad.dossiers>("all");
+  const [mode, setMode] = useState<"place" | "simulate">("place");
   const mutation = useMutation();
   const below = CATEGORIES[CATEGORIES.indexOf(category) - 1];
   const evaluationsOf = useMemo(() => {
@@ -281,6 +283,30 @@ export function Squad() {
   const names = (ids: string[]) =>
     ids.map((id) => byId.get(id)?.full_name ?? "—").join(", ");
 
+  const modeSwitch = (
+    <div className="ml-mode-switch" role="group" aria-label={t.squad.mode}>
+      {(
+        [
+          ["place", Users, t.squad.placeMode],
+          ["simulate", Route, t.squad.simulateMode],
+        ] as const
+      ).map(([id, Icon, text]) => (
+        <button
+          key={id}
+          type="button"
+          aria-pressed={mode === id}
+          onClick={() => {
+            setMode(id);
+            setSelected(null);
+          }}
+        >
+          <Icon size={17} aria-hidden />
+          {text}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <>
       <Heading title={t.squad.title} eyebrow={t.squad.eyebrow}>
@@ -428,272 +454,287 @@ export function Squad() {
         </label>
       </section>
       <div className="ml-squad">
-        <section className="ml-card ml-squad-list" aria-label={t.squad.squad}>
-          <h2>{t.squad.squad}</h2>
-          <p className="ml-muted">{t.squad.squadHint}</p>
-          <div className="ml-squad-filters">
-            <label>
-              {t.squad.availability}
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">{t.all}</option>
-                {(["active", "injured", "trial", "inactive"] as const).map(
-                  (s) => (
-                    <option key={s} value={s}>
-                      {t.players[s]}
-                    </option>
-                  ),
-                )}
-              </select>
-            </label>
-            <label>
-              {t.squad.position}
-              <select
-                value={position}
-                onChange={(e) => setPosition(e.target.value)}
-              >
-                <option value="">{t.all}</option>
-                {POSITIONS.map((p) => (
-                  <option key={p} value={p}>
-                    {positionNames[p]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {t.squad.dossier}
-              <select
-                value={dossier}
-                onChange={(e) => setDossier(e.target.value as typeof dossier)}
-              >
-                {Object.entries(t.squad.dossiers).map(([k, v]) => (
-                  <option key={k} value={k}>
-                    {v}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {below && (
-              <label className="ml-check">
-                <input
-                  type="checkbox"
-                  checked={lower}
-                  onChange={(e) => setLower(e.target.checked)}
-                />
-                {t.squad.lowerCategory} · {below}
-              </label>
-            )}
-          </div>
-          <ul className="ml-squad-players" data-drop="list">
-            {shown.map((p) => (
-              <SquadCard
-                key={p.id}
-                player={p}
-                jersey={jersey(p.id)}
-                evaluations={evaluationsOf.get(p.id) ?? 0}
-                where={locate(draft.board, p.id)}
-                selected={selected === p.id}
-                canWrite={canWrite}
-                onSelect={() => setSelected(selected === p.id ? null : p.id)}
-                drag={dragHandlers(p.id)}
-              />
-            ))}
-            {!shown.length && <li className="ml-muted">{t.squad.noPlayers}</li>}
-          </ul>
-        </section>
-        <section className="ml-card ml-pitch-card" aria-label={t.squad.pitch}>
-          <div className="ml-pitch">
-            <svg viewBox="0 0 68 100" aria-hidden="true" focusable="false">
-              <rect x="1" y="1" width="66" height="98" rx="1" />
-              <line x1="1" y1="50" x2="67" y2="50" />
-              <circle cx="34" cy="50" r="9" />
-              <rect x="14" y="1" width="40" height="16" />
-              <rect x="25" y="1" width="18" height="6" />
-              <rect x="14" y="83" width="40" height="16" />
-              <rect x="25" y="93" width="18" height="6" />
-            </svg>
-            {slots.map((slot) => {
-              const occupant = draft.board.slots[slot.id]?.player_id ?? null;
-              const p = occupant ? byId.get(occupant) : undefined;
-              return (
-                <div
-                  key={slot.id}
-                  className={`ml-slot${ghost?.over === `slot:${slot.id}` ? " over" : ""}${occupant && occupant === selected ? " selected" : ""}`}
-                  style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
-                  data-drop={`slot:${slot.id}`}
+        <SquadSimulation
+          key={`${draft.id ?? "new"}:${draft.board.formation}`}
+          hidden={mode !== "simulate"}
+          slots={slots}
+          occupants={Object.fromEntries(
+            slots.map((slot) => [
+              slot.id,
+              draft.board.slots[slot.id]?.player_id ?? null,
+            ]),
+          )}
+          token={(id) => token(id)}
+          playerName={(id) => byId.get(id)?.full_name ?? "—"}
+          modeSwitch={modeSwitch}
+        />
+        {mode === "place" && (
+          <section className="ml-card ml-squad-list" aria-label={t.squad.squad}>
+            <h2>{t.squad.squad}</h2>
+            <p className="ml-muted">{t.squad.squadHint}</p>
+            <div className="ml-squad-filters">
+              <label>
+                {t.squad.availability}
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
                 >
-                  <button
-                    type="button"
-                    className="ml-slot-button"
-                    aria-label={
-                      p
-                        ? `${positionNames[slot.position]} : ${p.full_name}`
-                        : `${positionNames[slot.position]} : ${t.squad.emptySlot}`
-                    }
-                    aria-pressed={!!occupant && occupant === selected}
-                    disabled={!canWrite && !occupant}
-                    onClick={() => {
-                      if (selected && canWrite) place(selected, slot.id);
-                      else if (occupant)
-                        setSelected(occupant === selected ? null : occupant);
-                    }}
-                    {...(occupant ? dragHandlers(occupant) : {})}
+                  <option value="">{t.all}</option>
+                  {(["active", "injured", "trial", "inactive"] as const).map(
+                    (s) => (
+                      <option key={s} value={s}>
+                        {t.players[s]}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </label>
+              <label>
+                {t.squad.position}
+                <select
+                  value={position}
+                  onChange={(e) => setPosition(e.target.value)}
+                >
+                  <option value="">{t.all}</option>
+                  {POSITIONS.map((p) => (
+                    <option key={p} value={p}>
+                      {positionNames[p]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                {t.squad.dossier}
+                <select
+                  value={dossier}
+                  onChange={(e) => setDossier(e.target.value as typeof dossier)}
+                >
+                  {Object.entries(t.squad.dossiers).map(([k, v]) => (
+                    <option key={k} value={k}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {below && (
+                <label className="ml-check">
+                  <input
+                    type="checkbox"
+                    checked={lower}
+                    onChange={(e) => setLower(e.target.checked)}
+                  />
+                  {t.squad.lowerCategory} · {below}
+                </label>
+              )}
+            </div>
+            <ul className="ml-squad-players" data-drop="list">
+              {shown.map((p) => (
+                <SquadCard
+                  key={p.id}
+                  player={p}
+                  jersey={jersey(p.id)}
+                  evaluations={evaluationsOf.get(p.id) ?? 0}
+                  where={locate(draft.board, p.id)}
+                  selected={selected === p.id}
+                  canWrite={canWrite}
+                  onSelect={() => setSelected(selected === p.id ? null : p.id)}
+                  drag={dragHandlers(p.id)}
+                />
+              ))}
+              {!shown.length && (
+                <li className="ml-muted">{t.squad.noPlayers}</li>
+              )}
+            </ul>
+          </section>
+        )}
+        {mode === "place" && (
+          <section className="ml-card ml-pitch-card" aria-label={t.squad.pitch}>
+            {modeSwitch}
+            <div className="ml-pitch">
+              <PitchLines />
+              {slots.map((slot) => {
+                const occupant = draft.board.slots[slot.id]?.player_id ?? null;
+                const p = occupant ? byId.get(occupant) : undefined;
+                return (
+                  <div
+                    key={slot.id}
+                    className={`ml-slot${ghost?.over === `slot:${slot.id}` ? " over" : ""}${occupant && occupant === selected ? " selected" : ""}`}
+                    style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
+                    data-drop={`slot:${slot.id}`}
                   >
-                    {occupant ? (
-                      token(occupant)
-                    ) : (
-                      <span className="ml-slot-empty">
-                        {positionShort[slot.position]}
-                      </span>
-                    )}
-                  </button>
-                  <span className="ml-slot-name">
-                    {p ? shortName(p.full_name) : positionShort[slot.position]}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <div
-            className={`ml-bench${ghost?.over === "bench" ? " over" : ""}`}
-            data-drop="bench"
-          >
-            <h3>{t.squad.bench}</h3>
-            {draft.board.bench.length ? (
-              <ul>
-                {draft.board.bench.map((id) => (
-                  <li key={id}>
                     <button
                       type="button"
-                      className="ml-bench-token"
-                      aria-pressed={selected === id}
-                      aria-label={byId.get(id)?.full_name}
-                      onClick={() => setSelected(selected === id ? null : id)}
-                      {...dragHandlers(id)}
+                      className="ml-slot-button"
+                      aria-label={
+                        p
+                          ? `${positionNames[slot.position]} : ${p.full_name}`
+                          : `${positionNames[slot.position]} : ${t.squad.emptySlot}`
+                      }
+                      aria-pressed={!!occupant && occupant === selected}
+                      disabled={!canWrite && !occupant}
+                      onClick={() => {
+                        if (selected && canWrite) place(selected, slot.id);
+                        else if (occupant)
+                          setSelected(occupant === selected ? null : occupant);
+                      }}
+                      {...(occupant ? dragHandlers(occupant) : {})}
                     >
-                      {token(id, 44)}
-                      <span>{shortName(byId.get(id)?.full_name ?? "—")}</span>
+                      {occupant ? (
+                        token(occupant)
+                      ) : (
+                        <span className="ml-slot-empty">
+                          {positionShort[slot.position]}
+                        </span>
+                      )}
                     </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="ml-muted">{t.squad.benchEmpty}</p>
-            )}
-            {selected &&
-              canWrite &&
-              locate(draft.board, selected) !== "bench" && (
-                <button
-                  type="button"
-                  className="ml-button secondary"
-                  onClick={() => place(selected, "bench")}
-                >
-                  {t.squad.toBench}
-                </button>
+                    <span className="ml-slot-name">
+                      {p
+                        ? shortName(p.full_name)
+                        : positionShort[slot.position]}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            <div
+              className={`ml-bench${ghost?.over === "bench" ? " over" : ""}`}
+              data-drop="bench"
+            >
+              <h3>{t.squad.bench}</h3>
+              {draft.board.bench.length ? (
+                <ul>
+                  {draft.board.bench.map((id) => (
+                    <li key={id}>
+                      <button
+                        type="button"
+                        className="ml-bench-token"
+                        aria-pressed={selected === id}
+                        aria-label={byId.get(id)?.full_name}
+                        onClick={() => setSelected(selected === id ? null : id)}
+                        {...dragHandlers(id)}
+                      >
+                        {token(id, 44)}
+                        <span>{shortName(byId.get(id)?.full_name ?? "—")}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="ml-muted">{t.squad.benchEmpty}</p>
               )}
-          </div>
-          {selectedPlayer && (
-            <div className="ml-selection" aria-label={t.squad.selected}>
-              <div className="ml-selection-head">
-                <PlayerAvatar
-                  playerId={selectedPlayer.id}
-                  name={selectedPlayer.full_name}
-                  size={44}
-                />
-                <div>
-                  <strong>{selectedPlayer.full_name}</strong>
-                  <small>
-                    #{jersey(selectedPlayer.id) ?? "—"} ·{" "}
-                    {positionNames[selectedPlayer.usual_position]}
-                    {selectedSlot && selectedSlot !== "bench"
-                      ? ` · ${t.squad.placed} : ${slotLabel(selectedSlot)}`
-                      : ""}
-                  </small>
-                </div>
-              </div>
-              {placement && canWrite && (
-                <div className="ml-form-grid">
-                  <label>
-                    {t.squad.role}
-                    <input
-                      value={placement.role}
-                      maxLength={80}
-                      onChange={(e) =>
-                        update({
-                          ...draft.board,
-                          slots: {
-                            ...draft.board.slots,
-                            [selectedSlot!]: {
-                              ...placement,
-                              role: e.target.value,
-                            },
-                          },
-                        })
-                      }
-                    />
-                  </label>
-                  <label className="wide">
-                    {t.squad.instructions}
-                    <textarea
-                      value={placement.instructions}
-                      maxLength={500}
-                      onChange={(e) =>
-                        update({
-                          ...draft.board,
-                          slots: {
-                            ...draft.board.slots,
-                            [selectedSlot!]: {
-                              ...placement,
-                              instructions: e.target.value,
-                            },
-                          },
-                        })
-                      }
-                    />
-                  </label>
-                </div>
-              )}
-              <div className="ml-actions">
-                <Link
-                  className="ml-button secondary"
-                  href={`/matchlab/player?id=${selectedPlayer.id}`}
-                >
-                  {t.squad.openFile}
-                </Link>
-                {canWrite && selectedSlot && (
+              {selected &&
+                canWrite &&
+                locate(draft.board, selected) !== "bench" && (
                   <button
                     type="button"
                     className="ml-button secondary"
-                    onClick={() => place(selectedPlayer.id, null)}
+                    onClick={() => place(selected, "bench")}
                   >
-                    {t.squad.remove}
+                    {t.squad.toBench}
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="ml-button secondary"
-                  onClick={() => setSelected(null)}
-                >
-                  {t.squad.cancel}
-                </button>
-              </div>
             </div>
-          )}
-          <label className="ml-squad-notes">
-            {t.squad.notes}
-            <textarea
-              value={draft.notes}
-              maxLength={2000}
-              disabled={!canWrite}
-              onChange={(e) => {
-                setDraft((d) => ({ ...d, notes: e.target.value }));
-                setDirty(true);
-              }}
-            />
-          </label>
-        </section>
+            {selectedPlayer && (
+              <div className="ml-selection" aria-label={t.squad.selected}>
+                <div className="ml-selection-head">
+                  <PlayerAvatar
+                    playerId={selectedPlayer.id}
+                    name={selectedPlayer.full_name}
+                    size={44}
+                  />
+                  <div>
+                    <strong>{selectedPlayer.full_name}</strong>
+                    <small>
+                      #{jersey(selectedPlayer.id) ?? "—"} ·{" "}
+                      {positionNames[selectedPlayer.usual_position]}
+                      {selectedSlot && selectedSlot !== "bench"
+                        ? ` · ${t.squad.placed} : ${slotLabel(selectedSlot)}`
+                        : ""}
+                    </small>
+                  </div>
+                </div>
+                {placement && canWrite && (
+                  <div className="ml-form-grid">
+                    <label>
+                      {t.squad.role}
+                      <input
+                        value={placement.role}
+                        maxLength={80}
+                        onChange={(e) =>
+                          update({
+                            ...draft.board,
+                            slots: {
+                              ...draft.board.slots,
+                              [selectedSlot!]: {
+                                ...placement,
+                                role: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                      />
+                    </label>
+                    <label className="wide">
+                      {t.squad.instructions}
+                      <textarea
+                        value={placement.instructions}
+                        maxLength={500}
+                        onChange={(e) =>
+                          update({
+                            ...draft.board,
+                            slots: {
+                              ...draft.board.slots,
+                              [selectedSlot!]: {
+                                ...placement,
+                                instructions: e.target.value,
+                              },
+                            },
+                          })
+                        }
+                      />
+                    </label>
+                  </div>
+                )}
+                <div className="ml-actions">
+                  <Link
+                    className="ml-button secondary"
+                    href={`/matchlab/player?id=${selectedPlayer.id}`}
+                  >
+                    {t.squad.openFile}
+                  </Link>
+                  {canWrite && selectedSlot && (
+                    <button
+                      type="button"
+                      className="ml-button secondary"
+                      onClick={() => place(selectedPlayer.id, null)}
+                    >
+                      {t.squad.remove}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="ml-button secondary"
+                    onClick={() => setSelected(null)}
+                  >
+                    {t.squad.cancel}
+                  </button>
+                </div>
+              </div>
+            )}
+            <label className="ml-squad-notes">
+              {t.squad.notes}
+              <textarea
+                value={draft.notes}
+                maxLength={2000}
+                disabled={!canWrite}
+                onChange={(e) => {
+                  setDraft((d) => ({ ...d, notes: e.target.value }));
+                  setDirty(true);
+                }}
+              />
+            </label>
+          </section>
+        )}
       </div>
       <p className="ml-sr-live" aria-live="polite">
         {announce}
