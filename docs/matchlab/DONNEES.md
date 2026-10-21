@@ -18,9 +18,9 @@ Note individuelle = (moyenne des réponses communes notées × 0,40 + moyenne de
 
 Ex æquo conservés, effectifs de joueurs distincts, résultats ventilés par poste et avertissement n < 5. Les notes de fondamentaux n’entrent pas dans le 40/60. Toute écriture utilise une version attendue et un conflit explicite HTTP409. Les rapports créent de nouvelles révisions ; ils ne remplacent pas un instantané validé.
 
-## Ajouts du cahier v2.2 (migrations 202610180013 à 202610180019)
+## Ajouts du cahier v2.2 (migrations 202610180013 à 202610210020)
 
-- lineups : scénarios du terrain tactique (saison, catégorie, type, formation, placements avec rôle et consigne, banc, notes, match optionnel).
+- lineups : scénarios du terrain tactique (saison, catégorie, type, formation, placements avec rôle et consigne, banc, notes, match optionnel) et leurs simulations d’action enregistrées (`simulations` : nom, formation, porteur de départ, gestes tracés, adversaires ; 12 au maximum).
 - requirements / trials : référentiel d’essai (catégorie × poste × critère → niveau 1–5, échantillon minimal) et décisions d’essai immuables, auteur fixé par la base.
 - videos : vidéo de match dans le bucket privé `matchlab-videos` (chemin, taille, durée, équipe filmée, conditions, état) ; import soumis à la gouvernance.
 - markers (étendu) : douze actions du cahier, fin, résultat, tags, vérification avec auteur, source (manuelle, direct, IA), vidéo, minute.

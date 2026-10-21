@@ -22,7 +22,7 @@ Les composants React appellent `/api/matchlab`. La validation Zod précède les 
 | /api/matchlab/exports, imports | Téléchargement, dry-run et restauration |
 | /api/matchlab/articles | Un seul service CMS, y compris l’ancien écran admin |
 | /api/matchlab/ai/[module], push | Contrats désactivés / abonnement optionnel préparé |
-| /matchlab/squad | Terrain tactique : compositions, scénarios, simulation d’action (passes, appels, tirs tracés au doigt), essai en catégorie supérieure |
+| /matchlab/squad | Terrain tactique : compositions, scénarios, simulation d’action (passes, appels, tirs tracés au doigt, adversaires, simulations enregistrées avec le scénario), essai en catégorie supérieure |
 | /matchlab/player?id= | Fiche joueur interne et dossiers club |
 | /matchlab/live?id= | Match en direct, sans enregistrement |
 | /matchlab/tactics?id= | Cellule tactique : entrées, plans, priorités, avant/après |

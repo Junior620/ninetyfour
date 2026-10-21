@@ -67,6 +67,9 @@ export function dbError(error: { code?: string; message: string } | null) {
     throw new LabError("SHARE_CONSENT_REQUIRED", 403);
   if (error.message === "IMMUTABLE_DECISION")
     throw new LabError("IMMUTABLE_DECISION", 409);
+  // Code ahead of the database: a migration has not been applied yet.
+  if (error.code === "42703" || error.code === "42P01")
+    throw new LabError("MIGRATION_REQUIRED", 503);
   if (error.code?.startsWith("23") || error.code === "22P02")
     throw new LabError("INVALID_DATA", 400);
   console.error("[MatchLab database]", error.code ?? "unavailable");

@@ -341,6 +341,46 @@ async function main() {
     }),
   );
   ok(lineup.id, "Scoped staff saves a lineup scenario");
+  // Action simulations saved with the scenario (migration 202610210020).
+  const simulation = {
+    id: "0b7d6c1e-2f3a-4b5c-9d8e-7f6a5b4c3d2e",
+    name: "Sortie de balle fictive",
+    formation: "4-3-3",
+    holder: "dm",
+    steps: [{ action: "pass", from: "dm", to: "st", path: [[50, 57], [50, 14]] }],
+    opponents: [{ id: "o1", label: "DC", x: 50, y: 30 }],
+  };
+  ok(
+    Array.isArray(lineup.simulations) && lineup.simulations.length === 0,
+    "A scenario starts with no simulation",
+  );
+  const simulated = unwrap(
+    await staff.db.rpc("ml_save", {
+      kind: "lineups",
+      payload: { id: lineup.id, simulations: [simulation] },
+      expected: lineup.version,
+    }),
+  );
+  ok(
+    simulated.simulations[0].steps[0].to === "st" &&
+      simulated.slots.st.player_id === p.player.id &&
+      simulated.version === lineup.version + 1,
+    "A scenario keeps its saved simulations next to its posts",
+  );
+  for (const [simulations, label] of [
+    [{ steps: [] }, "a single object"],
+    [Array.from({ length: 13 }, () => simulation), "thirteen simulations"],
+  ] as const)
+    ok(
+      (
+        await staff.db.rpc("ml_save", {
+          kind: "lineups",
+          payload: { id: lineup.id, simulations },
+          expected: simulated.version,
+        })
+      ).error,
+      `The database refuses ${label} as simulations`,
+    );
   ok(
     unwrap(await other.db.from("ml_lineups").select("id").eq("id", lineup.id))
       .length === 0,
@@ -851,6 +891,7 @@ async function main() {
         name: "Composition U-17 fictive",
         formation: "4-3-3",
         slots: { lcm: { player_id: p.player.id, role: "Relayeur", instructions: "" } },
+        simulations: [simulation],
       },
       expected: 0,
     }),
@@ -884,6 +925,13 @@ async function main() {
   const [restoredPlan] = await rows("ml_plans", "id", copy.plans[0].id);
   const [restoredDossier] = await rows("ml_dossiers", "id", copy.dossiers[0].id);
   const [restoredLive] = await rows("ml_live_sessions", "id", copy.live_sessions[0].id);
+  const [restoredLineup] = await rows("ml_lineups", "id", copy.lineups[0].id);
+  ok(
+    restoredLineup.simulations[0].name === simulation.name &&
+      restoredLineup.simulations[0].steps[0].from === "dm" &&
+      restoredLineup.slots.lcm.player_id === copy.players[0].id,
+    "A restored scenario keeps its simulations",
+  );
   const copiedSequence = copy.markers.find((m) => m.kind === "duel")!;
   ok(
     restoredPlan.match_id === copy.matches[0].id &&

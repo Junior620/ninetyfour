@@ -42,6 +42,9 @@
   --ml-pitch-mark: #ffffffb3;
   --ml-pitch-label: #0f2745cc;
   --ml-pitch-run: #9fc6f0;
+  --ml-pitch-alert: #ffa094;
+  --ml-opponent: #b42318;
+  --ml-opponent-ring: #ffa094b3;
   --ml-goal-net: #9fb2c880;
   --ml-crop-shade: #0f2745a6;
   --ml-crop-ring: #ffffffd9;
@@ -2476,6 +2479,75 @@
 }
 .ml-sim-arrow.run path {
   fill: var(--ml-pitch-run);
+}
+/* A pass or shot line drawn within reach of an opponent. */
+.ml-pitch .ml-sim-path.contested {
+  stroke: var(--ml-pitch-alert);
+}
+.ml-sim-arrow.contested path {
+  fill: var(--ml-pitch-alert);
+}
+.ml-sim-opponent {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: var(--ml-target);
+  height: var(--ml-target);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+}
+.ml-body .ml-sim-opponent {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.ml-sim-opponent > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--ml-text-inverse);
+  border-radius: 50%;
+  background: var(--ml-opponent);
+  color: var(--ml-text-inverse);
+  font-size: var(--ml-font-xs);
+  font-weight: 800;
+}
+.ml-sim-opponent.on-line > span {
+  box-shadow: 0 0 0 4px var(--ml-opponent-ring);
+}
+.ml-sim-opponent.selected > span {
+  outline: 3px solid var(--ml-gold);
+  outline-offset: 2px;
+}
+.ml-sim-saved {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--ml-target-gap);
+}
+.ml-sim-saved li {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--ml-border);
+  border-radius: 8px;
+}
+.ml-sim-saved li.current {
+  border-color: var(--ml-accent);
+  box-shadow: 0 0 0 1px var(--ml-accent);
+}
+.ml-sim-saved li > div:first-child {
+  display: grid;
+  gap: 2px;
+}
+.ml-sim-saved small {
+  color: var(--ml-text-tertiary);
 }
 .ml-sim-actor .ml-slot-empty {
   border-style: solid;

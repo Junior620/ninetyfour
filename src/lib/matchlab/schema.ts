@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { POSITIONS } from "./questionnaire";
 import { GROUNDS, EVENTS } from "./circumstances";
+import { FORMATIONS } from "./formations";
 
 const id = z.uuid();
 const text = (max = 5000) => z.string().trim().max(max);
@@ -200,6 +201,62 @@ const slotSchema = z
     instructions: text(500).default(""),
   })
   .strict();
+// Action simulations saved with a scenario: drawn steps and opponent markers.
+export const SIM_ACTIONS = ["pass", "shot", "carry", "run"] as const;
+const slotId = z.string().regex(/^[a-z0-9-]{1,16}$/);
+const coordinate = z.number().min(-10).max(110);
+const simulationSchema = z
+  .object({
+    id: id,
+    name: text(80).min(1),
+    formation: z.enum(FORMATION_IDS),
+    holder: slotId.nullable(),
+    steps: z
+      .array(
+        z
+          .object({
+            action: z.enum(SIM_ACTIONS),
+            from: slotId,
+            to: slotId.nullable(),
+            path: z
+              .array(z.tuple([coordinate, coordinate]))
+              .min(2)
+              .max(200),
+          })
+          .strict(),
+      )
+      .max(40),
+    opponents: z
+      .array(
+        z
+          .object({
+            id: z.string().regex(/^o[0-9]{1,2}$/),
+            label: text(4).min(1),
+            x: coordinate,
+            y: coordinate,
+          })
+          .strict(),
+      )
+      .max(11),
+  })
+  .strict()
+  .superRefine((sim, ctx) => {
+    // Steps name the posts of the formation the simulation was drawn on.
+    const posts = new Set(FORMATIONS[sim.formation].map((p) => p.id));
+    const valid =
+      (sim.holder === null || posts.has(sim.holder)) &&
+      sim.steps.every(
+        (s) =>
+          posts.has(s.from) &&
+          (s.action === "pass"
+            ? !!s.to && posts.has(s.to) && s.to !== s.from
+            : s.to === null),
+      ) &&
+      new Set(sim.opponents.map((o) => o.id)).size === sim.opponents.length;
+    if (!valid)
+      ctx.addIssue({ code: "custom", message: "Simulation invalide" });
+  });
+export type Simulation = z.infer<typeof simulationSchema>;
 export const lineupSchema = z
   .object({
     ...base,
@@ -213,6 +270,19 @@ export const lineupSchema = z
     bench: z.array(id).max(30).default([]),
     notes: text(2000).default(""),
     match_id: id.nullable().default(null),
+    // Optional so a scenario saved before the column exists keeps working.
+    simulations: z
+      .array(simulationSchema)
+      .max(12)
+      .refine(
+        (list) => new Set(list.map((x) => x.id)).size === list.length,
+        "Simulation en double",
+      )
+      .refine(
+        (list) => JSON.stringify(list).length <= 300000,
+        "Simulations trop volumineuses",
+      )
+      .optional(),
   })
   .strict();
 export const requirementSchema = z

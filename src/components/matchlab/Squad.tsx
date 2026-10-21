@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { GripVertical, Route, Save, Users } from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
@@ -21,6 +21,7 @@ import {
   LINEUP_KINDS,
   type Lineup,
   type Player,
+  type Simulation,
 } from "@/lib/matchlab/schema";
 import {
   useLab,
@@ -40,6 +41,8 @@ type Draft = {
   kind: Lineup["kind"];
   notes: string;
   board: Board;
+  /** Undefined until the database has the column (migration 202610210020). */
+  simulations?: Simulation[];
 };
 const fresh = (): Draft => ({
   version: 0,
@@ -55,6 +58,7 @@ const fromLineup = (l: Lineup): Draft => ({
   kind: l.kind,
   notes: l.notes,
   board: { formation: l.formation, slots: l.slots, bench: l.bench },
+  simulations: l.simulations,
 });
 // Full name, cut by CSS: no guess about which word is the family name.
 const shortName = (name: string) => name.trim();
@@ -93,6 +97,13 @@ export function Squad() {
   const [dossier, setDossier] = useState<keyof typeof t.squad.dossiers>("all");
   const [mode, setMode] = useState<"place" | "simulate">("place");
   const mutation = useMutation();
+  const simMutation = useMutation();
+  // A new instance of the simulation board for each scenario opened (not on save).
+  const [instance, setInstance] = useState(0);
+  const simPending = useRef(false);
+  const onSimPending = useCallback((pending: boolean) => {
+    simPending.current = pending;
+  }, []);
   const below = CATEGORIES[CATEGORIES.indexOf(category) - 1];
   const evaluationsOf = useMemo(() => {
     const counts = new Map<string, number>();
@@ -147,11 +158,40 @@ export function Squad() {
     setSelected(null);
   };
   const switchTo = (next: Draft) => {
-    if (dirty && !window.confirm(t.unsaved)) return false;
+    if ((dirty || simPending.current) && !window.confirm(t.unsaved))
+      return false;
     setDraft(next);
     setDirty(false);
     setSelected(null);
+    setInstance((n) => n + 1);
     return true;
+  };
+  const persist = async (next: Draft) => {
+    const saved = await api("data", {
+      kind: "lineups",
+      version: next.version,
+      payload: {
+        ...(next.id ? { id: next.id } : {}),
+        season_id: season,
+        category_id: category,
+        name: next.name,
+        kind: next.kind,
+        formation: next.board.formation,
+        slots: next.board.slots,
+        bench: next.board.bench,
+        notes: next.notes,
+        match_id: null,
+        // Sent only once known, so scenarios still save before the migration.
+        ...(next.simulations ? { simulations: next.simulations } : {}),
+      },
+    });
+    setDraft((d) => ({
+      ...d,
+      id: saved.id,
+      version: saved.version,
+      simulations: saved.simulations ?? next.simulations,
+    }));
+    setDirty(false);
   };
   const changeScope = (nextSeason: string, nextCategory: Category) => {
     const first = graph.lineups.find(
@@ -325,32 +365,7 @@ export function Squad() {
             <button
               className="ml-button"
               disabled={mutation.busy || !season}
-              onClick={() =>
-                mutation.run(async () => {
-                  const saved = await api("data", {
-                    kind: "lineups",
-                    version: draft.version,
-                    payload: {
-                      ...(draft.id ? { id: draft.id } : {}),
-                      season_id: season,
-                      category_id: category,
-                      name: draft.name,
-                      kind: draft.kind,
-                      formation: draft.board.formation,
-                      slots: draft.board.slots,
-                      bench: draft.board.bench,
-                      notes: draft.notes,
-                      match_id: null,
-                    },
-                  });
-                  setDraft((d) => ({
-                    ...d,
-                    id: saved.id,
-                    version: saved.version,
-                  }));
-                  setDirty(false);
-                })
-              }
+              onClick={() => mutation.run(() => persist(draft))}
             >
               <Save size={17} />
               {t.squad.save}
@@ -455,9 +470,10 @@ export function Squad() {
       </section>
       <div className="ml-squad">
         <SquadSimulation
-          key={`${draft.id ?? "new"}:${draft.board.formation}`}
+          key={`${instance}:${draft.board.formation}`}
           hidden={mode !== "simulate"}
           slots={slots}
+          formation={draft.board.formation}
           occupants={Object.fromEntries(
             slots.map((slot) => [
               slot.id,
@@ -467,6 +483,14 @@ export function Squad() {
           token={(id) => token(id)}
           playerName={(id) => byId.get(id)?.full_name ?? "—"}
           modeSwitch={modeSwitch}
+          saved={draft.simulations ?? []}
+          canWrite={canWrite}
+          busy={mutation.busy || simMutation.busy}
+          feedback={simMutation}
+          onSave={(list) =>
+            simMutation.run(() => persist({ ...draft, simulations: list }))
+          }
+          onPending={onSimPending}
         />
         {mode === "place" && (
           <section className="ml-card ml-squad-list" aria-label={t.squad.squad}>

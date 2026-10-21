@@ -7,10 +7,26 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { Play, RotateCcw, Square, Undo2 } from "lucide-react";
+import {
+  FilePlus,
+  Play,
+  RotateCcw,
+  Save,
+  Square,
+  Trash2,
+  Undo2,
+  UserPlus,
+  UserX,
+} from "lucide-react";
 import { fr as t } from "@/lib/matchlab/messages";
 import { positionNames } from "@/lib/matchlab/questionnaire";
-import { positionShort, type Slot } from "@/lib/matchlab/formations";
+import {
+  FORMATIONS,
+  positionShort,
+  type FormationId,
+  type Slot,
+} from "@/lib/matchlab/formations";
+import { FORMATION_IDS, type Simulation } from "@/lib/matchlab/schema";
 import {
   startState,
   defaultHolder,
@@ -20,22 +36,45 @@ import {
   frameAt,
   phaseDuration,
   trimPath,
+  opponentFormation,
+  addOpponent,
+  placeOpponent,
+  onTheLine,
+  packStep,
+  unpackStep,
   MAX_STEPS,
+  type Opponent,
   type Point,
   type SimAction,
   type SimState,
   type SimStep,
 } from "@/lib/matchlab/simulation";
+import { Feedback } from "./shared";
 
 const SPEEDS = [
   ["slow", 0.5],
   ["normal", 1],
   ["fast", 2],
 ] as const;
-const ACTIONS: SimAction[] = ["pass", "shot", "carry", "run"];
+const MARKERS: (SimAction | "contested")[] = [
+  "pass",
+  "shot",
+  "carry",
+  "run",
+  "contested",
+];
+/** Simulations kept per scenario (same limit as the database). */
+const MAX_SAVED = 12;
 // Slot frame (percent) to the 68 × 100 pitch drawing.
 const svgPoints = (path: Point[]) =>
   path.map((p) => `${(p.x * 0.68).toFixed(2)},${p.y.toFixed(2)}`).join(" ");
+// What a save keeps, to tell whether the board differs from the saved version.
+const snapshot = (
+  holder: string | null,
+  steps: SimStep[],
+  opponents: Opponent[],
+  name: string,
+) => JSON.stringify([holder, steps.map(packStep), opponents, name.trim()]);
 
 /** Pitch markings, shared by both board modes. */
 export function PitchLines() {
@@ -55,31 +94,56 @@ export function PitchLines() {
 /**
  * "Simulate an action" mode of the tactical board: draw from the ball holder to pass,
  * shoot or carry, from another player to make a run, then replay the whole move.
- * Works on the scenario's posts (empty ones included) and is never saved.
+ * Opponent markers can be placed and dragged. Works on the scenario's posts (empty
+ * ones included); a simulation is saved with the scenario on request.
  */
 export function SquadSimulation({
   hidden,
   slots,
+  formation,
   occupants,
   token,
   playerName,
   modeSwitch,
+  saved,
+  canWrite,
+  busy,
+  feedback,
+  onSave,
+  onPending,
 }: {
   hidden: boolean;
   slots: Slot[];
+  formation: FormationId;
   occupants: Record<string, string | null>;
   token: (playerId: string) => ReactNode;
   playerName: (playerId: string) => string;
   modeSwitch: ReactNode;
+  saved: Simulation[];
+  canWrite: boolean;
+  busy: boolean;
+  feedback: { error: string; success: string };
+  /** Saves the scenario with this list of simulations; false on failure. */
+  onSave: (list: Simulation[]) => Promise<boolean>;
+  /** Told whether the board holds work that is not saved (checked before leaving it). */
+  onPending: (pending: boolean) => void;
 }) {
   const s = t.squad.sim;
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const firstName = `${s.defaultName} ${saved.length + 1}`;
   const [holder, setHolder] = useState(() => defaultHolder(slots));
   const [steps, setSteps] = useState<SimStep[]>([]);
+  const [opponents, setOpponents] = useState<Opponent[]>([]);
+  const [current, setCurrent] = useState<string | null>(null);
+  const [name, setName] = useState(firstName);
+  const [kept, setKept] = useState(() =>
+    snapshot(defaultHolder(slots), [], [], firstName),
+  );
   const [frame, setFrame] = useState<SimState | null>(null);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
+  const [rival, setRival] = useState<string | null>(null);
   const [drawing, setDrawing] = useState<{
     from: string;
     points: Point[];
@@ -91,6 +155,11 @@ export function SquadSimulation({
   const settled = useMemo(() => replay(start, steps), [start, steps]);
   const view = frame ?? settled;
   const groups = phases(steps);
+  const contested = steps.map((step) => onTheLine(step, opponents));
+  const pressed = new Set(contested.flat().map((o) => o.id));
+  const clean = snapshot(holder, steps, opponents, name) === kept;
+  const pending = !clean && (steps.length > 0 || opponents.length > 0);
+  useEffect(() => onPending(pending), [pending, onPending]);
 
   const nameOf = (slotId: string) => {
     const player = occupants[slotId];
@@ -103,6 +172,11 @@ export function SquadSimulation({
   };
   const describe = (step: SimStep) =>
     `${s.actions[step.action]} : ${nameOf(step.from)}${step.to ? ` → ${nameOf(step.to)}` : ""}`;
+  const describeAt = (index: number) =>
+    describe(steps[index]) +
+    (contested[index].length
+      ? ` · ${contested[index].length} ${s.onTheLine} (${contested[index].map((o) => o.label).join(", ")})`
+      : "");
 
   // Animation: one requestAnimationFrame loop, phase after phase.
   const timers = useRef({ frame: 0, pause: 0, goal: 0 });
@@ -198,6 +272,10 @@ export function SquadSimulation({
     moved: boolean;
   } | null>(null);
   const justDrew = useRef(false);
+  const swallowClick = () => {
+    justDrew.current = true;
+    window.setTimeout(() => (justDrew.current = false), 0);
+  };
   const actorHandlers = (id: string) => ({
     onPointerDown: (e: React.PointerEvent) => {
       if (e.button !== 0) return;
@@ -227,8 +305,8 @@ export function SquadSimulation({
       draw.current = null;
       setDrawing(null);
       if (!d?.moved) return;
-      justDrew.current = true;
-      window.setTimeout(() => (justDrew.current = false), 0);
+      swallowClick();
+      setRival(null);
       commit(makeStep(settled, d.from, [...d.points, toPoint(e)]));
     },
     onPointerCancel: () => {
@@ -240,6 +318,7 @@ export function SquadSimulation({
     onClick: () => {
       if (justDrew.current) return;
       if (playing) stop();
+      setRival(null);
       if (selected && selected !== id && selected === settled.holder) {
         commit(makeStep(settled, selected, [settled.positions[id]]));
         return;
@@ -260,6 +339,155 @@ export function SquadSimulation({
     if (settled.holder)
       commit(makeStep(settled, settled.holder, [{ x: 50, y: 1 }]));
   };
+
+  // Opponents: dragged, or picked then placed with a tap; arrows and Delete on a keyboard.
+  const moveOpponent = (id: string, to: (o: Opponent) => Point) =>
+    setOpponents((list) =>
+      list.map((o) => (o.id === id ? placeOpponent(o, to(o)) : o)),
+    );
+  const removeOpponent = (o: Opponent) => {
+    setOpponents((list) => list.filter((x) => x.id !== o.id));
+    setRival(null);
+    setAnnounce(`${s.opponent} ${o.label} ${s.opponentRemoved}`);
+  };
+  const grab = useRef<{
+    id: string;
+    x: number;
+    y: number;
+    moved: boolean;
+  } | null>(null);
+  const opponentHandlers = (o: Opponent) => ({
+    onPointerDown: (e: React.PointerEvent) => {
+      if (e.button !== 0) return;
+      if (playing) stop();
+      e.currentTarget.setPointerCapture(e.pointerId);
+      grab.current = { id: o.id, x: e.clientX, y: e.clientY, moved: false };
+    },
+    onPointerMove: (e: React.PointerEvent) => {
+      const g = grab.current;
+      if (!g) return;
+      if (!g.moved && Math.hypot(e.clientX - g.x, e.clientY - g.y) < 8) return;
+      g.moved = true;
+      const p = toPoint(e);
+      moveOpponent(g.id, () => p);
+    },
+    onPointerUp: () => {
+      const g = grab.current;
+      grab.current = null;
+      if (!g?.moved) return;
+      swallowClick();
+      setAnnounce(`${s.opponent} ${o.label} ${s.opponentMoved}`);
+    },
+    onPointerCancel: () => {
+      grab.current = null;
+    },
+    onClick: () => {
+      if (justDrew.current) return;
+      setSelected(null);
+      setRival(rival === o.id ? null : o.id);
+      if (rival !== o.id)
+        setAnnounce(`${s.opponent} ${o.label} ${s.pickOpponent}`);
+    },
+    onKeyDown: (e: React.KeyboardEvent) => {
+      const by = e.shiftKey ? 6 : 2;
+      const moves: Record<string, [number, number]> = {
+        ArrowLeft: [-by, 0],
+        ArrowRight: [by, 0],
+        ArrowUp: [0, -by],
+        ArrowDown: [0, by],
+      };
+      if (moves[e.key]) {
+        e.preventDefault();
+        const [dx, dy] = moves[e.key];
+        moveOpponent(o.id, (p) => ({ x: p.x + dx, y: p.y + dy }));
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        e.preventDefault();
+        removeOpponent(o);
+      }
+    },
+  });
+  const addOne = () => {
+    const next = addOpponent(opponents, Object.values(settled.positions));
+    if (!next) {
+      setAnnounce(s.opponentsFull);
+      return;
+    }
+    setOpponents([...opponents, next]);
+    setAnnounce(`${s.opponent} ${next.label}`);
+  };
+
+  // Saved simulations of the scenario.
+  const confirmLeave = () => !pending || window.confirm(s.replaceConfirm);
+  const open = (sim: Simulation) => {
+    if (sim.id !== current && !confirmLeave()) return;
+    stop();
+    const loaded = sim.steps.map(unpackStep);
+    const from = sim.holder ?? defaultHolder(slots);
+    setHolder(from);
+    setSteps(loaded);
+    setOpponents(sim.opponents);
+    setName(sim.name);
+    setCurrent(sim.id);
+    setKept(snapshot(from, loaded, sim.opponents, sim.name));
+    setSelected(null);
+    setRival(null);
+    setGoal(false);
+    setAnnounce(`${sim.name} ${s.opened}`);
+  };
+  const startNew = () => {
+    if (!confirmLeave()) return;
+    stop();
+    const from = defaultHolder(slots);
+    const next = `${s.defaultName} ${saved.length + 1}`;
+    setHolder(from);
+    setSteps([]);
+    setCurrent(null);
+    setName(next);
+    setKept(snapshot(from, [], opponents, next));
+    setSelected(null);
+    setGoal(false);
+  };
+  const save = async () => {
+    const entry: Simulation = {
+      id: current ?? crypto.randomUUID(),
+      name: name.trim() || `${s.defaultName} ${saved.length + 1}`,
+      formation,
+      holder,
+      steps: steps.map(packStep),
+      opponents,
+    };
+    const exists = saved.some((x) => x.id === entry.id);
+    if (!exists && saved.length >= MAX_SAVED) {
+      setAnnounce(s.listFull);
+      return;
+    }
+    const kept = snapshot(holder, steps, opponents, entry.name);
+    const list = exists
+      ? saved.map((x) => (x.id === entry.id ? entry : x))
+      : [...saved, entry];
+    if (await onSave(list)) {
+      setCurrent(entry.id);
+      setName(entry.name);
+      setKept(kept);
+    }
+  };
+  const remove = async (sim: Simulation) => {
+    if (!window.confirm(s.removeConfirm)) return;
+    if (
+      (await onSave(saved.filter((x) => x.id !== sim.id))) &&
+      sim.id === current
+    )
+      setCurrent(null);
+  };
+  const full =
+    !saved.some((x) => x.id === current) && saved.length >= MAX_SAVED;
+  const state = current
+    ? clean
+      ? ["", s.stateSaved]
+      : [" dirty", s.stateDirty]
+    : steps.length || opponents.length
+      ? [" dirty", s.stateNew]
+      : null;
 
   return (
     <>
@@ -310,6 +538,71 @@ export function SquadSimulation({
             {s.startLocked}
           </p>
         )}
+
+        <h3>{s.opponents}</h3>
+        <p className="ml-muted">{s.opponentsHint}</p>
+        <div className="ml-sim-settings">
+          <label>
+            {s.opponentShape}
+            <select
+              value=""
+              onChange={(e) => {
+                const shape = e.target.value as FormationId;
+                if (!shape) return;
+                setOpponents(
+                  opponentFormation(
+                    FORMATIONS[shape].map((p) => ({
+                      ...p,
+                      label: positionShort[p.position],
+                    })),
+                  ),
+                );
+                setRival(null);
+                setAnnounce(`${s.opponents} : ${shape}`);
+              }}
+            >
+              <option value="">{s.pickShape}</option>
+              {FORMATION_IDS.map((f) => (
+                <option key={f}>{f}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="ml-actions">
+          <button
+            type="button"
+            className="ml-button secondary"
+            onClick={addOne}
+          >
+            <UserPlus size={17} />
+            {s.addOpponent}
+          </button>
+          {rival && (
+            <button
+              type="button"
+              className="ml-button secondary"
+              onClick={() => {
+                const o = opponents.find((x) => x.id === rival);
+                if (o) removeOpponent(o);
+              }}
+            >
+              <UserX size={17} />
+              {s.removeOpponent} {opponents.find((x) => x.id === rival)?.label}
+            </button>
+          )}
+          <button
+            type="button"
+            className="ml-button secondary"
+            disabled={!opponents.length}
+            onClick={() => {
+              setOpponents([]);
+              setRival(null);
+            }}
+          >
+            {s.clearOpponents}
+          </button>
+        </div>
+
         <h3>{s.steps}</h3>
         {groups.length ? (
           <ol className="ml-sim-steps">
@@ -318,11 +611,7 @@ export function SquadSimulation({
                 <strong>
                   {s.phase} {i + 1}
                 </strong>
-                <span>
-                  {group
-                    .map((index) => describe(steps[index]))
-                    .join(` · ${s.together} · `)}
-                </span>
+                <span>{group.map(describeAt).join(` · ${s.together} · `)}</span>
               </li>
             ))}
           </ol>
@@ -330,6 +619,103 @@ export function SquadSimulation({
           <p className="ml-muted">{s.noSteps}</p>
         )}
         <p className="ml-muted">{s.notSaved}</p>
+
+        <h3>{s.saving}</h3>
+        {canWrite ? (
+          <>
+            <label>
+              {s.name}
+              <input
+                value={name}
+                maxLength={80}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <p className="ml-muted">{s.saveHint}</p>
+            <div className="ml-actions">
+              <button
+                type="button"
+                className="ml-button"
+                disabled={busy || full || (!steps.length && !opponents.length)}
+                onClick={save}
+              >
+                <Save size={17} />
+                {s.save}
+              </button>
+              <button
+                type="button"
+                className="ml-button secondary"
+                disabled={!current && !steps.length}
+                onClick={startNew}
+              >
+                <FilePlus size={17} />
+                {s.newOne}
+              </button>
+            </div>
+            {state && (
+              <p className={`ml-save-state${state[0]}`} role="status">
+                {state[1]}
+              </p>
+            )}
+            {full && <p className="ml-muted">{s.listFull}</p>}
+            <Feedback {...feedback} />
+          </>
+        ) : (
+          <p className="ml-muted">{s.readOnly}</p>
+        )}
+        <h3>{s.savedList}</h3>
+        {saved.length ? (
+          <ul className="ml-sim-saved">
+            {saved.map((sim) => {
+              const elsewhere = sim.formation !== formation;
+              return (
+                <li
+                  key={sim.id}
+                  className={sim.id === current ? "current" : undefined}
+                >
+                  <div>
+                    <strong>{sim.name}</strong>
+                    <small>
+                      {sim.formation} · {sim.steps.length} {s.steps_count} ·{" "}
+                      {sim.opponents.length} {s.opponents_count}
+                    </small>
+                    {elsewhere && (
+                      <small>
+                        {s.otherFormation} {sim.formation} :{" "}
+                        {s.otherFormationHint}
+                      </small>
+                    )}
+                  </div>
+                  <div className="ml-actions">
+                    <button
+                      type="button"
+                      className="ml-button secondary"
+                      disabled={elsewhere}
+                      aria-label={`${s.open} : ${sim.name}`}
+                      onClick={() => open(sim)}
+                    >
+                      {s.open}
+                    </button>
+                    {canWrite && (
+                      <button
+                        type="button"
+                        className="ml-button secondary"
+                        disabled={busy}
+                        aria-label={`${s.remove} : ${sim.name}`}
+                        onClick={() => remove(sim)}
+                      >
+                        <Trash2 size={17} />
+                        {s.remove}
+                      </button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="ml-muted">{s.noSaved}</p>
+        )}
       </section>
       <section
         className="ml-card ml-pitch-card"
@@ -350,7 +736,17 @@ export function SquadSimulation({
             ref={pitch}
             className={`ml-pitch ml-sim-pitch${drawing ? " drawing" : ""}`}
             onClick={(e) => {
-              if (!selected || (e.target as Element).closest("button")) return;
+              if ((e.target as Element).closest("button")) return;
+              if (rival) {
+                const p = toPoint(e);
+                const o = opponents.find((x) => x.id === rival);
+                moveOpponent(rival, () => p);
+                setRival(null);
+                if (o)
+                  setAnnounce(`${s.opponent} ${o.label} ${s.opponentMoved}`);
+                return;
+              }
+              if (!selected) return;
               if (playing) stop();
               commit(makeStep(settled, selected, [toPoint(e)]));
             }}
@@ -363,7 +759,7 @@ export function SquadSimulation({
               focusable="false"
             >
               <defs>
-                {ACTIONS.map((a) => (
+                {MARKERS.map((a) => (
                   <marker
                     key={a}
                     id={`${uid}-${a}`}
@@ -385,12 +781,13 @@ export function SquadSimulation({
                   3.5,
                   step.action === "shot" ? 0 : 4.5,
                 );
+                const look = contested[i].length ? "contested" : step.action;
                 return path.length ? (
                   <polyline
                     key={i}
-                    className={`ml-sim-path ${step.action}`}
+                    className={`ml-sim-path ${step.action}${contested[i].length ? " contested" : ""}`}
                     points={svgPoints(path)}
-                    markerEnd={`url(#${uid}-${step.action})`}
+                    markerEnd={`url(#${uid}-${look})`}
                   />
                 ) : null;
               })}
@@ -404,6 +801,19 @@ export function SquadSimulation({
                 />
               )}
             </svg>
+            {opponents.map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                className={`ml-sim-opponent${rival === o.id ? " selected" : ""}${pressed.has(o.id) ? " on-line" : ""}`}
+                style={{ left: `${o.x}%`, top: `${o.y}%` }}
+                aria-label={`${s.opponent} ${o.label}`}
+                aria-pressed={rival === o.id}
+                {...opponentHandlers(o)}
+              >
+                <span aria-hidden="true">{o.label}</span>
+              </button>
+            ))}
             {slots.map((slot) => {
               const player = occupants[slot.id];
               const at = view.positions[slot.id];

@@ -1,6 +1,7 @@
 /**
  * Action simulation on the tactical board: paths drawn from a player are read as a
- * pass, a shot, a carry or a run, then replayed. Nothing here is stored.
+ * pass, a shot, a carry or a run, then replayed. Opponents are markers the staff
+ * places; they never move during a replay.
  * Points use the slot frame: x across (0 left, 100 right), y from the opponent goal
  * (0) to ours (100).
  */
@@ -161,12 +162,17 @@ export function makeStep(
 ): SimStep | null {
   const origin = state.positions[from];
   if (!origin || !drawn.length) return null;
+  // A finger may leave the pitch: the line stays on it, or in the goal behind it.
+  const points = drawn.map((p) => ({
+    x: clamp(p.x, 0, 100),
+    y: clamp(p.y, -6, 100),
+  }));
   const end = {
-    x: clamp(drawn[drawn.length - 1].x, 0, 100),
-    y: clamp(drawn[drawn.length - 1].y, 0, 100),
+    ...points[points.length - 1],
+    y: Math.max(0, points[points.length - 1].y),
   };
   if (
-    pathLength([origin, ...drawn]) < MIN_PATH &&
+    pathLength([origin, ...points]) < MIN_PATH &&
     distance(origin, end) < MIN_PATH
   )
     return null;
@@ -196,7 +202,7 @@ export function makeStep(
     action,
     from,
     to,
-    path: smoothPath([origin, ...drawn.slice(0, -1), target]),
+    path: smoothPath([origin, ...points.slice(0, -1), target]),
   };
 }
 
@@ -280,3 +286,81 @@ export function frameAt(
   }
   return { positions, holder, ball: holder ? positions[holder] : ball, scored };
 }
+
+/** An opponent marker: placed by hand, or from a formation facing ours. */
+export type Opponent = { id: string; label: string; x: number; y: number };
+export const MAX_OPPONENTS = 11;
+/** Closer than this to a pass or shot line, an opponent is flagged on that line. */
+export const PRESSURE = 3;
+
+/** The opponents in a formation, defending the goal we attack (mirrored). */
+export function opponentFormation(
+  slots: { id: string; x: number; y: number; label: string }[],
+): Opponent[] {
+  return slots.map((s, i) => ({
+    id: `o${i + 1}`,
+    label: s.label,
+    x: 100 - s.x,
+    y: 100 - s.y,
+  }));
+}
+
+/** A new marker, numbered after the others, in the free space of the attacking half. */
+export function addOpponent(
+  opponents: Opponent[],
+  avoid: Point[],
+): Opponent | null {
+  if (opponents.length >= MAX_OPPONENTS) return null;
+  const used = new Set(opponents.map((o) => o.id));
+  let n = 1;
+  while (used.has(`o${n}`)) n++;
+  const taken = [...avoid, ...opponents];
+  let best: Point = { x: 50, y: 30 };
+  let room = -1;
+  for (let y = 12; y <= 48; y += 6)
+    for (let x = 12; x <= 88; x += 8) {
+      const d = Math.min(99, ...taken.map((p) => distance(p, { x, y })));
+      if (d > room) {
+        room = d;
+        best = { x, y };
+      }
+    }
+  return { id: `o${n}`, label: String(n), ...best };
+}
+
+export const placeOpponent = (o: Opponent, p: Point): Opponent => ({
+  ...o,
+  x: round(clamp(p.x, 3, 97)),
+  y: round(clamp(p.y, 3, 97)),
+});
+
+function toSegment(p: Point, a: Point, b: Point) {
+  const ax = a.x * WIDTH;
+  const bx = b.x * WIDTH;
+  const px = p.x * WIDTH;
+  const dx = bx - ax;
+  const dy = b.y - a.y;
+  const len = dx * dx + dy * dy;
+  const t = len ? clamp(((px - ax) * dx + (p.y - a.y) * dy) / len, 0, 1) : 0;
+  return Math.hypot(px - (ax + t * dx), p.y - (a.y + t * dy));
+}
+/** Opponents standing on a pass or shot line (a fact about the drawing, not a forecast). */
+export function onTheLine(step: SimStep, opponents: Opponent[]) {
+  if (step.action !== "pass" && step.action !== "shot") return [];
+  return opponents.filter((o) =>
+    step.path.some(
+      (p, i) => i > 0 && toSegment(o, step.path[i - 1], p) < PRESSURE,
+    ),
+  );
+}
+
+/** Stored form: points as [x, y] pairs, a third of the size. */
+export type StoredStep = Omit<SimStep, "path"> & { path: [number, number][] };
+export const packStep = (s: SimStep): StoredStep => ({
+  ...s,
+  path: s.path.map((p) => [round(p.x), round(p.y)]),
+});
+export const unpackStep = (s: StoredStep): SimStep => ({
+  ...s,
+  path: s.path.map(([x, y]) => ({ x, y })),
+});

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { FORMATIONS } from "../src/lib/matchlab/formations";
+import { lineupSchema } from "../src/lib/matchlab/schema";
 import {
   startState,
   defaultHolder,
@@ -15,6 +16,12 @@ import {
   smoothPath,
   distance,
   trimPath,
+  opponentFormation,
+  addOpponent,
+  placeOpponent,
+  onTheLine,
+  packStep,
+  unpackStep,
 } from "../src/lib/matchlab/simulation";
 
 const slots = FORMATIONS["4-3-3"];
@@ -171,5 +178,102 @@ test("MatchLab simulation — drawn lines stop at the tokens' edge", () => {
       4,
     ),
     [],
+  );
+});
+
+test("MatchLab simulation — opponents: mirrored formation, free spot, flagged on a pass line, compact storage", () => {
+  const shape = opponentFormation(
+    FORMATIONS["4-4-2"].map((s) => ({ ...s, label: s.id })),
+  );
+  assert.equal(shape.length, 11);
+  assert.deepEqual(
+    shape.find((o) => o.label === "gk"),
+    { id: "o1", label: "gk", x: 50, y: 9 },
+  );
+  assert.equal(
+    shape.find((o) => o.label === "lb")!.x,
+    87,
+    "their left back faces our right",
+  );
+
+  const s = start();
+  const added = addOpponent([], Object.values(s.positions))!;
+  assert.equal(added.id, "o1");
+  assert.ok(
+    Object.values(s.positions).every((p) => distance(p, added) > 7),
+    "lands in free space",
+  );
+  assert.equal(addOpponent(shape, []), null, "eleven at most");
+  assert.deepEqual(placeOpponent(added, { x: 120, y: -4 }), {
+    ...added,
+    x: 97,
+    y: 3,
+  });
+
+  const pass = makeStep(s, "dm", [
+    { x: 50, y: 30 },
+    { x: 50, y: 15 },
+  ])!;
+  assert.equal(pass.to, "st");
+  const onLine = { id: "o2", label: "DC", x: 51, y: 35 };
+  const aside = { id: "o3", label: "DC", x: 80, y: 35 };
+  assert.deepEqual(
+    onTheLine(pass, [onLine, aside]).map((o) => o.id),
+    ["o2"],
+  );
+  const run = makeStep(s, "lw", [{ x: 50, y: 35 }])!;
+  assert.deepEqual(
+    onTheLine(run, [onLine]),
+    [],
+    "only pass and shot lines are checked",
+  );
+
+  const packed = packStep(pass);
+  assert.ok(Array.isArray(packed.path[0]));
+  assert.deepEqual(unpackStep(packed), pass);
+  // A finger that leaves the pitch keeps the stored line within bounds.
+  const wild = makeStep(s, "dm", [
+    { x: 140, y: 40 },
+    { x: 52, y: -30 },
+  ])!;
+  assert.equal(wild.action, "shot");
+  assert.ok(wild.path.every((p) => p.x >= 0 && p.x <= 100 && p.y >= -6));
+});
+
+test("MatchLab simulation — a saved simulation is checked against its formation's posts", () => {
+  const s = start();
+  const pass = packStep(makeStep(s, "dm", [{ x: 20, y: 25 }])!);
+  const sim = {
+    id: "6f1c2a8e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+    name: "Sortie de balle",
+    formation: "4-3-3" as const,
+    holder: "dm",
+    steps: [pass],
+    opponents: [{ id: "o1", label: "DC", x: 40, y: 30 }],
+  };
+  const lineup = {
+    season_id: "6f1c2a8e-3b4d-4e5f-8a9b-0c1d2e3f4a5c",
+    category_id: "U-16",
+    name: "Équipe type",
+    formation: "4-3-3",
+  };
+  assert.equal(lineupSchema.safeParse({ ...lineup, simulations: [sim] }).success, true);
+  assert.equal(lineupSchema.parse(lineup).simulations, undefined, "absent stays absent");
+  const bad = [
+    { ...sim, holder: "lst" },
+    { ...sim, formation: "4-4-2" as const },
+    { ...sim, steps: [{ ...pass, to: "dm" }] },
+    { ...sim, steps: [{ ...pass, action: "run" as const }] },
+    { ...sim, steps: [{ ...pass, path: [[50, 200], [20, 25]] as [number, number][] }] },
+    { ...sim, opponents: [sim.opponents[0], sim.opponents[0]] },
+    { ...sim, extra: true },
+  ];
+  for (const b of bad)
+    assert.equal(lineupSchema.safeParse({ ...lineup, simulations: [b] }).success, false, JSON.stringify(b).slice(0, 80));
+  assert.equal(lineupSchema.safeParse({ ...lineup, simulations: [sim, sim] }).success, false, "duplicate id");
+  assert.equal(
+    lineupSchema.safeParse({ ...lineup, simulations: Array.from({ length: 13 }, (_, i) => ({ ...sim, id: sim.id.slice(0, -2) + String(i).padStart(2, "0") })) }).success,
+    false,
+    "twelve at most",
   );
 });
