@@ -54,6 +54,17 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "190d4944-e4b3-4268-9f4f-8f9b63b5ad7a"
+      }
+    },
+    "owner": "app-survey"
   }
 }
