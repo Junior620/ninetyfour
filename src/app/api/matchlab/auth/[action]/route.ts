@@ -1,6 +1,12 @@
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
+import { nativeOriginAllowed } from "@/lib/matchlab/bearer";
 import {
   labClient,
+  labConfig,
+  tokenClient,
+  requestCredential,
+  expectedOrigin,
   body,
   checkOrigin,
   rateLimit,
@@ -17,14 +23,23 @@ export async function POST(
   { params }: { params: Promise<{ action: string }> },
 ) {
   try {
-    checkOrigin(request);
     const { action } = await params;
+    // Token login and refresh come from the native app, which sends no Origin.
+    if (action === "token" || action === "refresh") {
+      if (!nativeOriginAllowed(request.headers, expectedOrigin(request)))
+        throw new LabError("CSRF_REJECTED", 403);
+      await rateLimit(request, `auth-${action}`, "global", 30);
+      return json(await nativeSession(request, action));
+    }
+    checkOrigin(request);
     await rateLimit(request, `auth-${action}`, "global", 30);
     const db = await labClient();
     if (action === "logout") {
       const { error } = await db.rpc("ml_logout");
       dbError(error);
-      await db.auth.signOut({ scope: "local" });
+      // The mobile app forgets its tokens itself; only the cookie session is signed out here.
+      if ((await requestCredential()).kind !== "bearer")
+        await db.auth.signOut({ scope: "local" });
       return json({ next: "/matchlab/login" });
     }
     if (action === "login") {
@@ -96,3 +111,56 @@ export async function GET(
     return failure(e);
   }
 }
+
+/** Client without cookies or stored session, used to obtain tokens for the mobile app. */
+function bareClient() {
+  const { url, key } = labConfig();
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+/**
+ * Mobile session. `token`: same checks and limits as the web login, then the MatchLab
+ * session is registered (members only). `refresh`: a new access token for the same
+ * Supabase session, so the registered MatchLab session (12 h, revocable) still applies.
+ */
+async function nativeSession(request: Request, action: "token" | "refresh") {
+  const db = bareClient();
+  if (action === "token") {
+    const input = z
+      .object({ email: z.email(), password: z.string().min(1).max(200) })
+      .strict()
+      .parse(await body(request));
+    await rateLimit(request, "login", input.email.toLowerCase(), 6);
+    const { data, error } = await db.auth.signInWithPassword(input);
+    if (error || !data.session) throw new LabError("INVALID_CREDENTIALS", 401);
+    const session = data.session;
+    const result = await tokenClient(session.access_token).rpc(
+      "ml_register_session",
+    );
+    if (result.error) {
+      await db.auth.admin
+        .signOut(session.access_token, "local")
+        .catch(() => undefined);
+      dbError(result.error);
+    }
+    return tokens(session);
+  }
+  const input = z
+    .object({ refresh_token: z.string().min(1).max(2048) })
+    .strict()
+    .parse(await body(request));
+  await rateLimit(request, "refresh", input.refresh_token, 10);
+  const { data, error } = await db.auth.refreshSession(input);
+  if (error || !data.session) throw new LabError("UNAUTHENTICATED", 401);
+  return tokens(data.session);
+}
+const tokens = (session: {
+  access_token: string;
+  refresh_token: string;
+  expires_at?: number;
+}) => ({
+  access_token: session.access_token,
+  refresh_token: session.refresh_token,
+  expires_at: session.expires_at ?? null,
+});

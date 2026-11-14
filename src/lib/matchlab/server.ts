@@ -1,11 +1,12 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import type { Member } from "./schema";
 import { resolveLabConfig } from "./config.mjs";
+import { credential, originAllowed, type Credential } from "./bearer";
 
 export class LabError extends Error {
   constructor(
@@ -29,7 +30,23 @@ export function adminClient() {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }
-export async function labClient() {
+/** Cookie (web) or Bearer token (mobile app) of the current request. */
+export async function requestCredential(): Promise<Credential> {
+  return credential(await headers());
+}
+/** Client acting as the bearer of a Supabase access token: RLS applies to that JWT. */
+export function tokenClient(token: string) {
+  const { url, key } = labConfig();
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+}
+export async function labClient(): Promise<SupabaseClient> {
+  const found = await requestCredential();
+  // A Bearer request uses its token only and never the cookie of the same browser.
+  if (found.kind === "bearer") return tokenClient(found.token);
+  if (found.kind === "invalid") throw new LabError("UNAUTHENTICATED", 401);
   const jar = await cookies();
   const { url, key } = labConfig();
   return createServerClient(url, key, {
@@ -77,10 +94,11 @@ export function dbError(error: { code?: string; message: string } | null) {
 }
 export async function requireLab(permission?: string) {
   const db = await labClient();
+  const found = await requestCredential();
   const {
     data: { user },
     error,
-  } = await db.auth.getUser();
+  } = await db.auth.getUser(found.kind === "bearer" ? found.token : undefined);
   if (error || !user) throw new LabError("UNAUTHENTICATED", 401);
   const result = await db
     .from("ml_members")
@@ -113,15 +131,11 @@ export async function requireWrite(
   dbError(result.error);
   if (!result.data) throw new LabError("FORBIDDEN", 403);
 }
+export const expectedOrigin = (request: Request) =>
+  process.env.MATCHLAB_APP_ORIGIN || new URL(request.url).origin;
+/** Cookie requests need the exact Origin; Bearer requests (mobile app) carry no CSRF risk. */
 export function checkOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  const expected =
-    process.env.MATCHLAB_APP_ORIGIN || new URL(request.url).origin;
-  if (
-    !origin ||
-    origin !== expected ||
-    request.headers.get("sec-fetch-site") === "cross-site"
-  )
+  if (!originAllowed(request.headers, expectedOrigin(request)))
     throw new LabError("CSRF_REJECTED", 403);
 }
 export function safeReturn(value: unknown): string {
@@ -155,7 +169,7 @@ export async function rateLimit(
 export const PRIVATE_HEADERS = {
   "Cache-Control": "private, no-store, max-age=0",
   "X-Robots-Tag": "noindex, nofollow, noarchive",
-  Vary: "Cookie",
+  Vary: "Cookie, Authorization",
   "X-Content-Type-Options": "nosniff",
 };
 export function json(data: unknown, status = 200) {

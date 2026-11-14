@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // MediaPipe runtime copied at build time (scripts/copy-mediapipe.mjs).
     "public/matchlab/mediapipe/**",
+    // Expo mobile app: own package, own lint and TypeScript configuration.
+    "mobile/**",
   ]),
 ]);
 

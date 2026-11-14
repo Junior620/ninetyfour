@@ -83,6 +83,31 @@ export function Workspace({ section }: { section: string }) {
       active = false;
     };
   }, [key]);
+  // The overview (dashboard) follows what the mobile app saves: reloaded every 30 s
+  // while visible and when the tab comes back. Only there: it holds no form, so a
+  // fresher version can never slip under an edit in progress.
+  useEffect(() => {
+    if (section !== "overview") return;
+    const tick = () => {
+      if (document.visibilityState !== "visible") return;
+      fetchLab(key)
+        .then((result) => {
+          setData(result);
+          setError("");
+        })
+        .catch(() => {
+          /* Keep the data on screen; the next tick or a navigation retries. */
+        });
+    };
+    const timer = window.setInterval(tick, 30_000);
+    document.addEventListener("visibilitychange", tick);
+    window.addEventListener("focus", tick);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", tick);
+      window.removeEventListener("focus", tick);
+    };
+  }, [section, key]);
   if (error)
     return (
       <div className="ml-service-state">
