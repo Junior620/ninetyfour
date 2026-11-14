@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "N91 MatchLab",
+    "slug": "n91-matchlab",
+    "version": "1.0.0",
+    "scheme": "n91matchlab",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.n91.matchlab",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.n91.matchlab",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f2745",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0f2745",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "dark": {
+            "backgroundColor": "#081a35",
+            "image": "./assets/images/splash-icon.png"
+          }
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MatchLab utilise vos photos pour le portrait d’un joueur, après consentement enregistré.",
+          "cameraPermission": "MatchLab utilise l’appareil photo pour prendre le portrait d’un joueur, après consentement enregistré.",
+          "microphonePermission": false
+        }
+      ],
+      "@react-native-community/datetimepicker"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    }
+  }
+}

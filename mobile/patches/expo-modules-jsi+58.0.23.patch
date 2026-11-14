@@ -1,0 +1,29 @@
+diff --git a/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/Values/JavaScriptObject.swift b/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/Values/JavaScriptObject.swift
+index de76b97..f1b9b94 100644
+--- a/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/Values/JavaScriptObject.swift
++++ b/node_modules/expo-modules-jsi/apple/Sources/ExpoModulesJSI/Runtime/Values/JavaScriptObject.swift
+@@ -921,6 +921,11 @@ private func definePropertyFunction(in runtime: JavaScriptRuntime) -> DefineProp
+   }
+ }
+ 
++/// Pointer captured by the isolated closure of `withEncodedValue`, which runs synchronously.
++private struct UncheckedSlotPointer: @unchecked Sendable {
++  let value: UnsafeMutablePointer<facebook.jsi.Value>
++}
++
+ /// Calls `encode` with a slot in a temporary engine value and the runtime, then `body` with the value it
+ /// wrote. A value that `encode` doesn't write stays `undefined`. The value is destroyed when `body`
+ /// returns, which calls into the engine only for a value with an engine handle.
+@@ -941,9 +946,11 @@ private func withEncodedValue(
+     }
+     // The runtime can't be deallocated during a call on its JavaScript thread, so it's borrowed without
+     // a retain.
++    // Swift 6.2 (Xcode 26) cannot prove the synchronous capture safe; the box states it.
++    let target = UncheckedSlotPointer(value: slot)
+     try runtime._withUnsafeGuaranteedRef { runtime in
+       try JavaScriptActor.assumeIsolated {
+-        try encode(JavaScriptValue.Slot(slot), runtime)
++        try encode(JavaScriptValue.Slot(target.value), runtime)
+       }
+     }
+     body(slot.pointee)
